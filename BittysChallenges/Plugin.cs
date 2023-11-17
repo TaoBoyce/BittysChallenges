@@ -23,44 +23,27 @@ using BittysSigils;
 using System.Reflection;
 using System.IO;
 using BepInEx.Bootstrap;
-/// card intros don't work if curses mod is active
-/// not THAT big of a problem since it doesn't affect functionality, just flavor text
-///	
+using Steamworks;
+using System.Diagnostics;
+using InscryptionAPI.Helpers.Extensions;
+using static UnityEngine.GraphicsBuffer;
+
 /// Grimora mod compatibility?
 /// 
-///	Leshy can't use merge sigils
-///		It was planned for a future merge sigils update
-///	
-/// Environments:
+/// Tone down champion color tint
 /// 
-/// Test: 
-///		Electrical Storm
-///			P03
-///		Gem Sanctuary
-///			P03 dialogue
-///			P03
-///		Flood rafts
-///			Leshy
-///		Sprinter Draw (make it not work if there's 4 sigils on the card already)
-///			P03
-/// 
-/// NEED ART FOR:
-/// 
-/// Credit:
-///		—📸𝗦୭ for fleeting squirrels challenge icon base
-
-///Changelog:
-///		Abundance Anti-Challenge
-///		Vine Boom Death Toggle
-///		Fleeting Squirrels
-///		P03 Compatibility for a bunch of challenges
+///Changelog: 5.3.0
+///Added champions Challenge
+///
+///Credit:
+///Amy for champion sigil arts
 namespace BittysChallenges
 {
     [BepInPlugin(PluginGuid, PluginName, PluginVersion)]
     [BepInDependency("cyantist.inscryption.api", BepInDependency.DependencyFlags.HardDependency)]
 	[BepInDependency("spapi.inscryption.mergesigils", BepInDependency.DependencyFlags.HardDependency)]
 	[BepInDependency("bitty45.inscryption.sigils", BepInDependency.DependencyFlags.HardDependency)]
-	public partial class Plugin : BaseUnityPlugin
+    public partial class Plugin : BaseUnityPlugin
     {
 		private void Awake()
 		{
@@ -80,6 +63,7 @@ namespace BittysChallenges
 				};
 			}
 
+			Log.LogInfo("Start of challenges");
 			AddMycoChallenge();
 			AddWeakStartersChallenge();
 			AddWaterborneStarterChallenge();
@@ -98,8 +82,14 @@ namespace BittysChallenges
 			AddInfiniteLivesChallenge();
 			AddVineBoomChallenge();
 			AddFleetingSquirrelsChallenge();
+			AddUnfairHandChallenge();
+            AddAscenderBaneChallenge();
+			AddRedrawHandChallenge();
+            AddChampionsChallenge();
+            Log.LogInfo("End of challenges");
 
-			Add_Boon_Mud();
+            Log.LogInfo("Start of boons");
+            Add_Boon_Mud();
 			Add_Boon_Hail();
 			Add_Boon_Cliff();
 			Add_Boon_Mushrooms();
@@ -120,8 +110,10 @@ namespace BittysChallenges
 			Add_Boon_Conveyor();
 			Add_Boon_GemSanctuary();
 			Add_Boon_ElectricalStorm();
+            Log.LogInfo("End of boons");
 
-			Add_Ability_FalseUnkillable();
+            Log.LogInfo("Start of sigils");
+            Add_Ability_FalseUnkillable();
 			Add_Ability_Warper();
 			Add_Ability_Fragile();
 			Add_Ability_Paralysis();
@@ -132,8 +124,25 @@ namespace BittysChallenges
 			Add_Ability_StrafeAvalanche();
 			Add_Ability_ObeliskSlot();
 			Add_Ability_Raft();
+            Log.LogInfo("End of sigils");
 
-			Add_Card_TravelingOuroboros();
+            Log.LogInfo("Start of champs");
+            Add_Ability_RedChamp();
+            Add_Ability_YellowChamp();
+            Add_Ability_GreenChamp();
+            Add_Ability_OrangeChamp();
+            Add_Ability_CyanChamp();
+            Add_Ability_WhiteChamp();
+            Add_Ability_MagentaChamp();
+            Add_Ability_PurpleChamp();
+            Add_Ability_BlueChamp();
+            Add_Ability_LightBlueChamp();
+            Add_Ability_LightGreenChamp();
+            Add_Ability_BrightRedChamp();
+            Log.LogInfo("End of champs");
+
+            Log.LogInfo("Start of cards");
+            Add_Card_TravelingOuroboros();
 			Add_Card_GoldenSheep();
 			Add_Card_WoodenBoard();
 			Add_Card_Mud();
@@ -150,10 +159,15 @@ namespace BittysChallenges
 			Add_Card_DeckSkeletonPirate();
 			Add_Card_DeckSkeletonParrot();
 			Add_Card_Raft();
+			Add_Card_AscenderBane();
+			Add_Card_CloverReRoll();
+            Log.LogInfo("End of cards");
 
-			Add_Deck_Pirate();
+            Log.LogInfo("Start of starting decks");
+            Add_Deck_Pirate();
+            Log.LogInfo("End of starting decks");
 
-			StarterChallengesPatch.Register(harmony);
+            StarterChallengesPatch.Register(harmony);
 			EncounterAddPatches.Register(harmony);
 			MiscEncounters.Register(harmony);
 			BotchedPatch.Register(harmony);
@@ -165,8 +179,12 @@ namespace BittysChallenges
 			InfiniteLives.Register(harmony);
 			ReverseScales.Register(harmony);
 			Environment.Register(harmony);
-			Dialogue.Dialogue.Register(harmony); 
+			UnfairHandPatch.Register(harmony);
+            RedrawHand.Register(harmony);
+			Champions.Register(harmony);
+            Dialogue.Dialogue.Register(harmony); 
 			harmony.PatchAll(typeof(Plugin));
+			harmony.PatchAll();
 			RulebookExpander.RulebookExpansion.Register(harmony);
 
 			base.Logger.LogInfo("Plugin Bitty's Challenges is loaded!");
@@ -175,7 +193,7 @@ namespace BittysChallenges
 
 		internal const string PluginName = "Bitty's Challenges";
 
-		internal const string PluginVersion = "4.0.1";
+		internal const string PluginVersion = "5.2.0";
 
 		private static AscensionChallengeInfo waterborneStarterChallenge;
 		private static AscensionChallengeInfo shockedStarterChallenge;
@@ -195,8 +213,12 @@ namespace BittysChallenges
 		public static AscensionChallengeInfo environmentChallenge;
 		public static AscensionChallengeInfo vineBoomChallenge;
 		public static AscensionChallengeInfo fleetingSquirrelsChallenge;
+        public static AscensionChallengeInfo unfairHandChallenge;
+        public static AscensionChallengeInfo ascenderBaneChallenge;
+        public static AscensionChallengeInfo redrawHandChallenge;
+        public static AscensionChallengeInfo championChallenge;
 
-		public static AssetBundle assetBundle;
+        public static AssetBundle assetBundle;
 		public static List<AudioClip> addedSfx = new List<AudioClip>();
 
 		internal static ConfigEntry<int> famineRemoval;
@@ -247,7 +269,7 @@ namespace BittysChallenges
 			shockedStarterChallenge = ChallengeManager.AddSpecific(
 					PluginGuid,
 					"Shocked Starters",
-					"Cards in starting deck have the Paralysis sigil.",
+					"Cards in starting deck attack every other turn.",
 					20,
 					Tools.LoadTexture("ascensionicon_paralysisstarterdeck"),
 					Tools.LoadTexture("ascensionicon_activated_paralysisstarterdeck"),
@@ -371,7 +393,7 @@ namespace BittysChallenges
 			weakSoulStarterChallenge = ChallengeManager.AddSpecific(
 					PluginGuid,
 					"Unspirited Starters",
-					"Cards in the starting deck have the Weak Soul sigil.",
+					"Cards in the starting deck may not have their sigils transferred.",
 					25,
 					Tools.LoadTexture("ascensionicon_weaksoul"),
 					Tools.LoadTexture("ascensionicon_activated_weaksoul"),
@@ -442,15 +464,64 @@ namespace BittysChallenges
 		{
 			fleetingSquirrelsChallenge = ChallengeManager.AddSpecific<FleetingSquirrels>(
 					PluginGuid,
-					" Side Deck",
+					"Runaway Side Deck",
 					"Your Side Deck cards have the Fleeting sigil.",
 					10,
 					Tools.LoadTexture("ascensionicon_fleetingsquirrels"),
 					Tools.LoadTexture("activated_fleetingsquirrels"),
 					1
 					).SetFlags("p03");
-		}
-	}
+        }
+        private void AddUnfairHandChallenge()
+        {
+            unfairHandChallenge = ChallengeManager.AddSpecific(
+                    PluginGuid,
+                    "Unfair Hand",
+                    "Your starting hand is randomly drawn.",
+                    50,
+                    Tools.LoadTexture("ascensionicon_unfairhand"),
+                    ChallengeManager.DEFAULT_ACTIVATED_SPRITE,
+                    4
+                    ).SetFlags("p03");
+        }
+        private void AddAscenderBaneChallenge()
+        {
+            ascenderBaneChallenge = ChallengeManager.AddSpecific(
+                    PluginGuid,
+                    "Ascender's Bane",
+                    "You start with a useless card in the deck.",
+                    20,
+                    Tools.LoadTexture("ascensionicon_ascenderbane"),
+                    Tools.LoadTexture("ascensionicon_activated_ascenderbane"),
+                    4
+                    );
+        }
+        private void AddRedrawHandChallenge()
+        {
+            redrawHandChallenge = ChallengeManager.AddSpecific(
+                    PluginGuid,
+                    "Mulligan",
+                    "You may redraw your hand at the start of each battle.",
+                    -20,
+                    Tools.LoadTexture("ascensionicon_redrawhand"),
+					ChallengeManager.DEFAULT_ACTIVATED_SPRITE,
+                    0
+                    ).SetFlags("p03");
+        }
+		
+        private void AddChampionsChallenge()
+        {
+            championChallenge = ChallengeManager.AddSpecific(
+                    PluginGuid,
+                    "Champions",
+                    "Opponent cards have a chance to become a champion.",
+                    20,
+                    Tools.LoadTexture("ascensionicon_champion"),
+                    ChallengeManager.DEFAULT_ACTIVATED_SPRITE,
+                    4
+                    ).SetFlags("p03");
+        }
+    }
 	public partial class Plugin
     {
 		public static bool IsP03Run
@@ -751,7 +822,13 @@ namespace BittysChallenges
 						}
 					}
 				}
-			}
+
+                if (AscensionSaveData.Data.ChallengeIsActive(ascenderBaneChallenge.challengeType))
+                {
+                    Plugin.Log.LogInfo("Ascender's Bane Check");
+                    RunState.Run.playerDeck.AddCard(CardLoader.GetCardByName(CardPrefix + "_" + "Ascender's Bane"));
+                }
+            }
 			[HarmonyPatch(typeof(RunIntroSequencer), "RunIntroSequence")]
 			[HarmonyPostfix]
 			public static IEnumerator StartersAnnouncer(IEnumerator values)
@@ -815,8 +892,19 @@ namespace BittysChallenges
 						yield return new WaitForSeconds(0.5f);
 						yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("WeakSoulStart", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
 					}
-				}
-			}
+                }
+                if (AscensionSaveData.Data.ChallengeIsActive(ascenderBaneChallenge.challengeType))
+                {
+                    yield return new WaitForSeconds(0.5f);
+                    ChallengeActivationUI.Instance.ShowActivation(ascenderBaneChallenge.challengeType);
+                    if (!dialoguePlayed && SaveFile.IsAscension && !DialogueEventsData.EventIsPlayed("AscenderBaneStart"))
+                    {
+                        dialoguePlayed = true;
+                        yield return new WaitForSeconds(0.5f);
+                        yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("AscenderBaneStart", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
+                    }
+                }
+            }
 		}
 		public class EncounterAddPatches
 		{
@@ -1002,7 +1090,6 @@ namespace BittysChallenges
 				x.ability == Ability.StrafePush ||
 				x.ability == Sigils.GiveStrafePull.ability ||
 				x.ability == Sigils.GiveStrafeSticky.ability ||
-				x.ability == Sigils.GiveStrafeBoard.ability ||
 				x.ability == Ability.GainAttackOnKill ||
 				x.ability == Ability.WhackAMole ||
 				x.ability == Ability.QuadrupleBones ||
@@ -1449,7 +1536,25 @@ namespace BittysChallenges
 				harmony.PatchAll(typeof(Environment));
 			}
 
-			[HarmonyPatch(typeof(BoonsHandler), nameof(BoonsHandler.BoonsEnabled), MethodType.Getter)]
+            public static int EnvironmentNumber()
+            {
+                Plugin.Log.LogInfo(ModdedSaveManager.RunState.GetValueAsInt(Plugin.PluginGuid, "BittysChallenges.EnvironmentNumber"));
+                return ModdedSaveManager.RunState.GetValueAsInt(Plugin.PluginGuid, "BittysChallenges.EnvironmentNumber");
+            }
+            public static void ResetEnviroNumber(int value = 0)
+            {
+                Plugin.Log.LogInfo(string.Format("Resetting Environment Number to {0}", value));
+                ModdedSaveManager.RunState.SetValue(Plugin.PluginGuid, "BittysChallenges.EnvironmentNumber", value);
+            }
+            public static void IncreaseEnviroNumber(int by = 1)
+            {
+                int num = ModdedSaveManager.RunState.GetValueAsInt(Plugin.PluginGuid, "BittysChallenges.EnvironmentNumber") + by;
+                Plugin.Log.LogInfo(string.Format("Increasing Environment Number by {0} to {1}", by, num));
+                ModdedSaveManager.RunState.SetValue(Plugin.PluginGuid, "BittysChallenges.EnvironmentNumber", num.ToString());
+                Plugin.Log.LogInfo(EnvironmentNumber());
+            }
+
+            [HarmonyPatch(typeof(BoonsHandler), nameof(BoonsHandler.BoonsEnabled), MethodType.Getter)]
 			[HarmonyPostfix]
 			public static void OverrideBoonsEnabled(BoonsHandler __instance, ref bool __result)
 			{
@@ -1466,36 +1571,35 @@ namespace BittysChallenges
 				if (AscensionSaveData.Data.ChallengeIsActive(Plugin.environmentChallenge.challengeType) && (OpponentType == Opponent.Type.Default || OpponentType == Opponent.Type.Totem))
 				{
                     ClearEnvironmentBoons();
+					IncreaseEnviroNumber();
 					List<BoonData.Type> boons = new List<BoonData.Type>();
 					if (!Plugin.IsP03Run)
 					{
-						Plugin.Log.LogInfo("Region Tier: " + RunState.CurrentRegionTier);
+						
+                        Plugin.Log.LogInfo("Region Tier: " + RunState.CurrentRegionTier);
 						if (RunState.CurrentRegionTier >= 0)
 						{
 							boons.Add(ChallengeBoonCliffs.boo);
 							Plugin.Log.LogInfo("Added Cliffs to boons pool: " + ChallengeBoonCliffs.boo);
-							boons.Add(ChallengeBoonGraveyard.boo);
-							Plugin.Log.LogInfo("Added Graveyard to boons pool: " + ChallengeBoonGraveyard.boo);
 
-							if (RunState.Run.regionTier >= 0 && RunState.Run.regionTier < RunState.Run.regionOrder.Length)
+							Plugin.Log.LogInfo("Region: " + RunState.CurrentMapRegion.name);
+							switch (RunState.CurrentMapRegion.name)
 							{
-								Plugin.Log.LogInfo("Region: " + RunState.Run.regionOrder[RunState.Run.regionTier]);
-								if (RunState.Run.regionOrder[RunState.Run.regionTier] == 0)//woodlands
-								{
-									boons.Add(ChallengeBoonTotem.boo);
-									Plugin.Log.LogInfo("Added Totem to boons pool: " + ChallengeBoonTotem.boo);
-								}
-								else if (RunState.Run.regionOrder[RunState.Run.regionTier] == 1)//swamp
-								{
-									boons.Add(ChallengeBoonMud.boo);
-									Plugin.Log.LogInfo("Added Mud to boons pool: " + ChallengeBoonMud.boo);
-								}
-								else if (RunState.Run.regionOrder[RunState.Run.regionTier] == 2)//snowline
-								{
-									boons.Add(ChallengeBoonHail.boo);
-									Plugin.Log.LogInfo("Added Hail to boons pool: " + ChallengeBoonHail.boo);
-								}
-							}
+								case "Forest":
+                                    boons.Add(ChallengeBoonTotem.boo);
+                                    Plugin.Log.LogInfo("Added Totem to boons pool: " + ChallengeBoonTotem.boo);
+                                    break;
+                                case "Wetlands":
+                                    boons.Add(ChallengeBoonMud.boo);
+                                    Plugin.Log.LogInfo("Added Mud to boons pool: " + ChallengeBoonMud.boo);
+                                    break;
+                                case "Alpine":
+                                    boons.Add(ChallengeBoonHail.boo);
+                                    Plugin.Log.LogInfo("Added Hail to boons pool: " + ChallengeBoonHail.boo);
+                                    break;
+								case "Magma_bitty":
+									break;
+                            }
 						}
 						if (RunState.CurrentRegionTier >= 1)
 						{
@@ -1503,72 +1607,64 @@ namespace BittysChallenges
 							Plugin.Log.LogInfo("Added Breeze to boons pool: " + ChallengeBoonBreeze.boo);
 							boons.Add(ChallengeBoonFlashGrowth.boo);
 							Plugin.Log.LogInfo("Added Flash Growth to boons pool: " + ChallengeBoonFlashGrowth.boo);
+                            boons.Add(ChallengeBoonGraveyard.boo);
+                            Plugin.Log.LogInfo("Added Graveyard to boons pool: " + ChallengeBoonGraveyard.boo);
 
-							if (RunState.Run.regionTier >= 0 && RunState.Run.regionTier < RunState.Run.regionOrder.Length)
-							{
-								if (RunState.Run.regionOrder[RunState.Run.regionTier] == 0)//woodlands
-								{
-									boons.Add(ChallengeBoonDynamite.boo);
-									Plugin.Log.LogInfo("Added Prospector's Camp to boons pool: " + ChallengeBoonDynamite.boo);
-								}
-								else if (RunState.Run.regionOrder[RunState.Run.regionTier] == 1)//swamp
-								{
-									boons.Add(ChallengeBoonBait.boo);
-									Plugin.Log.LogInfo("Added Angler's Pool to boons pool: " + ChallengeBoonBait.boo);
-								}
-								else if (RunState.Run.regionOrder[RunState.Run.regionTier] == 2)//snowline
-								{
-									boons.Add(ChallengeBoonTrap.boo);
-									Plugin.Log.LogInfo("Added Trapper's Hunting Grounds to boons pool: " + ChallengeBoonTrap.boo);
-								}
-							}
+                            switch (RunState.CurrentMapRegion.name)
+                            {
+                                case "Forest":
+                                    boons.Add(ChallengeBoonDynamite.boo);
+                                    Plugin.Log.LogInfo("Added Prospector's Camp to boons pool: " + ChallengeBoonDynamite.boo);
+                                    break;
+                                case "Wetlands":
+                                    boons.Add(ChallengeBoonBait.boo);
+                                    Plugin.Log.LogInfo("Added Angler's Pool to boons pool: " + ChallengeBoonBait.boo);
+                                    break;
+                                case "Alpine":
+                                    boons.Add(ChallengeBoonTrap.boo);
+                                    Plugin.Log.LogInfo("Added Trapper's Hunting Grounds to boons pool: " + ChallengeBoonTrap.boo);
+                                    break;
+                            }
 						}
 						if (RunState.CurrentRegionTier >= 2)
 						{
-							if (SeededRandom.Bool(SaveManager.SaveFile.GetCurrentRandomSeed()))
+							boons.Add(ChallengeBoonObelisk.boo);
+							Plugin.Log.LogInfo("Added Obelisk to boons pool: " + ChallengeBoonObelisk.boo);
+
+							boons.Add(ChallengeBoonMushrooms.boo);
+							Plugin.Log.LogInfo("Added Mushrooms to boons pool: " + ChallengeBoonMushrooms.boo);
+
+							if (AscensionSaveData.Data.ChallengeIsActive(AscensionChallenge.GrizzlyMode))
 							{
-								boons.Add(ChallengeBoonObelisk.boo);
-								Plugin.Log.LogInfo("Added Obelisk to boons pool: " + ChallengeBoonObelisk.boo);
-
-								boons.Add(ChallengeBoonMushrooms.boo);
-								Plugin.Log.LogInfo("Added Mushrooms to boons pool: " + ChallengeBoonMushrooms.boo);
-
-								if (AscensionSaveData.Data.ChallengeIsActive(AscensionChallenge.GrizzlyMode))
-								{
-									boons.Add(ChallengeBoonBloodMoon.boo);
-									Plugin.Log.LogInfo("Added Blood Moon to boons pool: " + ChallengeBoonBloodMoon.boo);
-								}
-
-								if (AscensionSaveData.Data.ChallengeIsActive(Plugin.harderFinalBossChallenge.challengeType) || AscensionSaveData.Data.ChallengeIsActive(AscensionChallenge.FinalBoss))
-								{
-									boons.Add(ChallengeBoonMinicello.boo);
-									Plugin.Log.LogInfo("Added Minicello to boons pool: " + ChallengeBoonMinicello.boo);
-								}
-							}
-							if (AscensionSaveData.Data.ChallengeIsActive(AscensionChallenge.GrizzlyMode) && SeededRandom.Bool(SaveManager.SaveFile.GetCurrentRandomSeed() + 1) && !DialogueEventsData.EventIsPlayed("CarrotBoonIntro"))
+								boons.Add(ChallengeBoonBloodMoon.boo);
+								Plugin.Log.LogInfo("Added Blood Moon to boons pool: " + ChallengeBoonBloodMoon.boo);
+                            }
+                            if (AscensionSaveData.Data.ChallengeIsActive(AscensionChallenge.GrizzlyMode) && SeededRandom.Bool(SaveManager.SaveFile.GetCurrentRandomSeed() + 1) && !DialogueEventsData.EventIsPlayed("CarrotBoonIntro"))
+                            {
+                                boons.Add(ChallengeBoonCarrotPatch.boo);
+                                Plugin.Log.LogInfo("Added Blood Moon(?) to boons pool: " + ChallengeBoonCarrotPatch.boo);
+                            }
+                            if (AscensionSaveData.Data.ChallengeIsActive(Plugin.harderFinalBossChallenge.challengeType) || AscensionSaveData.Data.ChallengeIsActive(AscensionChallenge.FinalBoss))
 							{
-								boons.Add(ChallengeBoonCarrotPatch.boo);
-								Plugin.Log.LogInfo("Added Blood Moon(?) to boons pool: " + ChallengeBoonCarrotPatch.boo);
+								boons.Add(ChallengeBoonMinicello.boo);
+								Plugin.Log.LogInfo("Added Minicello to boons pool: " + ChallengeBoonMinicello.boo);
 							}
 
-							if (RunState.Run.regionTier >= 0 && RunState.Run.regionTier < RunState.Run.regionOrder.Length)
-							{
-								if (RunState.Run.regionOrder[RunState.Run.regionTier] == 0)//woodlands
-								{
-									boons.Add(ChallengeBoonDarkForest.boo);
-									Plugin.Log.LogInfo("Added Dark Forest to boons pool: " + ChallengeBoonDarkForest.boo);
-								}
-								else if (RunState.Run.regionOrder[RunState.Run.regionTier] == 1)//swamp
-								{
-									boons.Add(ChallengeBoonFlood.boo);
-									Plugin.Log.LogInfo("Added Flood to boons pool: " + ChallengeBoonFlood.boo);
-								}
-								else if (RunState.Run.regionOrder[RunState.Run.regionTier] == 2)//snowline
-								{
-									boons.Add(ChallengeBoonBlizzard.boo);
-									Plugin.Log.LogInfo("Added Blizzard to boons pool: " + ChallengeBoonBlizzard.boo);
-								}
-							}
+                            switch (RunState.CurrentMapRegion.name)
+                            {
+                                case "Forest":
+                                    boons.Add(ChallengeBoonDarkForest.boo);
+                                    Plugin.Log.LogInfo("Added Dark Forest to boons pool: " + ChallengeBoonDarkForest.boo);
+                                    break;
+                                case "Wetlands":
+                                    boons.Add(ChallengeBoonFlood.boo);
+                                    Plugin.Log.LogInfo("Added Flood to boons pool: " + ChallengeBoonFlood.boo);
+                                    break;
+                                case "Alpine":
+                                    boons.Add(ChallengeBoonBlizzard.boo);
+                                    Plugin.Log.LogInfo("Added Blizzard to boons pool: " + ChallengeBoonBlizzard.boo);
+                                    break;
+                            }
 						}
 					}
                     else //P03 boons
@@ -1584,8 +1680,8 @@ namespace BittysChallenges
 						boons.Add(ChallengeBoonElectricStorm.boo);
 						Plugin.Log.LogInfo("Added Electrical Storm to boons pool: " + ChallengeBoonElectricStorm.boo);
 					}
-					int i = SeededRandom.Range(0, boons.Count, SaveManager.SaveFile.GetCurrentRandomSeed());
-					bool boonActive = SeededRandom.Bool(SaveManager.SaveFile.GetCurrentRandomSeed()+1);
+					int i = EnvironmentNumber()%boons.Count;
+					bool boonActive = SeededRandom.Bool(SaveManager.SaveFile.GetCurrentRandomSeed()+2);
 					if (boonActive && boons != null)
 					{
 						RunState.Run.playerDeck.AddBoon(boons[i]);
@@ -1632,7 +1728,7 @@ namespace BittysChallenges
 						CardModificationInfo cardModificationInfo = slot.Card.TemporaryMods.Find((CardModificationInfo x) => x.singletonId == "bitty_mergeSigil");
 						if (cardModificationInfo != null)
                         {
-							__result = true;
+                             __result = true;
                         }
 					}
 				}
@@ -1729,10 +1825,444 @@ namespace BittysChallenges
 
             public string sideDeckName;
         }
-	}
+		public class RedrawHand
+		{
+			public static void Register(Harmony harmony)
+			{
+				harmony.PatchAll(typeof(RedrawHand));
+			}
+
+			[HarmonyPatch(typeof(TurnManager), "SetupPhase")]
+			private class CloverGiverPatch
+			{
+				[HarmonyPostfix]
+				public static IEnumerator CloverGiver(IEnumerator __result)
+				{
+					yield return __result;
+                    if (AscensionSaveData.Data.ChallengeIsActive(redrawHandChallenge.challengeType))
+                    {
+                        ChallengeActivationUI.TryShowActivation(redrawHandChallenge.challengeType);
+                        yield return Singleton<CardSpawner>.Instance.SpawnCardToHand(CardLoader.GetCardByName(CardPrefix + "_" + "Clover"), null, 0.25f, null);
+                        if (!DialogueEventsData.EventIsPlayed("RedrawHandIntro"))
+                        {
+                            yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("RedrawHandIntro", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
+                        }
+                    }
+                    yield break;
+				}
+			}
+        }
+        public class UnfairHandPatch
+		{
+            public static void Register(Harmony harmony)
+            {
+                harmony.PatchAll(typeof(UnfairHandPatch));
+            }
+
+			[HarmonyPatch(typeof(CardDrawPiles3D), "InitializePiles")]
+			[HarmonyPostfix]
+			public static void UnfairHandShowActivation()
+			{
+				if (AscensionSaveData.Data.ChallengeIsActive(unfairHandChallenge.challengeType))
+				{
+					ChallengeActivationUI.TryShowActivation(unfairHandChallenge.challengeType);
+                    if (!DialogueEventsData.EventIsPlayed("UnfairHandIntro"))
+                    {
+                        Singleton<CardDrawPiles3D>.Instance.StartCoroutine(Singleton<TextDisplayer>.Instance.PlayDialogueEvent("UnfairHandIntro", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null));
+                    }
+                }
+			}
+
+            [HarmonyPatch(typeof(Deck), "GetFairHand")]
+            private class GetFairHandPatcher
+            {
+                [HarmonyPrefix]
+                private static bool GetFairHand_nomore(Deck __instance, ref List<CardInfo> __result, int numCards = 4, List<CardInfo> existingHand = null)
+                {
+					if (!AscensionSaveData.Data.ChallengeIsActive(Plugin.unfairHandChallenge.challengeType))
+					{
+						return true;
+					}
+					Plugin.Log.LogInfo("UNFAIR HAND GO!");
+                    List<CardInfo> list = new List<CardInfo>();
+                    List<CardInfo> list2 = new List<CardInfo>(__instance.Cards);
+                    int currentRandomSeed = SaveManager.SaveFile.GetCurrentRandomSeed();
+                    bool flag = existingHand != null;
+                    if (flag)
+                    {
+                        list2.RemoveAll((CardInfo x) => existingHand.Contains(x));
+                        list.AddRange(existingHand);
+                    }
+                    int num = list2.Count;
+                    if (num > numCards)
+                    {
+                        for (int i = 0; i < numCards - 1; i++)
+                        {
+                            int seed = currentRandomSeed + i;
+                            CardInfo item = list2[SeededRandom.Range(0, num, seed)];
+                            list.Add(item);
+                            list2.Remove(item);
+                            num--;
+                        }
+                    }
+                    else
+                    {
+                        list = list2;
+                    }
+                    __result = list;
+                    return false;
+                }
+            }
+        }
+		
+		public class Champions
+        {
+            public static void Register(Harmony harmony)
+            {
+                harmony.PatchAll(typeof(Champions));
+            }
+
+            [HarmonyPatch(typeof(Part1Opponent), nameof(Part1Opponent.TryModifyCardWithTotem))]
+            private static class ChampionPatch
+            {
+                [HarmonyPostfix]
+                private static void ChangeToChamp(PlayableCard card)
+                {
+                    var OpponentType = Singleton<Part1Opponent>.Instance.OpponentType;
+                    if (AscensionSaveData.Data.ChallengeIsActive(championChallenge.challengeType) && !card.HasAnyOfTraits(new Trait[] {Trait.Giant, Trait.Uncuttable, Trait.Terrain}) //&& card.InOpponentQueue
+						&& OpponentType != Opponent.Type.TrapperTraderBoss)
+                    {
+						double randomVal = UnityEngine.Random.value;
+						if (randomVal < 0.50f && (!Singleton<Opponent>.Instance.Queue.Exists((PlayableCard card) => card.TemporaryMods.Exists((CardModificationInfo x) => x.singletonId == "bitty_champion")) && !Singleton<BoardManager>.Instance.CardsOnBoard.Exists((PlayableCard card) => card.TemporaryMods.Exists((CardModificationInfo x) => x.singletonId == "bitty_champion"))))
+						{
+							ChallengeActivationUI.TryShowActivation(championChallenge.challengeType);
+							///if this fails just use ChallengeBehavior
+
+							///Out of 100
+							///Mythic: 10
+							///Legendary: 10
+							///Epic: 15
+							///Rare: 20
+							///Uncommon: 20
+							///Common: 25
+							///Common
+							///case <= 13 Red
+							///case <= 25 Yellow
+							///Uncommon
+							///case <= 35 Green
+							///case <= 45 Purple
+							///Rare
+							///case <= 55 Magenta
+							///case <= 65 Cyan
+							///Epic
+							///case <= 73 Orange
+							///case <= 80 Light Blue
+							///Legendary
+							///case <= 85 Light Green
+							///case <= 90 White
+							///Mythic
+							///case <= 95 Blue
+							///case <= 100 Bright Red
+							switch (SeededRandom.Range(0, 12, SaveManager.SaveFile.GetCurrentRandomSeed() + Singleton<TurnManager>.Instance.TurnNumber + 2))
+							{
+								case 0:
+									card.ApplyAppearanceBehaviours(new List<CardAppearanceBehaviour.Appearance> { RedChampAppearance });
+									card.AddTemporaryMod(new CardModificationInfo(0, 2) { abilities = new List<Ability> { GiveRedChamp.ability }, fromCardMerge = true });
+                                    card.AddTemporaryMod(championIDMod);
+                                    break;
+								case 1:
+									card.ApplyAppearanceBehaviours(new List<CardAppearanceBehaviour.Appearance> { YellowChampAppearance });
+									card.AddTemporaryMod(new CardModificationInfo(1, 0) { abilities = new List<Ability> { GiveYellowChamp.ability }, fromCardMerge = true });
+                                    card.AddTemporaryMod(championIDMod);
+                                    break;
+								case 2:
+									card.ApplyAppearanceBehaviours(new List<CardAppearanceBehaviour.Appearance> { GreenChampAppearance });
+									card.AddTemporaryMod(new CardModificationInfo(GiveGreenChamp.ability) { fromCardMerge = true });
+                                    card.AddTemporaryMod(championIDMod);
+                                    break;
+								case 3:
+									card.ApplyAppearanceBehaviours(new List<CardAppearanceBehaviour.Appearance> { OrangeChampAppearance });
+									card.AddTemporaryMod(new CardModificationInfo(GiveOrangeChamp.ability) { fromCardMerge = true });
+                                    card.AddTemporaryMod(championIDMod);
+                                    break;
+								case 4:
+									card.ApplyAppearanceBehaviours(new List<CardAppearanceBehaviour.Appearance> { CyanChampAppearance });
+									card.AddTemporaryMod(new CardModificationInfo(GiveCyanChamp.ability) { fromCardMerge = true });
+                                    card.AddTemporaryMod(championIDMod);
+                                    break;
+								case 5:
+									card.ApplyAppearanceBehaviours(new List<CardAppearanceBehaviour.Appearance> { WhiteChampAppearance });
+									card.AddTemporaryMod(new CardModificationInfo(GiveWhiteChamp.ability) { fromCardMerge = true });
+                                    card.AddTemporaryMod(championIDMod);
+                                    break;
+								case 6:
+									card.ApplyAppearanceBehaviours(new List<CardAppearanceBehaviour.Appearance> { MagentaChampAppearance });
+									card.AddTemporaryMod(new CardModificationInfo(GiveMagentaChamp.ability) { fromCardMerge = true });
+                                    card.AddTemporaryMod(championIDMod);
+                                    break;
+								case 7:
+									card.ApplyAppearanceBehaviours(new List<CardAppearanceBehaviour.Appearance> { PurpleChampAppearance });
+									card.AddTemporaryMod(new CardModificationInfo(GivePurpleChamp.ability) { fromCardMerge = true });
+                                    card.AddTemporaryMod(championIDMod);
+                                    break;
+								case 8:
+									card.ApplyAppearanceBehaviours(new List<CardAppearanceBehaviour.Appearance> { BlueChampAppearance });
+									card.AddTemporaryMod(new CardModificationInfo(GiveBlueChamp.ability) { fromCardMerge = true });
+                                    card.AddTemporaryMod(championIDMod);
+                                    break;
+								case 9:
+									card.ApplyAppearanceBehaviours(new List<CardAppearanceBehaviour.Appearance> { LightBlueChampAppearance });
+									card.AddTemporaryMod(new CardModificationInfo(GiveLightBlueChamp.ability) { fromCardMerge = true });
+                                    card.AddTemporaryMod(championIDMod);
+                                    break;
+								case 10:
+									card.ApplyAppearanceBehaviours(new List<CardAppearanceBehaviour.Appearance> { LightGreenChampAppearance });
+									card.AddTemporaryMod(new CardModificationInfo(GiveLightGreenChamp.ability) { fromCardMerge = true });
+                                    card.AddTemporaryMod(championIDMod);
+                                    break;
+								case 11:
+									card.ApplyAppearanceBehaviours(new List<CardAppearanceBehaviour.Appearance> { BrightRedChampAppearance });
+									card.AddTemporaryMod(new CardModificationInfo(GiveBrightRedChamp.ability) { fromCardMerge = true });
+                                    card.AddTemporaryMod(championIDMod);
+                                    break;
+							}
+							card.RenderCard();
+						}
+                    }
+                }
+				public static CardModificationInfo championIDMod = new CardModificationInfo() { singletonId = "bitty_champion" };
+            }
+            public class RedChampAppearanceBehaviour : CardAppearanceBehaviour
+            {
+                public override void ApplyAppearance()
+                {
+                    base.Card.renderInfo.forceEmissivePortrait = true;
+                    base.Card.StatsLayer.SetEmissionColor(GameColors.instance.darkRed);
+                }
+            }
+            public readonly static CardAppearanceBehaviour.Appearance RedChampAppearance = CardAppearanceBehaviourManager.Add(Plugin.PluginGuid, "RedChampAppearance", typeof(RedChampAppearanceBehaviour)).Id;
+            public class YellowChampAppearanceBehaviour : CardAppearanceBehaviour
+            {
+                public override void ApplyAppearance()
+                {
+                    base.Card.renderInfo.forceEmissivePortrait = true;
+                    base.Card.StatsLayer.SetEmissionColor(GameColors.instance.yellow);
+                }
+            }
+            public readonly static CardAppearanceBehaviour.Appearance YellowChampAppearance = CardAppearanceBehaviourManager.Add(Plugin.PluginGuid, "YellowChampAppearance", typeof(YellowChampAppearanceBehaviour)).Id;
+            public class OrangeChampAppearanceBehaviour : CardAppearanceBehaviour
+            {
+                public override void ApplyAppearance()
+                {
+                    base.Card.renderInfo.forceEmissivePortrait = true;
+                    base.Card.StatsLayer.SetEmissionColor(GameColors.instance.orange);
+                }
+            }
+            public readonly static CardAppearanceBehaviour.Appearance OrangeChampAppearance = CardAppearanceBehaviourManager.Add(Plugin.PluginGuid, "OrangeChampAppearance", typeof(OrangeChampAppearanceBehaviour)).Id;
+            public class CyanChampAppearanceBehaviour : CardAppearanceBehaviour
+            {
+                public override void ApplyAppearance()
+                {
+                    base.Card.renderInfo.forceEmissivePortrait = true;
+                    base.Card.StatsLayer.SetEmissionColor(Color.cyan);
+                }
+            }
+            public readonly static CardAppearanceBehaviour.Appearance CyanChampAppearance = CardAppearanceBehaviourManager.Add(Plugin.PluginGuid, "CyanChampAppearance", typeof(CyanChampAppearanceBehaviour)).Id;
+            public class WhiteChampAppearanceBehaviour : CardAppearanceBehaviour
+            {
+                public override void ApplyAppearance()
+                {
+                    base.Card.renderInfo.forceEmissivePortrait = true;
+                    base.Card.StatsLayer.SetEmissionColor(GameColors.instance.brightNearWhite);
+                }
+            }
+            public readonly static CardAppearanceBehaviour.Appearance WhiteChampAppearance = CardAppearanceBehaviourManager.Add(Plugin.PluginGuid, "WhiteChampAppearance", typeof(WhiteChampAppearanceBehaviour)).Id;
+            public class MagentaChampAppearanceBehaviour : CardAppearanceBehaviour
+            {
+                public override void ApplyAppearance()
+                {
+                    base.Card.renderInfo.forceEmissivePortrait = true;
+                    base.Card.StatsLayer.SetEmissionColor(Color.magenta);
+                }
+            }
+            public readonly static CardAppearanceBehaviour.Appearance MagentaChampAppearance = CardAppearanceBehaviourManager.Add(Plugin.PluginGuid, "MagentaChampAppearance", typeof(MagentaChampAppearanceBehaviour)).Id;
+            public class PurpleChampAppearanceBehaviour : CardAppearanceBehaviour
+            {
+                public override void ApplyAppearance()
+                {
+                    base.Card.renderInfo.forceEmissivePortrait = true;
+                    base.Card.StatsLayer.SetEmissionColor(GameColors.instance.darkPurple);
+                }
+            }
+            public readonly static CardAppearanceBehaviour.Appearance PurpleChampAppearance = CardAppearanceBehaviourManager.Add(Plugin.PluginGuid, "PurpleChampAppearance", typeof(PurpleChampAppearanceBehaviour)).Id;
+            public class LightBlueChampAppearanceBehaviour : CardAppearanceBehaviour
+            {
+                public override void ApplyAppearance()
+                {
+                    base.Card.renderInfo.forceEmissivePortrait = true;
+                    base.Card.StatsLayer.SetEmissionColor(GameColors.instance.brightBlue);
+                }
+            }
+            public readonly static CardAppearanceBehaviour.Appearance LightBlueChampAppearance = CardAppearanceBehaviourManager.Add(Plugin.PluginGuid, "LightBlueChampAppearance", typeof(LightBlueChampAppearanceBehaviour)).Id;
+            public class BrightRedChampAppearanceBehaviour : CardAppearanceBehaviour
+            {
+                public override void ApplyAppearance()
+                {
+                    base.Card.renderInfo.forceEmissivePortrait = true;
+                    base.Card.StatsLayer.SetEmissionColor(GameColors.instance.brightRed);
+                }
+            }
+            public readonly static CardAppearanceBehaviour.Appearance BrightRedChampAppearance = CardAppearanceBehaviourManager.Add(Plugin.PluginGuid, "BrightRedChampAppearance", typeof(BrightRedChampAppearanceBehaviour)).Id;
+            public class LightGreenChampAppearanceBehaviour : CardAppearanceBehaviour
+            {
+                public override void ApplyAppearance()
+                {
+                    base.Card.renderInfo.forceEmissivePortrait = true;
+                    base.Card.StatsLayer.SetEmissionColor(GameColors.instance.brightLimeGreen);
+                }
+            }
+            public readonly static CardAppearanceBehaviour.Appearance LightGreenChampAppearance = CardAppearanceBehaviourManager.Add(Plugin.PluginGuid, "LightGreenChampAppearance", typeof(LightGreenChampAppearanceBehaviour)).Id;
+            public class BlueChampAppearanceBehaviour : CardAppearanceBehaviour
+            {
+                public override void ApplyAppearance()
+                {
+                    base.Card.renderInfo.forceEmissivePortrait = true;
+                    base.Card.StatsLayer.SetEmissionColor(GameColors.instance.darkBlue);
+                }
+            }
+            public readonly static CardAppearanceBehaviour.Appearance BlueChampAppearance = CardAppearanceBehaviourManager.Add(Plugin.PluginGuid, "BlueChampAppearance", typeof(BlueChampAppearanceBehaviour)).Id;
+            public class GreenChampAppearanceBehaviour : CardAppearanceBehaviour
+            {
+                public override void ApplyAppearance()
+                {
+                    base.Card.renderInfo.forceEmissivePortrait = true;
+                    base.Card.StatsLayer.SetEmissionColor(GameColors.instance.darkLimeGreen);
+                }
+            }
+            public readonly static CardAppearanceBehaviour.Appearance GreenChampAppearance = CardAppearanceBehaviourManager.Add(Plugin.PluginGuid, "GreenChampAppearance", typeof(GreenChampAppearanceBehaviour)).Id;
+        }
+    }
 	public partial class Plugin
     {
-		public class AddTravelingOuroAbility : SpecialCardBehaviour
+        public class AddCloverReRollAbility : SpecialCardBehaviour, IOnOtherCardResolveInHand
+        {
+            public readonly static SpecialTriggeredAbility CloverReRollSpecialAbility = SpecialTriggeredAbilityManager.Add(PluginGuid, "CloverReRollSpecialAbility", typeof(AddCloverReRollAbility)).Id;
+
+            private CardModificationInfo mod = new CardModificationInfo();
+            public override bool RespondsToDrawn()
+            {
+				return true;
+            }
+            public override IEnumerator OnDrawn()
+            {
+                mod.singletonId = "bitty_mergeSigil";
+                base.PlayableCard.AddTemporaryMod(mod);
+                yield break;
+            }
+            public override bool RespondsToResolveOnBoard()
+            {
+				return true;
+            }
+            public override IEnumerator OnResolveOnBoard()
+            {
+				yield return MoveCardIntoDeck(Singleton<PlayerHand>.Instance.cardsInHand[0], true);
+				int cardsToDraw = 0;
+				int cardsToShuffle = Singleton<PlayerHand>.Instance.cardsInHand.Count;
+				for(int i = 0; i < cardsToShuffle; i++)
+				{
+					cardsToDraw++;
+					yield return MoveCardIntoDeck(Singleton<PlayerHand>.Instance.cardsInHand[0]);
+				}
+
+				if(CardDrawPiles3D.Instance.SideDeck.CardsInDeck > 0)
+                {
+                    yield return new WaitForSeconds(0.4f);
+                    if (Singleton<ViewManager>.Instance.CurrentView != View.Default)
+                    {
+                        yield return new WaitForSeconds(0.2f);
+                        Singleton<ViewManager>.Instance.SwitchToView(View.Default, false, false);
+                        yield return new WaitForSeconds(0.2f);
+                    }
+                    CardDrawPiles3D.Instance.SidePile.Draw();
+                    yield return CardDrawPiles3D.Instance.DrawFromSidePile();
+                }
+                for (int i = 0; i < cardsToDraw; i++)
+                {
+                    if (CardDrawPiles3D.Instance.Deck.CardsInDeck > 0)
+                    {
+                        yield return new WaitForSeconds(0.4f);
+                        if (Singleton<ViewManager>.Instance.CurrentView != View.Default)
+                        {
+                            yield return new WaitForSeconds(0.2f);
+                            Singleton<ViewManager>.Instance.SwitchToView(View.Default, false, false);
+                            yield return new WaitForSeconds(0.2f);
+                        }
+                        CardDrawPiles3D.Instance.Pile.Draw();
+                        yield return CardDrawPiles3D.Instance.DrawCardFromDeck();
+                    }
+                }
+				base.PlayableCard.Anim.PlayDeathAnimation(false);
+				Object.Destroy(base.PlayableCard.gameObject);
+				yield break;
+            }
+            public bool RespondsToOtherCardResolveInHand(PlayableCard resolvingCard)
+            {
+                return resolvingCard.IsPlayerCard() && resolvingCard != base.PlayableCard;
+            }
+            public IEnumerator OnOtherCardResolveInHand(PlayableCard resolvingCard)
+            {
+                Singleton<PlayerHand>.Instance.RemoveCardFromHand(base.PlayableCard);
+                Object.Destroy(base.PlayableCard.gameObject);
+                yield break;
+            }
+
+            public IEnumerator MoveCardIntoDeck(PlayableCard card, bool toSideDeck = false)
+            {
+                bool is3D = Singleton<BoardManager>.Instance is BoardManager3D;
+
+                if (Singleton<PlayerHand>.Instance.CardsInHand.Contains(card) && Singleton<ViewManager>.Instance.CurrentView != View.Hand)
+                {
+                    yield return new WaitForSeconds(0.2f);
+                    Singleton<ViewManager>.Instance.SwitchToView(View.Hand, false, false);
+                    yield return new WaitForSeconds(0.2f);
+                }
+                if (Singleton<PlayerHand>.Instance.CardsInHand.Contains(card))
+                {
+                    Singleton<PlayerHand>.Instance.RemoveCardFromHand(card);
+                }
+
+                if (is3D && toSideDeck)
+                {
+					//if from hand, tween to be horizontal
+                    Singleton<CardDrawPiles3D>.Instance.sidePile.MoveCardToPile(card, true);
+                    Object.Destroy(card.gameObject, 1f);
+                }
+                else if (is3D)
+                {
+                    Singleton<CardDrawPiles3D>.Instance.pile.MoveCardToPile(card, true);
+                    Object.Destroy(card.gameObject, 1f);
+                }
+                CreateCardInDeck(card.Info, toSideDeck);
+            }
+            public void CreateCardInDeck(CardInfo info, bool toSideDeck = false)
+            {
+                bool is3D = Singleton<BoardManager>.Instance is BoardManager3D;
+                if (is3D && toSideDeck)
+                {
+                    Singleton<CardDrawPiles3D>.Instance.sidePile.CreateCards(1);
+                    Singleton<CardDrawPiles3D>.Instance.SideDeck.AddCard(info);
+                }
+                else
+                {
+                    if (is3D)
+                    {
+                        Singleton<CardDrawPiles3D>.Instance.pile.CreateCards(1);
+                    }
+                    Singleton<CardDrawPiles>.Instance.Deck.AddCard(info);
+                }
+            }
+        }
+        public class AddTravelingOuroAbility : SpecialCardBehaviour
 		{
 			public readonly static SpecialTriggeredAbility TravelingOuroSpecialAbility = SpecialTriggeredAbilityManager.Add(PluginGuid, "TravelingOuroSpecialAbility", typeof(AddTravelingOuroAbility)).Id;
             public override bool RespondsToDie(bool wasSacrifice, PlayableCard killer)
@@ -2065,21 +2595,46 @@ namespace BittysChallenges
 				mod.singletonId = "bitty_mergeSigil";
 				base.Card.AddTemporaryMod(mod);
 			}
-
-			public override IEnumerator OnPreMergeDeath(PlayableCard mergeCard)
+            public override bool CanMergeWith(PlayableCard mergeCard)
+            {
+				return true;
+            }
+            public override IEnumerator OnPreMergeDeath(PlayableCard mergeCard)
 			{
 				yield break;
             }
-            public override IEnumerator OnPreCreatureMerge(PlayableCard mergeCard)
-            {
+			public override IEnumerator OnPreCreatureMerge(PlayableCard mergeCard)
+			{
 				CardModificationInfo mod = new CardModificationInfo();
 				mod.abilities.Add(Sigils.GiveCantAttack.ability);
 				mod.RemoveOnUpkeep = true;
 				mergeCard.AddTemporaryMod(mod);
-				yield break;
+				mergeCard.AddTemporaryMod(new CardModificationInfo(GiveMuddy.ability) { fromCardMerge = true });
+
+                if (!Plugin.IsP03Run && !CardDisplayer3D.EmissionEnabledForCard(mergeCard.renderInfo, mergeCard))
+                {
+                    mergeCard.RenderInfo.forceEmissivePortrait = true;
+                    mergeCard.StatsLayer.SetEmissionColor(GameColors.Instance.gold);
+                }
+                mergeCard.RenderCard();
+                yield break;
+            }
+            public override bool RespondsToSacrifice()
+            {
+				return true;
+            }
+            public override IEnumerator OnSacrifice()
+            {
+                yield return base.PreSuccessfulTriggerSequence();
+                CardModificationInfo mod = new CardModificationInfo();
+                mod.abilities.Add(Sigils.GiveCantAttack.ability);
+                mod.RemoveOnUpkeep = true;
+                Singleton<BoardManager>.Instance.CurrentSacrificeDemandingCard.AddTemporaryMod(mod);
+                yield return base.LearnAbility(0f);
+                yield break;
             }
 
-			private CardModificationInfo mod = new CardModificationInfo();
+            private CardModificationInfo mod = new CardModificationInfo();
 
 			public static Ability ability;
 		}
@@ -2227,8 +2782,10 @@ namespace BittysChallenges
 					yield return base.LearnAbility(0f);
 					yield break;
 				}
-				if (destination != null && destination.Card != null)
+				int killLoops = 0;
+				while (destination != null && destination.Card != null && killLoops < 5)
 				{
+					killLoops++;
 					yield return destination.Card.Die(false, base.Card);
 				}
 				yield return new WaitForSeconds(0.2f);
@@ -2267,7 +2824,7 @@ namespace BittysChallenges
 				yield return base.PreSuccessfulTriggerSequence();
 				yield return base.LearnAbility(0.25f);
 
-				if (mergeCard.Info.name == "Goat")
+				if (mergeCard.Info.HasTrait(Trait.Goat))
 				{
 					AudioController.Instance.PlaySound2D("creepy_rattle_lofi", MixerGroup.None, 1f, 0f, null, null, null, null, false);
 					yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("GoatSacrifice", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
@@ -2516,10 +3073,450 @@ namespace BittysChallenges
 			private CardModificationInfo mod = new CardModificationInfo();
 
 			public static Ability ability;
-		}
+        }
+        public class GiveRedChamp : AbilityBehaviour
+        {
+            public override Ability Ability
+            {
+                get
+                {
+                    return GiveRedChamp.ability;
+                }
+            }
 
+            public static Ability ability;
+        }
+        public class GiveYellowChamp : AbilityBehaviour
+        {
+            public override Ability Ability
+            {
+                get
+                {
+                    return GiveYellowChamp.ability;
+                }
+            }
 
-		public abstract class ChallengeBoonBase : BoonBehaviour
+            public static Ability ability;
+        }
+        public class GiveGreenChamp : AbilityBehaviour
+        {
+            public override Ability Ability
+            {
+                get
+                {
+                    return GiveGreenChamp.ability;
+                }
+            }
+            public override bool RespondsToOtherCardDie(PlayableCard card, CardSlot deathSlot, bool fromCombat, PlayableCard killer)
+            {
+                return killer == base.Card;
+            }
+            public override IEnumerator OnOtherCardDie(PlayableCard card, CardSlot deathSlot, bool fromCombat, PlayableCard killer)
+            {
+                yield return base.PreSuccessfulTriggerSequence();
+                yield return Singleton<LifeManager>.Instance.ShowDamageSequence(1, 1, base.Card.OpponentCard);
+                yield return base.LearnAbility(0f);
+                yield break;
+            }
+
+            public static Ability ability;
+        }
+        public class GiveOrangeChamp : AbilityBehaviour
+        {
+            public override Ability Ability
+            {
+                get
+                {
+                    return GiveOrangeChamp.ability;
+                }
+            }
+
+            public override bool RespondsToDealDamageDirectly(int amount)
+            {
+                return RunState.Run.currency >= 1;
+            }
+            public override IEnumerator OnDealDamageDirectly(int amount)
+            {
+
+                yield return base.PreSuccessfulTriggerSequence();
+                yield return Singleton<CurrencyBowl>.Instance.SpillOnTable();
+                yield return new WaitForSeconds(0.4f);
+
+                int moneyToTake = 1;
+                if (RunState.Run.currency >= 2) moneyToTake = 2;
+                List<Rigidbody> list = Singleton<CurrencyBowl>.Instance.TakeWeights(moneyToTake);
+                foreach (Rigidbody rigidbody in list)
+                {
+                    float num = (float)list.IndexOf(rigidbody) * 0.05f;
+                    Tween.Position(rigidbody.transform, rigidbody.transform.position + Vector3.up * 0.5f, 0.075f, num, Tween.EaseIn, Tween.LoopType.None, null, null, true);
+                    Tween.Position(rigidbody.transform, new Vector3(0f, 5.5f, 4f), 0.3f, 0.125f + num, Tween.EaseOut, Tween.LoopType.None, null, null, true);
+                    Object.Destroy(rigidbody.gameObject, 0.5f);
+                }
+
+                RunState.Run.currency = RunState.Run.currency - moneyToTake;
+
+                yield return new WaitForSeconds(0.4f);
+                yield return base.StartCoroutine(Singleton<CurrencyBowl>.Instance.CleanUpFromTableAndExit());
+                yield return base.LearnAbility(0f);
+                yield break;
+            }
+
+            public static Ability ability;
+        }
+        public class GiveCyanChamp : AbilityBehaviour
+        {
+            public override Ability Ability
+            {
+                get
+                {
+                    return GiveCyanChamp.ability;
+                }
+            }
+            public override bool RespondsToDie(bool wasSacrifice, PlayableCard killer)
+            {
+				return !wasSacrifice;
+            }
+            public override IEnumerator OnDie(bool wasSacrifice, PlayableCard killer)
+            {
+                yield return base.PreSuccessfulTriggerSequence();
+                foreach (PlayableCard target in Singleton<BoardManager>.Instance.CardsOnBoard)
+				{
+					target.Anim.StrongNegationEffect();
+					yield return target.TakeDamage(1, null);
+                }
+                yield return base.LearnAbility(0f);
+                yield break;
+            }
+
+            public static Ability ability;
+        }
+        public class GiveWhiteChamp : AbilityBehaviour
+        {
+            public override Ability Ability
+            {
+                get
+                {
+                    return GiveWhiteChamp.ability;
+                }
+            }
+            public override bool RespondsToDie(bool wasSacrifice, PlayableCard killer)
+            {
+                return !wasSacrifice && base.Card.OnBoard;
+            }
+            public override IEnumerator OnDie(bool wasSacrifice, PlayableCard killer)
+            {
+                yield return base.PreSuccessfulTriggerSequence();
+                yield return new WaitForSeconds(0.3f);
+                yield return Singleton<BoardManager>.Instance.CreateCardInSlot(CardLoader.GetCardByName("Boulder"), base.Card.Slot, 0.15f, true);
+                yield return base.LearnAbility(0.5f);
+                yield break;
+            }
+
+            public static Ability ability;
+        }
+        public class GiveMagentaChamp : AbilityBehaviour
+        {
+            public override Ability Ability
+            {
+                get
+                {
+                    return GiveMagentaChamp.ability;
+                }
+            }
+            public override bool RespondsToUpkeep(bool playerUpkeep)
+            {
+				return playerUpkeep == base.Card.OpponentCard;
+            }
+            public override IEnumerator OnUpkeep(bool playerUpkeep)
+            {
+                yield return new WaitForSeconds(0.3f);
+                int seed = GetRandomSeed() + Singleton<TurnManager>.Instance.TurnNumber;
+				PlayableCard target;
+                if (base.Card.OpponentCard)
+                {
+                    List<PlayableCard> playerCardsCopy = Singleton<BoardManager>.Instance.GetPlayerCards();
+					if(playerCardsCopy.Count > 0)
+                    {
+                        target = playerCardsCopy[SeededRandom.Range(0, playerCardsCopy.Count - 1, seed++)];
+                    }
+                    else
+                    {
+                        target = null;
+                    }
+                }
+                else
+                {
+                    List<PlayableCard> opponentCardsCopy = Singleton<BoardManager>.Instance.GetOpponentCards();
+					if(opponentCardsCopy.Count > 0)
+                    {
+                        target = opponentCardsCopy[SeededRandom.Range(0, opponentCardsCopy.Count - 1, seed++)];
+                    }
+					else
+					{
+						target = null;
+					}
+                }
+				if(target == null)
+				{
+					yield break;
+				}
+                yield return base.PreSuccessfulTriggerSequence();
+				base.Card.Anim.StrongNegationEffect();
+				yield return new WaitForSeconds(0.3f);
+                target.Anim.StrongNegationEffect();
+                yield return target.TakeDamage(1, base.Card);
+                yield return base.LearnAbility(0.5f);
+                yield break;
+            }
+
+            public static Ability ability;
+        }
+        public class GivePurpleChamp : AbilityBehaviour
+        {
+            public override Ability Ability
+            {
+                get
+                {
+                    return GivePurpleChamp.ability;
+                }
+            }
+            public override bool RespondsToOtherCardResolve(PlayableCard otherCard)
+            {
+				return otherCard != null && otherCard.Slot != null && otherCard.IsPlayerCard() == base.Card.OpponentCard && otherCard.Slot != base.Card.Slot.opposingSlot;
+            }
+            public override IEnumerator OnOtherCardResolve(PlayableCard otherCard)
+            {
+                Singleton<ViewManager>.Instance.SwitchToView(View.Board, false, false);
+                yield return new WaitForSeconds(0.15f);
+				CardSlot targetSlot = base.Card.OpposingSlot();
+                if (targetSlot.Card != null)
+                {
+                    base.Card.Anim.StrongNegationEffect();
+                    yield return new WaitForSeconds(0.3f);
+                }
+                else
+                {
+                    yield return base.PreSuccessfulTriggerSequence();
+                    Vector3 a = (otherCard.Slot.transform.position + targetSlot.transform.position) / 2f;
+                    Tween.Position(otherCard.transform, a + Vector3.up * 0.5f, 0.1f, 0f, Tween.EaseIn, Tween.LoopType.None, null, null, true);
+                    yield return Singleton<BoardManager>.Instance.AssignCardToSlot(otherCard, targetSlot, 0.1f, null, true);
+                    yield return new WaitForSeconds(0.3f);
+                    yield return base.LearnAbility(0.1f);
+                }
+                yield break;
+            }
+
+            public static Ability ability;
+        }
+        public class GiveBlueChamp : AbilityBehaviour
+        {
+            public override Ability Ability
+            {
+                get
+                {
+                    return GiveBlueChamp.ability;
+                }
+            }
+            public override bool RespondsToOtherCardResolve(PlayableCard otherCard)
+            {
+                return RespondsToTrigger(otherCard);
+            }
+            public override IEnumerator OnOtherCardResolve(PlayableCard otherCard)
+            {
+                yield return base.PreSuccessfulTriggerSequence();
+                yield return AddAirborne(otherCard);
+                yield return base.LearnAbility(0f);
+                yield break;
+            }
+            public override bool RespondsToOtherCardAssignedToSlot(PlayableCard otherCard)
+            {
+				return RespondsToTrigger(otherCard);
+            }
+            public override IEnumerator OnOtherCardAssignedToSlot(PlayableCard otherCard)
+            {
+                yield return base.PreSuccessfulTriggerSequence();
+                yield return AddAirborne(otherCard);
+                yield return base.LearnAbility(0f);
+                yield break;
+            }
+            public override bool RespondsToDie(bool wasSacrifice, PlayableCard killer)
+            {
+				return true;
+            }
+            public override IEnumerator OnDie(bool wasSacrifice, PlayableCard killer)
+            {
+                yield return base.PreSuccessfulTriggerSequence();
+				foreach(PlayableCard target in Singleton<BoardManager>.Instance.CardsOnBoard)
+				{
+					yield return RemoveAirborne(target);
+				}
+                yield return base.LearnAbility(0f);
+                yield break;
+            }
+            private bool RespondsToTrigger(PlayableCard otherCard)
+            {
+                return !base.Card.Dead && !otherCard.Dead && otherCard != base.Card && otherCard.OpponentCard == base.Card.OpponentCard;
+            }
+
+            public IEnumerator AddAirborne(PlayableCard target)
+            {
+                CardModificationInfo cardModificationInfo = target.TemporaryMods.Find((CardModificationInfo x) => x.singletonId == airborneMod.singletonId);
+				if (cardModificationInfo == null && !target.Info.HasTrait(Trait.Terrain) && !target.HasAbility(Ability.Flying))
+				{
+					Plugin.Log.LogInfo("Apply Airborne");
+					Singleton<ViewManager>.Instance.SwitchToView(View.Board, false, true);
+					target.AddTemporaryMod(airborneMod);
+					target.OnStatsChanged();
+					target.Anim.StrongNegationEffect();
+					yield return new WaitForSeconds(0.1f);
+				}
+            }
+            public IEnumerator RemoveAirborne(PlayableCard target)
+			{
+                CardModificationInfo cardModificationInfo = target.TemporaryMods.Find((CardModificationInfo x) => x.singletonId == airborneMod.singletonId);
+                if (cardModificationInfo != null)
+                {
+                    Plugin.Log.LogInfo("Remove Airborne");
+                    Singleton<ViewManager>.Instance.SwitchToView(View.Board, false, true);
+                    target.RemoveTemporaryMod(cardModificationInfo);
+					target.OnStatsChanged();
+                    target.Anim.StrongNegationEffect();
+                    yield return new WaitForSeconds(0.1f);
+                }
+            }
+
+			CardModificationInfo airborneMod = new CardModificationInfo()
+			{
+				singletonId = "bitty_airborne_champ",
+				abilities = new List<Ability> { Ability.Flying}
+			};
+
+            public static Ability ability;
+        }
+        public class GiveLightBlueChamp : AbilityBehaviour
+        {
+            public override Ability Ability
+            {
+                get
+                {
+                    return GiveLightBlueChamp.ability;
+                }
+            }
+            public override bool RespondsToPreDeathAnimation(bool wasSacrifice)
+            {
+				return !wasSacrifice;
+            }
+            public override IEnumerator OnPreDeathAnimation(bool wasSacrifice)
+            {
+                yield return base.PreSuccessfulTriggerSequence();
+				ExplodeFromSlot(base.Card.slot);
+                yield return base.LearnAbility(0f);
+                yield break;
+            }
+            public IEnumerator ExplodeFromSlot(CardSlot slot)
+            {
+                List<CardSlot> adjacentSlots = Singleton<BoardManager>.Instance.GetAdjacentSlots(slot);
+                if (adjacentSlots.Count > 0 && adjacentSlots[0].Index < slot.Index)
+                {
+                    if (adjacentSlots[0].Card != null && !adjacentSlots[0].Card.Dead)
+                    {
+                        yield return this.BombCard(adjacentSlots[0].Card, slot.Card);
+                    }
+                    adjacentSlots.RemoveAt(0);
+                }
+                if (slot.opposingSlot.Card != null && !slot.opposingSlot.Card.Dead)
+                {
+                    yield return this.BombCard(slot.opposingSlot.Card, slot.Card);
+                }
+                if (adjacentSlots.Count > 0 && adjacentSlots[0].Card != null && !adjacentSlots[0].Card.Dead)
+                {
+                    yield return this.BombCard(adjacentSlots[0].Card, slot.Card);
+                }
+                yield break;
+            }
+            private IEnumerator BombCard(PlayableCard target, PlayableCard attacker)
+            {
+                yield return new WaitForSeconds(0.5f);
+                target.Anim.PlayHitAnimation();
+                yield return target.TakeDamage(3, attacker);
+                yield break;
+            }
+
+            public static Ability ability;
+        }
+        public class GiveLightGreenChamp : AbilityBehaviour
+        {
+            public override Ability Ability
+            {
+                get
+                {
+                    return GiveLightGreenChamp.ability;
+                }
+            }
+
+            public override bool RespondsToResolveOnBoard()
+            {
+				return true;
+            }
+            public override IEnumerator OnResolveOnBoard()
+            {
+                yield return base.PreSuccessfulTriggerSequence();
+                Card.Status.hiddenAbilities.Add(Ability.DeathShield);
+                Card.AddTemporaryMod(new CardModificationInfo(Ability.DeathShield));
+				Card.ResetShield();
+                yield return base.LearnAbility(0f);
+                yield break;
+            }
+            public override bool RespondsToCardGettingAttacked(PlayableCard source)
+            {
+                return source != null && !activated;
+            }
+            public override IEnumerator OnCardGettingAttacked(PlayableCard card)
+            {
+                yield return base.PreSuccessfulTriggerSequence();
+                Card.Status.hiddenAbilities.Add(Ability.DeathShield);
+                Card.AddTemporaryMod(new CardModificationInfo(Ability.DeathShield));
+                Card.ResetShield();
+				this.activated = true;
+                yield return base.LearnAbility(0f);
+                yield break;
+            }
+            bool activated = false;
+
+            public static Ability ability;
+        }
+        public class GiveBrightRedChamp : AbilityBehaviour
+        {
+            public override Ability Ability
+            {
+                get
+                {
+                    return GiveBrightRedChamp.ability;
+                }
+            }
+            public override bool RespondsToUpkeep(bool playerUpkeep)
+            {
+                return playerUpkeep == base.Card.OpponentCard;
+            }
+            public override IEnumerator OnUpkeep(bool playerUpkeep)
+            {
+                yield return base.PreSuccessfulTriggerSequence();
+				foreach(PlayableCard target in Singleton<BoardManager>.Instance.CardsOnBoard)
+				{
+					if(target.OpponentCard == base.Card.OpponentCard && !target.HasTrait(Trait.Terrain))
+					{
+						target.HealDamage(1);
+					}
+				}
+                yield return base.LearnAbility(0.5f);
+                yield break;
+            }
+
+            public static Ability ability;
+        }
+
+        #region ChallengeBoons
+        public abstract class ChallengeBoonBase : BoonBehaviour
         {
 			protected abstract BoonData.Type boonType { get; }
             public override bool RespondsToPostBoonActivation()
@@ -2959,7 +3956,16 @@ namespace BittysChallenges
 
 				yield break;
 			}
-		}
+            public override bool RespondsToOtherCardDie(PlayableCard card, CardSlot deathSlot, bool fromCombat, PlayableCard killer)
+            {
+				return card.Info.name == "BaitBucket";
+            }
+            public override IEnumerator OnOtherCardDie(PlayableCard card, CardSlot deathSlot, bool fromCombat, PlayableCard killer)
+            {
+                yield return Singleton<BoardManager>.Instance.CreateCardInSlot(CardLoader.GetCardByName("Shark"), deathSlot);
+                yield break;
+            }
+        }
 		public class ChallengeBoonTrap : ChallengeBoonBase
 		{
 			internal static BoonData.Type boo;
@@ -3784,6 +4790,11 @@ namespace BittysChallenges
 			}
 			public override IEnumerator OnOtherCardDie(PlayableCard card, CardSlot deathSlot, bool fromCombat, PlayableCard killer)
 			{
+				REVIVES++;
+				if (REVIVES > 5)
+				{
+					yield break;
+				}
 				this.currentlyResurrectingCards.Add(deathSlot.Card.Info);
 				yield return Singleton<BoardManager>.Instance.CreateCardInSlot(deathSlot.Card.Info, deathSlot, 0.1f, true);
 				yield return new WaitForSeconds(0.1f);
@@ -3794,6 +4805,16 @@ namespace BittysChallenges
 				this.currentlyResurrectingCards.Clear();
 				yield break;
 			}
+            public override bool RespondsToTurnEnd(bool playerTurnEnd)
+            {
+				return true;
+            }
+            public override IEnumerator OnTurnEnd(bool playerTurnEnd)
+            {
+				REVIVES = 0;
+				yield break;
+            }
+            private int REVIVES;
 			private List<CardInfo> currentlyResurrectingCards = new List<CardInfo>();
 		}
 		public class ChallengeBoonFlashGrowth : ChallengeBoonBase
@@ -3853,10 +4874,14 @@ namespace BittysChallenges
 				{
 					yield return otherCard.TriggerHandler.OnTrigger(Trigger.Upkeep, new object[]
 					{
-					Singleton<TurnManager>.Instance.IsPlayerTurn
-					});
+					otherCard.IsPlayerCard()? Singleton<TurnManager>.Instance.IsPlayerTurn : !Singleton<TurnManager>.Instance.IsPlayerTurn
+                    });
 				}
-				yield break;
+                yield return otherCard.TriggerHandler.OnTrigger(Trigger.TurnEnd, new object[]
+                    {
+                    otherCard.IsPlayerCard()? Singleton<TurnManager>.Instance.IsPlayerTurn : !Singleton<TurnManager>.Instance.IsPlayerTurn
+                    });
+                yield break;
             }
 		}
 		public class ChallengeBoonConveyor : ChallengeBoonBase
@@ -3936,19 +4961,20 @@ namespace BittysChallenges
 				emptySlots.RemoveAll((CardSlot x) => x.Card != null);
 
 				List<CardSlot> slots = GetSlots(Math.Max((emptySlots.Count + 1) / 2, 1), emptySlots);
-
+				CardSlot animatorSlot = null;
 				for (int i = 0; i < slots.Count; i++)
 				{
-					string name = SeededRandom.Bool(SaveManager.SaveFile.GetCurrentRandomSeed() + i) ? "EmptyVessel_OrangeGem" : "EmptyVessel_GreenGem";
+					string name = SeededRandom.Bool(SaveManager.SaveFile.GetCurrentRandomSeed() + i + 1) ? "EmptyVessel_OrangeGem" : "EmptyVessel_GreenGem";
 					yield return Singleton<BoardManager>.Instance.CreateCardInSlot(CardLoader.GetCardByName(name), slots[i]);
 					if (i == 0)
 					{
 						slots[i].Card.AddTemporaryMod(new CardModificationInfo(Ability.BuffGems));
+						animatorSlot = slots[i];
 					}
 				}
 
 				emptySlots = Singleton<BoardManager>.Instance.PlayerSlotsCopy;
-				emptySlots.RemoveAll((CardSlot x) => x.Card != null);
+				emptySlots.RemoveAll((CardSlot x) => x.Card != null || x == animatorSlot);
 
 				slots = GetSlots(1, emptySlots);
 
@@ -4024,10 +5050,27 @@ namespace BittysChallenges
 				yield break;
             }
         }
-	}
-	public partial class Plugin
+        #endregion
+    }
+    public partial class Plugin
     {
-		private void Add_Deck_Pirate()
+        public class CloverAppearanceBehaviour : CardAppearanceBehaviour
+        {
+            Texture2D CardBG = Tools.LoadTexture("card_clover");
+            public override void ApplyAppearance()
+            {
+                CardBG.filterMode = FilterMode.Point;
+                base.Card.RenderInfo.baseTextureOverride = CardBG;
+				base.Card.Info.AddDecal(CardBG);
+            }
+            public override void ResetAppearance()
+            {
+				Card.Info.Decals.Clear();
+            }
+        }
+        public readonly static CardAppearanceBehaviour.Appearance CloverAppearance = CardAppearanceBehaviourManager.Add(Plugin.PluginGuid, "CloverAppearance", typeof(CloverAppearanceBehaviour)).Id;
+
+        private void Add_Deck_Pirate()
         {
 			StarterDeckManager.New(PluginGuid, "PirateDeck", Tools.LoadTexture("starterdeck_icon_pirate.png"),
 				new string[]
@@ -4038,7 +5081,62 @@ namespace BittysChallenges
 				}, 0);
         }
 
-		private void Add_Card_TravelingOuroboros()
+
+        private void Add_Card_AscenderBane()
+        {
+			CardInfo newCard = CardManager.New(
+
+				// Card ID Prefix
+				modPrefix: CardPrefix,
+				// Card internal name.
+				"Ascender's Bane",
+				// Card display name.
+				"Ascender's Bane",
+				// Attack.
+				0,
+				// Health.
+				1,
+				// Description
+				description: "A reminder of past challengers."
+			)
+
+			.SetBloodCost(4)
+            //card appearance
+            .SetTerrain()
+
+            .SetPortraitAndEmission(Tools.LoadTexture("portrait_ascendersbane"), Tools.LoadTexture("portrait_ascendersbane"))
+            ;
+            // Pass the card to the API.
+            CardManager.Add(CardPrefix, newCard);
+        }
+        private void Add_Card_CloverReRoll()
+        {
+            CardInfo newCard = CardManager.New(
+
+                // Card ID Prefix
+                modPrefix: CardPrefix,
+                // Card internal name.
+                "Clover",
+                // Card display name.
+                "",
+                // Attack.
+                0,
+                // Health.
+                0,
+                // Description
+                description: "A reminder of past challengers."
+            )
+
+            //card appearance
+			.AddAppearances(CloverAppearance)
+			.AddSpecialAbilities(AddCloverReRollAbility.CloverReRollSpecialAbility)
+
+            .SetPortraitAndEmission(Tools.LoadTexture("portrait_blank"), Tools.LoadTexture("portrait_blank"))
+            ;
+            // Pass the card to the API.
+            CardManager.Add(CardPrefix, newCard);
+        }
+        private void Add_Card_TravelingOuroboros()
 		{
             CardInfo TravelingOuroboros = CardManager.New(
 
@@ -4628,7 +5726,7 @@ namespace BittysChallenges
 			AbilityInfo abilityInfo = AbilityManager.New(
 				PluginGuid,
 				"Muddy",
-				"Other cards may be placed on top of [creature], but will be unable to attack for one turn.",
+				"Other cards may be placed on top of [creature], but will be unable to attack for one turn and will gain Muddy. If [creature] is sacrificed, the sacrificing creature will be unable to attack for one turn.",
 				typeof(GiveMuddy),
 				Tools.LoadTexture("ability_mud.png")
 			).AddMetaCategories(AbilityMetaCategory.Part1Rulebook)
@@ -4734,9 +5832,202 @@ namespace BittysChallenges
 
 			// Pass the ability to the API.
 			GiveRaft.ability = abilityInfo.ability;
-		}
+        }
+		//CHAMPION ABILITIES ------------------------------------------------
+        private void Add_Ability_RedChamp()
+        {
+            AbilityInfo abilityInfo = AbilityManager.New(
+                PluginGuid,
+                "Red Champion",
+                "This champion starts with 2 additional Health.",
+                typeof(GiveRedChamp),
+                Tools.LoadTexture("ability_redChampion.png")
+            )
+            .AddMetaCategories(AbilityMetaCategory.Part1Rulebook)
+            ;
+            abilityInfo.powerLevel = 5;
 
-		private void Add_Boon_Mud()
+            // Pass the ability to the API.
+            GiveRedChamp.ability = abilityInfo.ability;
+        }
+        private void Add_Ability_YellowChamp()
+        {
+            AbilityInfo abilityInfo = AbilityManager.New(
+                PluginGuid,
+                "Yellow Champion",
+                "This champion starts with 1 additional Power.",
+                typeof(GiveYellowChamp),
+                Tools.LoadTexture("ability_yellowChampion.png")
+            )
+            .AddMetaCategories(AbilityMetaCategory.Part1Rulebook)
+            ;
+            abilityInfo.powerLevel = 5;
+
+            // Pass the ability to the API.
+            GiveYellowChamp.ability = abilityInfo.ability;
+        }
+        private void Add_Ability_GreenChamp()
+        {
+            AbilityInfo abilityInfo = AbilityManager.New(
+                PluginGuid,
+                "Green Champion",
+                "This champion will deal 1 damage directly to you, after it destroys another creature.",
+                typeof(GiveGreenChamp),
+                Tools.LoadTexture("ability_greenChampion.png")
+            )
+            .AddMetaCategories(AbilityMetaCategory.Part1Rulebook)
+            ;
+            abilityInfo.powerLevel = 5;
+
+            // Pass the ability to the API.
+            GiveGreenChamp.ability = abilityInfo.ability;
+        }
+        private void Add_Ability_OrangeChamp()
+        {
+            AbilityInfo abilityInfo = AbilityManager.New(
+                PluginGuid,
+                "Orange Champion",
+                "This champion will steal 2 golden teeth from you if it damages you directly.",
+                typeof(GiveOrangeChamp),
+                Tools.LoadTexture("ability_orangeChampion.png")
+            )
+            .AddMetaCategories(AbilityMetaCategory.Part1Rulebook)
+            ;
+            abilityInfo.powerLevel = 5;
+
+            // Pass the ability to the API.
+            GiveOrangeChamp.ability = abilityInfo.ability;
+        }
+        private void Add_Ability_CyanChamp()
+        {
+            AbilityInfo abilityInfo = AbilityManager.New(
+                PluginGuid,
+                "Cyan Champion",
+                "When this champion perishes, it will deal 1 damage to every other creature on the board.",
+                typeof(GiveCyanChamp),
+                Tools.LoadTexture("ability_cyanChampion.png")
+            )
+            .AddMetaCategories(AbilityMetaCategory.Part1Rulebook)
+            ;
+            abilityInfo.powerLevel = 5;
+
+            // Pass the ability to the API.
+            GiveCyanChamp.ability = abilityInfo.ability;
+        }
+        private void Add_Ability_WhiteChamp()
+        {
+            AbilityInfo abilityInfo = AbilityManager.New(
+                PluginGuid,
+                "White Champion",
+                "When this champion perishes, it will create a Boulder in its space. [define:Boulder]",
+                typeof(GiveWhiteChamp),
+                Tools.LoadTexture("ability_whiteChampion.png")
+            )
+            .AddMetaCategories(AbilityMetaCategory.Part1Rulebook)
+            ;
+            abilityInfo.powerLevel = 5;
+
+            // Pass the ability to the API.
+            GiveWhiteChamp.ability = abilityInfo.ability;
+        }
+        private void Add_Ability_MagentaChamp()
+        {
+            AbilityInfo abilityInfo = AbilityManager.New(
+                PluginGuid,
+                "Magenta Champion",
+                "At the start of each turn, this champion will attack for 1 damage in a random space on your side.",
+                typeof(GiveMagentaChamp),
+                Tools.LoadTexture("ability_magentaChampion.png")
+            )
+            .AddMetaCategories(AbilityMetaCategory.Part1Rulebook)
+            ;
+            abilityInfo.powerLevel = 5;
+
+            // Pass the ability to the API.
+            GiveMagentaChamp.ability = abilityInfo.ability;
+        }
+        private void Add_Ability_PurpleChamp()
+        {
+            AbilityInfo abilityInfo = AbilityManager.New(
+                PluginGuid,
+                "Purple Champion",
+                "Each time you play a card, if the space opposing this champion is empty, that card will move to that space.",
+                typeof(GivePurpleChamp),
+                Tools.LoadTexture("ability_purpleChampion.png")
+            )
+            .AddMetaCategories(AbilityMetaCategory.Part1Rulebook)
+            ;
+            abilityInfo.powerLevel = 5;
+
+            // Pass the ability to the API.
+            GivePurpleChamp.ability = abilityInfo.ability;
+        }
+        private void Add_Ability_BlueChamp()
+        {
+            AbilityInfo abilityInfo = AbilityManager.New(
+                PluginGuid,
+                "Blue Champion",
+                "This champion will cause all other non-Terrain cards on the same side to gain flight, as long as the champion is alive.",
+                typeof(GiveBlueChamp),
+                Tools.LoadTexture("ability_blueChampion.png")
+            )
+            .AddMetaCategories(AbilityMetaCategory.Part1Rulebook)
+            ;
+            abilityInfo.powerLevel = 5;
+
+            // Pass the ability to the API.
+            GiveBlueChamp.ability = abilityInfo.ability;
+        }
+        private void Add_Ability_LightBlueChamp()
+        {
+            AbilityInfo abilityInfo = AbilityManager.New(
+                PluginGuid,
+                "Light Blue Champion",
+                "When this champion perishes, it will deal 3 damage to creatures to the left and right of it as well as the opposing creature.",
+                typeof(GiveLightBlueChamp),
+                Tools.LoadTexture("ability_lightBlueChampion.png")
+            )
+            .AddMetaCategories(AbilityMetaCategory.Part1Rulebook)
+            ;
+            abilityInfo.powerLevel = 5;
+
+            // Pass the ability to the API.
+            GiveLightBlueChamp.ability = abilityInfo.ability;
+        }
+        private void Add_Ability_LightGreenChamp()
+        {
+            AbilityInfo abilityInfo = AbilityManager.New(
+                PluginGuid,
+                "Light Green Champion",
+                "This champion will prevent all damage from the first strike dealt to it. Damage from effects like sigils will not be prevented.",
+                typeof(GiveLightGreenChamp),
+                Tools.LoadTexture("ability_lightGreenChampion.png")
+            )
+            .AddMetaCategories(AbilityMetaCategory.Part1Rulebook)
+            ;
+            abilityInfo.powerLevel = 5;
+
+            // Pass the ability to the API.
+            GiveLightGreenChamp.ability = abilityInfo.ability;
+        }
+        private void Add_Ability_BrightRedChamp()
+        {
+            AbilityInfo abilityInfo = AbilityManager.New(
+                PluginGuid,
+                "Bright Red Champion",
+                "At the start of each turn, this champion will heal all other non-terrain creatures on the opponent's side by 1.",
+                typeof(GiveBrightRedChamp),
+                Tools.LoadTexture("ability_brightRedChampion.png")
+            )
+            .AddMetaCategories(AbilityMetaCategory.Part1Rulebook)
+            ;
+            abilityInfo.powerLevel = 5;
+
+            // Pass the ability to the API.
+            GiveBrightRedChamp.ability = abilityInfo.ability;
+        }
+
+        private void Add_Boon_Mud()
 		{
 			Texture boonRulebookIcon = Tools.LoadTexture("boonicon_mud");
 			Texture boonCardArt = Tools.LoadTexture("boon_swamp");
@@ -4859,7 +6150,7 @@ namespace BittysChallenges
 		{
 			Texture boonRulebookIcon = Tools.LoadTexture("boonicon_flashgrowth");
 			Texture boonCardArt = Tools.LoadTexture("boon_flashgrowth");
-			BoonData.Type boon = BoonManager.New(PluginGuid, "Environment: Flash Growth", typeof(ChallengeBoonFlashGrowth), "When a card is played, any sigils that activate on upkeep are activated.", boonRulebookIcon, boonCardArt, false, false, true);
+			BoonData.Type boon = BoonManager.New(PluginGuid, "Environment: Flash Growth", typeof(ChallengeBoonFlashGrowth), "When a card is played, any sigils that activate at the start of the turn are activated.", boonRulebookIcon, boonCardArt, false, false, true);
 			ChallengeBoonFlashGrowth.boo = boon;
 		}
 		private void Add_Boon_Conveyor()
@@ -5538,8 +6829,20 @@ namespace Dialogue
 		[HarmonyPostfix]
 		public static void ModDialogue()
 		{
-			///-------------Act 1 Lines----------
-			Division.Helpers.DialogueHelper.AddOrModifySimpleDialogEvent("OuroIntro", new string[]
+            ///-------------Act 1 Lines----------
+            Division.Helpers.DialogueHelper.AddOrModifySimpleDialogEvent("RedrawHandIntro", new string[]
+            {
+                "Is that a clover?",
+				"I see."
+            }, null, null, null, "NewRunDealtDeckDefault");
+            Division.Helpers.DialogueHelper.AddOrModifySimpleDialogEvent("UnfairHandIntro", new string[]
+            {
+                "Oh?",
+                "Did you not like having a stacked deck?",
+                "That's fine with me.",
+				"It will be more fair this way anyways."
+            }, null, null, null, "NewRunDealtDeckDefault");
+            Division.Helpers.DialogueHelper.AddOrModifySimpleDialogEvent("OuroIntro", new string[]
 			{
 				"oh?",
 				"my very own ouroboros.",
@@ -5775,7 +7078,11 @@ namespace Dialogue
 				"You will not be able to extract their souls into new creatures,",
 				"For better or worse..."
 			}, null, null, Emotion.Surprise, "NewRunDealtDeckDefault");
-			Division.Helpers.DialogueHelper.AddOrModifySimpleDialogEvent("FamineIntro", new string[]
+            Division.Helpers.DialogueHelper.AddOrModifySimpleDialogEvent("AscenderBaneStart", new string[]
+            {
+                "The lives of past challengers weighed down on you..."
+            }, null, null, Emotion.Surprise, "NewRunDealtDeckDefault");
+            Division.Helpers.DialogueHelper.AddOrModifySimpleDialogEvent("FamineIntro", new string[]
 			{
 				"Hm?",
 				"How to explain this...",
