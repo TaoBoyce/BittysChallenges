@@ -31,6 +31,7 @@ using static UnityEngine.GraphicsBuffer;
 /// Grimora mod compatibility?
 /// 
 /// Tone down champion color tint
+/// Nerf totem environment so it only summons 1
 /// 
 ///Changelog: 5.3.0
 ///Added champions Challenge
