@@ -48,6 +48,7 @@
     <None Remove="Resources\ascensionicon_activated_ascenderbane.png" />
     <None Remove="Resources\ascensionicon_activated_asleepstarterdeck.png" />
     <None Remove="Resources\ascensionicon_activated_brittle.png" />
+    <None Remove="Resources\ascensionicon_activated_firepit.png" />
     <None Remove="Resources\ascensionicon_activated_goldensheep.png" />
     <None Remove="Resources\ascensionicon_activated_harderfinalboss.png" />
     <None Remove="Resources\ascensionicon_activated_hardersignatures.png" />
@@ -64,6 +65,7 @@
     <None Remove="Resources\ascensionicon_champion.png" />
     <None Remove="Resources\ascensionicon_environment.png" />
     <None Remove="Resources\ascensionicon_famine.png" />
+    <None Remove="Resources\ascensionicon_firepit.png" />
     <None Remove="Resources\ascensionicon_fleetingsquirrels.png" />
     <None Remove="Resources\ascensionicon_goldensheep.png" />
     <None Remove="Resources\ascensionicon_harderfinalboss.png" />
@@ -95,6 +97,7 @@
     <None Remove="Resources\boonicon_fungus.png" />
     <None Remove="Resources\boonicon_graveyard.png" />
     <None Remove="Resources\boonicon_hail.png" />
+    <None Remove="Resources\boonicon_knife.png" />
     <None Remove="Resources\boonicon_mud.png" />
     <None Remove="Resources\boonicon_obelisk.png" />
     <None Remove="Resources\boonicon_pirate.png" />
@@ -102,6 +105,7 @@
     <None Remove="Resources\boonicon_trap.png" />
     <None Remove="Resources\boonicon_tree.png" />
     <None Remove="Resources\boon_blank.png" />
+    <None Remove="Resources\boon_blood.png" />
     <None Remove="Resources\boon_Blood_Moon.png" />
     <None Remove="Resources\boon_breeze.png" />
     <None Remove="Resources\boon_cliffs.png" />
@@ -191,6 +195,7 @@
     <EmbeddedResource Include="Resources\ascensionicon_activated_ascenderbane.png" />
     <EmbeddedResource Include="Resources\ascensionicon_activated_asleepstarterdeck.png" />
     <EmbeddedResource Include="Resources\ascensionicon_activated_brittle.png" />
+    <EmbeddedResource Include="Resources\ascensionicon_activated_firepit.png" />
     <EmbeddedResource Include="Resources\ascensionicon_activated_goldensheep.png" />
     <EmbeddedResource Include="Resources\ascensionicon_activated_harderfinalboss.png" />
     <EmbeddedResource Include="Resources\ascensionicon_activated_hardersignatures.png" />
@@ -207,6 +212,7 @@
     <EmbeddedResource Include="Resources\ascensionicon_champion.png" />
     <EmbeddedResource Include="Resources\ascensionicon_environment.png" />
     <EmbeddedResource Include="Resources\ascensionicon_famine.png" />
+    <EmbeddedResource Include="Resources\ascensionicon_firepit.png" />
     <EmbeddedResource Include="Resources\ascensionicon_fleetingsquirrels.png" />
     <EmbeddedResource Include="Resources\ascensionicon_goldensheep.png" />
     <EmbeddedResource Include="Resources\ascensionicon_harderfinalboss.png" />
@@ -238,6 +244,7 @@
     <EmbeddedResource Include="Resources\boonicon_fungus.png" />
     <EmbeddedResource Include="Resources\boonicon_graveyard.png" />
     <EmbeddedResource Include="Resources\boonicon_hail.png" />
+    <EmbeddedResource Include="Resources\boonicon_knife.png" />
     <EmbeddedResource Include="Resources\boonicon_mud.png" />
     <EmbeddedResource Include="Resources\boonicon_obelisk.png" />
     <EmbeddedResource Include="Resources\boonicon_pirate.png" />
@@ -245,6 +252,7 @@
     <EmbeddedResource Include="Resources\boonicon_trap.png" />
     <EmbeddedResource Include="Resources\boonicon_tree.png" />
     <EmbeddedResource Include="Resources\boon_blank.png" />
+    <EmbeddedResource Include="Resources\boon_blood.png" />
     <EmbeddedResource Include="Resources\boon_Blood_Moon.png" />
     <EmbeddedResource Include="Resources\boon_breeze.png" />
     <EmbeddedResource Include="Resources\boon_cliffs.png" />
