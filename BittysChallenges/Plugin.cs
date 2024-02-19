@@ -510,15 +510,15 @@ namespace BittysChallenges
 		
         private void AddChampionsChallenge()
         {
-            championChallenge = ChallengeManager.AddSpecific(
-                    PluginGuid,
-                    "Champions",
-                    "Opponent cards have a chance to become a champion.",
-                    20,
-                    Tools.LoadTexture("ascensionicon_champion"),
-                    ChallengeManager.DEFAULT_ACTIVATED_SPRITE,
-                    5
-                    ).SetFlags("p03");
+			championChallenge = ChallengeManager.AddSpecific(
+					PluginGuid,
+					"Champions",
+					"Opponent cards have a chance to become a champion.",
+					20,
+					Tools.LoadTexture("ascensionicon_champion"),
+					ChallengeManager.DEFAULT_ACTIVATED_SPRITE,
+					6
+					);
         }
     }
 	public partial class Plugin
@@ -1930,22 +1930,31 @@ namespace BittysChallenges
 					summonedChampion = false;
 					summonCount = 0;
 				}
-			}
-			[HarmonyPatch(typeof(Opponent), nameof(Opponent.ModifyQueuedCard))]
+            }
+            [HarmonyPatch(typeof(Part1BossOpponent), "PostResetScalesSequence")]
+            private static class MoreChampionsOnPhaseTransition
+            {
+                [HarmonyPostfix]
+                public static void ChampionCleanup()
+                {
+                    summonedChampion = false;
+                }
+            }
+            [HarmonyPatch(typeof(Part1Opponent), nameof(Part1Opponent.ModifyQueuedCard))]
 			private class ChampionPatch
 			{
 				[HarmonyPrefix]
 				public static void ChangeToChamp(ref PlayableCard card)
 				{
 					summonCount++;
-					var OpponentType = Singleton<Opponent>.Instance.OpponentType;
+					var OpponentType = Singleton<Part1Opponent>.Instance.OpponentType;
 					if (AscensionSaveData.Data.ChallengeIsActive(championChallenge.challengeType) && !card.HasAnyOfTraits(new Trait[] { Trait.Giant, Trait.Uncuttable, Trait.Terrain }) //&& card.InOpponentQueue
-						&& OpponentType != Opponent.Type.TrapperTraderBoss)
+						&& OpponentType != Part1Opponent.Type.TrapperTraderBoss)
 					{
 						int random = SeededRandom.Range(75, 200, SaveManager.SaveFile.GetCurrentRandomSeed() + Singleton<TurnManager>.Instance.TurnNumber + summonCount);
-						random += Singleton<Opponent>.Instance.Difficulty;
-                        Plugin.Log.LogInfo("Champion random: " + random);
-						if (random > 100 && !summonedChampion)
+						random += Singleton<Part1Opponent>.Instance.Difficulty;
+                        //Plugin.Log.LogInfo("Champion random: " + random);
+						if (random >= 100 && !summonedChampion)
 						{
 							ChallengeActivationUI.TryShowActivation(championChallenge.challengeType);
 							summonedChampion = true;
