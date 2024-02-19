@@ -6,6 +6,14 @@
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+  </PropertyGroup>
+
   <ItemGroup>
     <None Remove="Resources\ability_asleep.png" />
     <None Remove="Resources\ability_blueChampion.png" />
@@ -293,15 +301,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Inscryption.GameLibs" Version="1.9.0-r.0" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Reference Include="0Harmony">
-      <HintPath>..\..\..\..\..\AppData\Roaming\Thunderstore Mod Manager\DataFolder\Inscryption\profiles\Mod Creation\BepInEx\core\0Harmony.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\AppData\Roaming\r2modmanPlus-local\Inscryption\profiles\Default\BepInEx\core\0Harmony.dll</HintPath>
+    </Reference>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Steam\SteamApps\common\Inscryption\Inscryption_Data\Managed\publicized_assemblies\Assembly-CSharp_publicized.dll</HintPath>
     </Reference>
     <Reference Include="BepInEx">
-      <HintPath>..\..\..\..\..\AppData\Roaming\Thunderstore Mod Manager\DataFolder\Inscryption\profiles\Mod Creation\BepInEx\core\BepInEx.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\AppData\Roaming\r2modmanPlus-local\Inscryption\profiles\Default\BepInEx\core\BepInEx.dll</HintPath>
     </Reference>
     <Reference Include="BittysSigils">
       <HintPath>..\..\BittysSigils\BittysSigils\bin\Debug\netstandard2.0\BittysSigils.dll</HintPath>
@@ -316,10 +323,10 @@
       <HintPath>..\..\References\Inscryption\Ibuprogames.VideoGlitchesAsset.dll</HintPath>
     </Reference>
     <Reference Include="InscryptionAPI">
-      <HintPath>..\..\..\..\..\AppData\Roaming\Thunderstore Mod Manager\DataFolder\Inscryption\profiles\Mod Creation\BepInEx\plugins\API_dev-API\InscryptionAPI.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\AppData\Roaming\r2modmanPlus-local\Inscryption\profiles\Default\BepInEx\plugins\API_dev-API\InscryptionAPI.dll</HintPath>
     </Reference>
     <Reference Include="MergeSigils">
-      <HintPath>..\..\..\..\..\AppData\Roaming\Thunderstore Mod Manager\DataFolder\Inscryption\profiles\Mod Creation\BepInEx\plugins\SpecialAPI-MergeSigils\MergeSigils.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\AppData\Roaming\r2modmanPlus-local\Inscryption\profiles\Default\BepInEx\plugins\SpecialAPI-MergeSigils\MergeSigils.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Security">
       <HintPath>..\..\References\Inscryption\Mono.Security.dll</HintPath>

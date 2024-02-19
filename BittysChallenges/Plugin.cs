@@ -28,13 +28,10 @@ using System.Diagnostics;
 using InscryptionAPI.Helpers.Extensions;
 using static UnityEngine.GraphicsBuffer;
 
-/// Grimora mod compatibility?
-/// 
-/// Tone down champion color tint
-/// Nerf totem environment so it only summons 1
-/// 
-///Changelog: 5.3.0
+///Changelog: 5.3.0 - WIP
 ///Added champions Challenge
+///Limited wooden boards from limoncello to max 3 in one turn
+///Nerfed totem environment scaling
 ///
 ///Credit:
 ///Amy for champion sigil arts
@@ -519,7 +516,7 @@ namespace BittysChallenges
                     20,
                     Tools.LoadTexture("ascensionicon_champion"),
                     ChallengeManager.DEFAULT_ACTIVATED_SPRITE,
-                    4
+                    5
                     ).SetFlags("p03");
         }
     }
@@ -622,8 +619,9 @@ namespace BittysChallenges
 				{
 					int numSkeles = (Singleton<GiantShip>.Instance.nextHealthThreshold - Singleton<GiantShip>.Instance.PlayableCard.Health) / 5 + 1;
 					int num;
-					for (int i = 0; i < numSkeles; i = num + 1)
+					for (int i = 0; i < Math.Min(numSkeles,3); i = num + 1)
 					{
+						
 						List<CardSlot> validSlots = Singleton<BoardManager>.Instance.PlayerSlotsCopy;
 						validSlots.RemoveAll((CardSlot x) => x.Card != null);
 						if (validSlots.Count > 0)
@@ -1923,9 +1921,17 @@ namespace BittysChallenges
                 harmony.PatchAll(typeof(Champions));
             }
 
-            [HarmonyPatch(typeof(Part1Opponent), nameof(Part1Opponent.TryModifyCardWithTotem))]
+			
+
             private static class ChampionPatch
             {
+				[HarmonyPatch(typeof(TurnManager), "CleanupPhase")]
+				[HarmonyPostfix]
+				public static void ChampionCleanup()
+				{
+					summonedChampion = false;
+				}
+                [HarmonyPatch(typeof(Part1Opponent), nameof(Part1Opponent.TryModifyCardWithTotem))]
                 [HarmonyPostfix]
                 private static void ChangeToChamp(PlayableCard card)
                 {
@@ -1933,11 +1939,11 @@ namespace BittysChallenges
                     if (AscensionSaveData.Data.ChallengeIsActive(championChallenge.challengeType) && !card.HasAnyOfTraits(new Trait[] {Trait.Giant, Trait.Uncuttable, Trait.Terrain}) //&& card.InOpponentQueue
 						&& OpponentType != Opponent.Type.TrapperTraderBoss)
                     {
-						double randomVal = UnityEngine.Random.value;
-						if (randomVal < 0.50f && (!Singleton<Opponent>.Instance.Queue.Exists((PlayableCard card) => card.TemporaryMods.Exists((CardModificationInfo x) => x.singletonId == "bitty_champion")) && !Singleton<BoardManager>.Instance.CardsOnBoard.Exists((PlayableCard card) => card.TemporaryMods.Exists((CardModificationInfo x) => x.singletonId == "bitty_champion"))))
+                        int random = SeededRandom.Range(0, 200, SaveManager.SaveFile.GetCurrentRandomSeed() + Singleton<TurnManager>.Instance.TurnNumber + 2);
+                        if (random > 100 && !summonedChampion)
 						{
 							ChallengeActivationUI.TryShowActivation(championChallenge.challengeType);
-							///if this fails just use ChallengeBehavior
+							summonedChampion = true;
 
 							///Out of 100
 							///Mythic: 10
@@ -1964,73 +1970,83 @@ namespace BittysChallenges
 							///Mythic
 							///case <= 95 Blue
 							///case <= 100 Bright Red
-							switch (SeededRandom.Range(0, 12, SaveManager.SaveFile.GetCurrentRandomSeed() + Singleton<TurnManager>.Instance.TurnNumber + 2))
+
+							if (random <= 113) {
+								card.ApplyAppearanceBehaviours(new List<CardAppearanceBehaviour.Appearance> { RedChampAppearance });
+								card.AddTemporaryMod(new CardModificationInfo(0, 2) { abilities = new List<Ability> { GiveRedChamp.ability }, fromCardMerge = true });
+								card.AddTemporaryMod(championIDMod);
+							}
+							else if (random <= 125)
 							{
-								case 0:
-									card.ApplyAppearanceBehaviours(new List<CardAppearanceBehaviour.Appearance> { RedChampAppearance });
-									card.AddTemporaryMod(new CardModificationInfo(0, 2) { abilities = new List<Ability> { GiveRedChamp.ability }, fromCardMerge = true });
-                                    card.AddTemporaryMod(championIDMod);
-                                    break;
-								case 1:
-									card.ApplyAppearanceBehaviours(new List<CardAppearanceBehaviour.Appearance> { YellowChampAppearance });
-									card.AddTemporaryMod(new CardModificationInfo(1, 0) { abilities = new List<Ability> { GiveYellowChamp.ability }, fromCardMerge = true });
-                                    card.AddTemporaryMod(championIDMod);
-                                    break;
-								case 2:
-									card.ApplyAppearanceBehaviours(new List<CardAppearanceBehaviour.Appearance> { GreenChampAppearance });
-									card.AddTemporaryMod(new CardModificationInfo(GiveGreenChamp.ability) { fromCardMerge = true });
-                                    card.AddTemporaryMod(championIDMod);
-                                    break;
-								case 3:
-									card.ApplyAppearanceBehaviours(new List<CardAppearanceBehaviour.Appearance> { OrangeChampAppearance });
-									card.AddTemporaryMod(new CardModificationInfo(GiveOrangeChamp.ability) { fromCardMerge = true });
-                                    card.AddTemporaryMod(championIDMod);
-                                    break;
-								case 4:
-									card.ApplyAppearanceBehaviours(new List<CardAppearanceBehaviour.Appearance> { CyanChampAppearance });
-									card.AddTemporaryMod(new CardModificationInfo(GiveCyanChamp.ability) { fromCardMerge = true });
-                                    card.AddTemporaryMod(championIDMod);
-                                    break;
-								case 5:
-									card.ApplyAppearanceBehaviours(new List<CardAppearanceBehaviour.Appearance> { WhiteChampAppearance });
-									card.AddTemporaryMod(new CardModificationInfo(GiveWhiteChamp.ability) { fromCardMerge = true });
-                                    card.AddTemporaryMod(championIDMod);
-                                    break;
-								case 6:
-									card.ApplyAppearanceBehaviours(new List<CardAppearanceBehaviour.Appearance> { MagentaChampAppearance });
-									card.AddTemporaryMod(new CardModificationInfo(GiveMagentaChamp.ability) { fromCardMerge = true });
-                                    card.AddTemporaryMod(championIDMod);
-                                    break;
-								case 7:
-									card.ApplyAppearanceBehaviours(new List<CardAppearanceBehaviour.Appearance> { PurpleChampAppearance });
-									card.AddTemporaryMod(new CardModificationInfo(GivePurpleChamp.ability) { fromCardMerge = true });
-                                    card.AddTemporaryMod(championIDMod);
-                                    break;
-								case 8:
-									card.ApplyAppearanceBehaviours(new List<CardAppearanceBehaviour.Appearance> { BlueChampAppearance });
-									card.AddTemporaryMod(new CardModificationInfo(GiveBlueChamp.ability) { fromCardMerge = true });
-                                    card.AddTemporaryMod(championIDMod);
-                                    break;
-								case 9:
-									card.ApplyAppearanceBehaviours(new List<CardAppearanceBehaviour.Appearance> { LightBlueChampAppearance });
-									card.AddTemporaryMod(new CardModificationInfo(GiveLightBlueChamp.ability) { fromCardMerge = true });
-                                    card.AddTemporaryMod(championIDMod);
-                                    break;
-								case 10:
-									card.ApplyAppearanceBehaviours(new List<CardAppearanceBehaviour.Appearance> { LightGreenChampAppearance });
-									card.AddTemporaryMod(new CardModificationInfo(GiveLightGreenChamp.ability) { fromCardMerge = true });
-                                    card.AddTemporaryMod(championIDMod);
-                                    break;
-								case 11:
-									card.ApplyAppearanceBehaviours(new List<CardAppearanceBehaviour.Appearance> { BrightRedChampAppearance });
-									card.AddTemporaryMod(new CardModificationInfo(GiveBrightRedChamp.ability) { fromCardMerge = true });
-                                    card.AddTemporaryMod(championIDMod);
-                                    break;
+								card.ApplyAppearanceBehaviours(new List<CardAppearanceBehaviour.Appearance> { YellowChampAppearance });
+								card.AddTemporaryMod(new CardModificationInfo(1, 0) { abilities = new List<Ability> { GiveYellowChamp.ability }, fromCardMerge = true });
+								card.AddTemporaryMod(championIDMod);
+							}
+							else if (random <= 135)
+							{
+								card.ApplyAppearanceBehaviours(new List<CardAppearanceBehaviour.Appearance> { GreenChampAppearance });
+								card.AddTemporaryMod(new CardModificationInfo(GiveGreenChamp.ability) { fromCardMerge = true });
+								card.AddTemporaryMod(championIDMod);
+							}
+							else if (random <= 145)
+							{
+								card.ApplyAppearanceBehaviours(new List<CardAppearanceBehaviour.Appearance> { OrangeChampAppearance });
+								card.AddTemporaryMod(new CardModificationInfo(GiveOrangeChamp.ability) { fromCardMerge = true });
+								card.AddTemporaryMod(championIDMod);
+							}
+							else if (random <= 155)
+							{
+								card.ApplyAppearanceBehaviours(new List<CardAppearanceBehaviour.Appearance> { CyanChampAppearance });
+								card.AddTemporaryMod(new CardModificationInfo(GiveCyanChamp.ability) { fromCardMerge = true });
+								card.AddTemporaryMod(championIDMod);
+							}
+							else if (random <= 165)
+							{
+								card.ApplyAppearanceBehaviours(new List<CardAppearanceBehaviour.Appearance> { WhiteChampAppearance });
+								card.AddTemporaryMod(new CardModificationInfo(GiveWhiteChamp.ability) { fromCardMerge = true });
+								card.AddTemporaryMod(championIDMod);
+							}
+							else if (random <= 173)
+							{
+								card.ApplyAppearanceBehaviours(new List<CardAppearanceBehaviour.Appearance> { MagentaChampAppearance });
+								card.AddTemporaryMod(new CardModificationInfo(GiveMagentaChamp.ability) { fromCardMerge = true });
+								card.AddTemporaryMod(championIDMod);
+							}
+							else if (random <= 180)
+							{
+								card.ApplyAppearanceBehaviours(new List<CardAppearanceBehaviour.Appearance> { PurpleChampAppearance });
+								card.AddTemporaryMod(new CardModificationInfo(GivePurpleChamp.ability) { fromCardMerge = true });
+								card.AddTemporaryMod(championIDMod);
+							}
+							else if (random <= 185)
+							{
+								card.ApplyAppearanceBehaviours(new List<CardAppearanceBehaviour.Appearance> { BlueChampAppearance });
+								card.AddTemporaryMod(new CardModificationInfo(GiveBlueChamp.ability) { fromCardMerge = true });
+								card.AddTemporaryMod(championIDMod);
+							}
+							else if (random <= 190)
+							{
+								card.ApplyAppearanceBehaviours(new List<CardAppearanceBehaviour.Appearance> { LightBlueChampAppearance });
+								card.AddTemporaryMod(new CardModificationInfo(GiveLightBlueChamp.ability) { fromCardMerge = true });
+								card.AddTemporaryMod(championIDMod);
+							}
+							else if (random <= 195)
+							{
+								card.ApplyAppearanceBehaviours(new List<CardAppearanceBehaviour.Appearance> { LightGreenChampAppearance });
+								card.AddTemporaryMod(new CardModificationInfo(GiveLightGreenChamp.ability) { fromCardMerge = true });
+								card.AddTemporaryMod(championIDMod);
+							}
+							else if (random <= 200)
+							{
+								card.ApplyAppearanceBehaviours(new List<CardAppearanceBehaviour.Appearance> { BrightRedChampAppearance });
+								card.AddTemporaryMod(new CardModificationInfo(GiveBrightRedChamp.ability) { fromCardMerge = true });
+								card.AddTemporaryMod(championIDMod);
 							}
 							card.RenderCard();
 						}
                     }
                 }
+				public static bool summonedChampion = false;
 				public static CardModificationInfo championIDMod = new CardModificationInfo() { singletonId = "bitty_champion" };
             }
             public class RedChampAppearanceBehaviour : CardAppearanceBehaviour
@@ -3410,7 +3426,7 @@ namespace BittysChallenges
             public override IEnumerator OnPreDeathAnimation(bool wasSacrifice)
             {
                 yield return base.PreSuccessfulTriggerSequence();
-				ExplodeFromSlot(base.Card.slot);
+				yield return ExplodeFromSlot(base.Card.slot);
                 yield return base.LearnAbility(0f);
                 yield break;
             }
@@ -3476,7 +3492,10 @@ namespace BittysChallenges
             {
                 yield return base.PreSuccessfulTriggerSequence();
                 Card.Status.hiddenAbilities.Add(Ability.DeathShield);
-                Card.AddTemporaryMod(new CardModificationInfo(Ability.DeathShield));
+				Card.AddTemporaryMod(new CardModificationInfo(Ability.DeathShield)
+				{
+					negateAbilities = { this.Ability }
+				});
                 Card.ResetShield();
 				this.activated = true;
                 yield return base.LearnAbility(0f);
@@ -3504,7 +3523,8 @@ namespace BittysChallenges
                 yield return base.PreSuccessfulTriggerSequence();
 				foreach(PlayableCard target in Singleton<BoardManager>.Instance.CardsOnBoard)
 				{
-					if(target.OpponentCard == base.Card.OpponentCard && !target.HasTrait(Trait.Terrain))
+					if (target.OpponentCard == base.Card.OpponentCard && !target.HasTrait(Trait.Terrain) &&
+						target.Health < target.MaxHealth)
 					{
 						target.HealDamage(1);
 					}
@@ -4063,14 +4083,14 @@ namespace BittysChallenges
 				List<CardSlot> opponentSlotsCopy = Singleton<BoardManager>.Instance.OpponentSlotsCopy;
 				opponentSlotsCopy.RemoveAll((CardSlot x) => x.Card != null);
 
-				List<CardSlot> slots = GetSlots(Math.Max((opponentSlotsCopy.Count + 1) / 2, 1), opponentSlotsCopy);
+				List<CardSlot> slots = GetSlots((opponentSlotsCopy.Count / 5) + 1, opponentSlotsCopy);
 
 				for (int i = 0; i < slots.Count; i++)
 				{
 					yield return Singleton<BoardManager>.Instance.CreateCardInSlot(CardLoader.GetCardByName("bitty_Totem"), slots[i]);
 					if (RunState.CurrentRegionTier >= 2)
 					{
-						slots[i].Card.AddTemporaryMod(new CardModificationInfo(Ability.DeathShield));
+						slots[i].Card.AddTemporaryMod(new CardModificationInfo(Ability.DeathShield) { healthAdjustment = 1 });
 					}
 				}
 
