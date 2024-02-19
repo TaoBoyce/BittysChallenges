@@ -1931,19 +1931,19 @@ namespace BittysChallenges
 					summonCount = 0;
 				}
 			}
-			[HarmonyPatch(typeof(Part1Opponent), nameof(Part1Opponent.ModifyQueuedCard))]
+			[HarmonyPatch(typeof(Opponent), nameof(Opponent.ModifyQueuedCard))]
 			private class ChampionPatch
 			{
 				[HarmonyPrefix]
 				public static void ChangeToChamp(ref PlayableCard card)
 				{
 					summonCount++;
-					var OpponentType = Singleton<Part1Opponent>.Instance.OpponentType;
+					var OpponentType = Singleton<Opponent>.Instance.OpponentType;
 					if (AscensionSaveData.Data.ChallengeIsActive(championChallenge.challengeType) && !card.HasAnyOfTraits(new Trait[] { Trait.Giant, Trait.Uncuttable, Trait.Terrain }) //&& card.InOpponentQueue
 						&& OpponentType != Opponent.Type.TrapperTraderBoss)
 					{
 						int random = SeededRandom.Range(75, 200, SaveManager.SaveFile.GetCurrentRandomSeed() + Singleton<TurnManager>.Instance.TurnNumber + summonCount);
-						random += Singleton<Part1Opponent>.Instance.Difficulty;
+						random += Singleton<Opponent>.Instance.Difficulty;
                         Plugin.Log.LogInfo("Champion random: " + random);
 						if (random > 100 && !summonedChampion)
 						{
