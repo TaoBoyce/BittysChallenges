@@ -29,7 +29,7 @@ using InscryptionAPI.Helpers.Extensions;
 using static UnityEngine.GraphicsBuffer;
 using I2.TextAnimation;
 
-///Changelog: 5.3.0 - WIP
+///Changelog: 5.3.0
 ///Added champions Challenge
 ///Limited wooden boards from limoncello to max 3 in one turn
 ///Nerfed totem environment scaling
@@ -192,7 +192,7 @@ namespace BittysChallenges
 
 		internal const string PluginName = "Bitty's Challenges";
 
-		internal const string PluginVersion = "5.2.0";
+		internal const string PluginVersion = "5.3.0";
 
 		private static AscensionChallengeInfo waterborneStarterChallenge;
 		private static AscensionChallengeInfo shockedStarterChallenge;
