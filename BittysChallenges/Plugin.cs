@@ -3348,7 +3348,7 @@ namespace BittysChallenges
 
             public static Ability ability;
         }
-        public class GiveBlueChamp : AbilityBehaviour
+        public class GiveBlueChamp : AbilityBehaviour, IOnBellRung
         {
             public override Ability Ability
             {
@@ -3404,7 +3404,7 @@ namespace BittysChallenges
 				if (cardModificationInfo == null && !target.Info.HasTrait(Trait.Terrain) && !target.HasAbility(Ability.Flying))
 				{
 					Plugin.Log.LogInfo("Apply Airborne");
-					Singleton<ViewManager>.Instance.SwitchToView(View.Board, false, true);
+					Singleton<ViewManager>.Instance.SwitchToView(View.Board, false, false);
 					target.AddTemporaryMod(airborneMod);
 					target.OnStatsChanged();
 					target.Anim.StrongNegationEffect();
@@ -3417,7 +3417,7 @@ namespace BittysChallenges
                 if (cardModificationInfo != null)
                 {
                     Plugin.Log.LogInfo("Remove Airborne");
-                    Singleton<ViewManager>.Instance.SwitchToView(View.Board, false, true);
+                    Singleton<ViewManager>.Instance.SwitchToView(View.Board, false, false);
                     target.RemoveTemporaryMod(cardModificationInfo);
 					target.OnStatsChanged();
                     target.Anim.StrongNegationEffect();
@@ -3425,7 +3425,28 @@ namespace BittysChallenges
                 }
             }
 
-			CardModificationInfo airborneMod = new CardModificationInfo()
+            public bool RespondsToBellRung(bool playerCombatPhase)
+            {
+				return true;
+            }
+
+            public IEnumerator OnBellRung(bool playerCombatPhase)
+            {
+                yield return base.PreSuccessfulTriggerSequence();
+                List<PlayableCard> cards;
+				cards = this.Card.IsPlayerCard() ? Singleton<BoardManager>.Instance.GetPlayerCards() : Singleton<BoardManager>.Instance.GetOpponentCards();
+                foreach (PlayableCard curCard in cards)
+                {
+					if(curCard != this.Card)
+                    {
+                        yield return AddAirborne(curCard);
+                    }
+                }
+                yield return base.LearnAbility(0f);
+                yield break;
+            }
+
+            CardModificationInfo airborneMod = new CardModificationInfo()
 			{
 				singletonId = "bitty_airborne_champ",
 				abilities = new List<Ability> { Ability.Flying}
@@ -3507,24 +3528,25 @@ namespace BittysChallenges
                 yield return base.LearnAbility(0f);
                 yield break;
             }
-            public override bool RespondsToCardGettingAttacked(PlayableCard source)
+            public override bool RespondsToSlotTargetedForAttack(CardSlot slot, PlayableCard attacker)
             {
-                return source != null && !activated;
+                if (attacker != null)
+                {
+                    bool flying = attacker.HasAbility(Ability.Flying);
+                    return slot.Card == this.Card && (!flying || base.Card.HasAbility(Ability.Reach));
+                }
+                return false;
             }
-            public override IEnumerator OnCardGettingAttacked(PlayableCard card)
+            public override IEnumerator OnSlotTargetedForAttack(CardSlot slot, PlayableCard attacker)
             {
                 yield return base.PreSuccessfulTriggerSequence();
-                Card.Status.hiddenAbilities.Add(Ability.DeathShield);
-				Card.AddTemporaryMod(new CardModificationInfo(Ability.DeathShield)
-				{
-					negateAbilities = { this.Ability }
-				});
-                Card.ResetShield();
-				this.activated = true;
+                Card.AddTemporaryMod(new CardModificationInfo()
+                {
+                    negateAbilities = { this.Ability }
+                });
                 yield return base.LearnAbility(0f);
                 yield break;
             }
-            bool activated = false;
 
             public static Ability ability;
         }
