@@ -27,6 +27,7 @@ using Steamworks;
 using System.Diagnostics;
 using InscryptionAPI.Helpers.Extensions;
 using static UnityEngine.GraphicsBuffer;
+using I2.TextAnimation;
 
 ///Changelog: 5.3.0 - WIP
 ///Added champions Challenge
@@ -1920,27 +1921,31 @@ namespace BittysChallenges
             {
                 harmony.PatchAll(typeof(Champions));
             }
-
-			
-
-            private static class ChampionPatch
-            {
-				[HarmonyPatch(typeof(TurnManager), "CleanupPhase")]
+			[HarmonyPatch(typeof(TurnManager), "CleanupPhase")]
+			private static class ChampionCleanupPatch
+			{
 				[HarmonyPostfix]
 				public static void ChampionCleanup()
 				{
 					summonedChampion = false;
+					summonCount = 0;
 				}
-                [HarmonyPatch(typeof(Part1Opponent), nameof(Part1Opponent.TryModifyCardWithTotem))]
-                [HarmonyPostfix]
-                private static void ChangeToChamp(PlayableCard card)
-                {
-                    var OpponentType = Singleton<Part1Opponent>.Instance.OpponentType;
-                    if (AscensionSaveData.Data.ChallengeIsActive(championChallenge.challengeType) && !card.HasAnyOfTraits(new Trait[] {Trait.Giant, Trait.Uncuttable, Trait.Terrain}) //&& card.InOpponentQueue
+			}
+			[HarmonyPatch(typeof(Part1Opponent), nameof(Part1Opponent.ModifyQueuedCard))]
+			private class ChampionPatch
+			{
+				[HarmonyPrefix]
+				public static void ChangeToChamp(ref PlayableCard card)
+				{
+					summonCount++;
+					var OpponentType = Singleton<Part1Opponent>.Instance.OpponentType;
+					if (AscensionSaveData.Data.ChallengeIsActive(championChallenge.challengeType) && !card.HasAnyOfTraits(new Trait[] { Trait.Giant, Trait.Uncuttable, Trait.Terrain }) //&& card.InOpponentQueue
 						&& OpponentType != Opponent.Type.TrapperTraderBoss)
-                    {
-                        int random = SeededRandom.Range(0, 200, SaveManager.SaveFile.GetCurrentRandomSeed() + Singleton<TurnManager>.Instance.TurnNumber + 2);
-                        if (random > 100 && !summonedChampion)
+					{
+						int random = SeededRandom.Range(75, 200, SaveManager.SaveFile.GetCurrentRandomSeed() + Singleton<TurnManager>.Instance.TurnNumber + summonCount);
+						random += Singleton<Part1Opponent>.Instance.Difficulty;
+                        Plugin.Log.LogInfo("Champion random: " + random);
+						if (random > 100 && !summonedChampion)
 						{
 							ChallengeActivationUI.TryShowActivation(championChallenge.challengeType);
 							summonedChampion = true;
@@ -1971,7 +1976,8 @@ namespace BittysChallenges
 							///case <= 95 Blue
 							///case <= 100 Bright Red
 
-							if (random <= 113) {
+							if (random <= 113)
+							{
 								card.ApplyAppearanceBehaviours(new List<CardAppearanceBehaviour.Appearance> { RedChampAppearance });
 								card.AddTemporaryMod(new CardModificationInfo(0, 2) { abilities = new List<Ability> { GiveRedChamp.ability }, fromCardMerge = true });
 								card.AddTemporaryMod(championIDMod);
@@ -2044,11 +2050,12 @@ namespace BittysChallenges
 							}
 							card.RenderCard();
 						}
-                    }
-                }
-				public static bool summonedChampion = false;
+					}
+				}
 				public static CardModificationInfo championIDMod = new CardModificationInfo() { singletonId = "bitty_champion" };
             }
+            public static bool summonedChampion = false;
+			public static int summonCount = 0;
             public class RedChampAppearanceBehaviour : CardAppearanceBehaviour
             {
                 public override void ApplyAppearance()
@@ -3045,7 +3052,6 @@ namespace BittysChallenges
 			try
             {
 				Singleton<GiveCannoneer>.Instance.ClearAllTargetIcons();
-				
 			}
             catch
             {
@@ -3150,30 +3156,38 @@ namespace BittysChallenges
 
             public override bool RespondsToDealDamageDirectly(int amount)
             {
-                return RunState.Run.currency >= 1;
+                return RunState.Run.currency >= 1 || !this.Card.OpponentCard;
             }
             public override IEnumerator OnDealDamageDirectly(int amount)
             {
 
                 yield return base.PreSuccessfulTriggerSequence();
-                yield return Singleton<CurrencyBowl>.Instance.SpillOnTable();
-                yield return new WaitForSeconds(0.4f);
+				if (this.Card.OpponentCard)
+				{
+					yield return Singleton<CurrencyBowl>.Instance.SpillOnTable();
+					yield return new WaitForSeconds(0.4f);
 
-                int moneyToTake = 1;
-                if (RunState.Run.currency >= 2) moneyToTake = 2;
-                List<Rigidbody> list = Singleton<CurrencyBowl>.Instance.TakeWeights(moneyToTake);
-                foreach (Rigidbody rigidbody in list)
+					int moneyToTake = 1;
+					if (RunState.Run.currency >= 2) moneyToTake = 2;
+					List<Rigidbody> list = Singleton<CurrencyBowl>.Instance.TakeWeights(moneyToTake);
+					foreach (Rigidbody rigidbody in list)
+					{
+						float num = (float)list.IndexOf(rigidbody) * 0.05f;
+						Tween.Position(rigidbody.transform, rigidbody.transform.position + Vector3.up * 0.5f, 0.075f, num, Tween.EaseIn, Tween.LoopType.None, null, null, true);
+						Tween.Position(rigidbody.transform, new Vector3(0f, 5.5f, 4f), 0.3f, 0.125f + num, Tween.EaseOut, Tween.LoopType.None, null, null, true);
+						Object.Destroy(rigidbody.gameObject, 0.5f);
+					}
+
+					RunState.Run.currency = RunState.Run.currency - moneyToTake;
+
+					yield return new WaitForSeconds(0.4f);
+					yield return base.StartCoroutine(Singleton<CurrencyBowl>.Instance.CleanUpFromTableAndExit());
+				}
+				else
                 {
-                    float num = (float)list.IndexOf(rigidbody) * 0.05f;
-                    Tween.Position(rigidbody.transform, rigidbody.transform.position + Vector3.up * 0.5f, 0.075f, num, Tween.EaseIn, Tween.LoopType.None, null, null, true);
-                    Tween.Position(rigidbody.transform, new Vector3(0f, 5.5f, 4f), 0.3f, 0.125f + num, Tween.EaseOut, Tween.LoopType.None, null, null, true);
-                    Object.Destroy(rigidbody.gameObject, 0.5f);
+                    yield return Singleton<CurrencyBowl>.Instance.ShowGain(5, false, true);
+                    RunState.Run.currency += 2;
                 }
-
-                RunState.Run.currency = RunState.Run.currency - moneyToTake;
-
-                yield return new WaitForSeconds(0.4f);
-                yield return base.StartCoroutine(Singleton<CurrencyBowl>.Instance.CleanUpFromTableAndExit());
                 yield return base.LearnAbility(0f);
                 yield break;
             }
