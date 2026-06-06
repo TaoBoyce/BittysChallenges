@@ -20,14 +20,14 @@ namespace BittysChallenges
                 info.ability == Ability.SkeletonStrafe ||
                 info.ability == Ability.Sentry ||
                 info.ability == Sigils.GiveNoTransfer.ability ||
-                info.ability == Plugin.GiveParalysis.ability ||
+                info.ability == Abilities.GiveParalysis.ability ||
                 info.ability == Ability.ConduitBuffAttack ||
                 info.ability == Sigils.GiveFleeting.ability ||
                 info.ability == Sigils.GiveCantAttack.ability ||
                 info.ability == Sigils.GiveStrafePull.ability ||
                 info.ability == Sigils.GiveStrafeSticky.ability ||
                 info.ability == Sigils.GiveStrafeSuper.ability ||
-                info.ability == Plugin.GiveWarper.ability)
+                info.ability == Abilities.GiveWarper.ability)
             {
                 __result = true;
             }

@@ -12,6 +12,8 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using UnityEngine;
+using static BittysChallenges.Abilities;
+using static BittysChallenges.Boons;
 using static BittysChallenges.Plugin;
 
 namespace BittysChallenges
@@ -896,7 +898,7 @@ namespace BittysChallenges
                 x.ability == Ability.Reach ||
                 x.ability == Ability.Flying ||
                 x.ability == Ability.RandomAbility ||
-                x.ability == Plugin.GiveFragile.ability ||
+                x.ability == GiveFragile.ability ||
                 x.ability == Ability.MadeOfStone ||
                 x.ability == Ability.BuffEnemy ||
                 x.ability == Ability.OpponentBones ||
@@ -1019,7 +1021,7 @@ namespace BittysChallenges
             x.ability == Ability.Strafe ||
             x.ability == Ability.MoveBeside ||
             x.ability == Sigils.GiveStrafeSticky.ability ||
-            x.ability == Plugin.GiveWarper.ability ||
+            x.ability == GiveWarper.ability ||
             x.ability == Sigils.GiveStrafePull.ability ||
             x.ability == Sigils.GiveStrafeSuper.ability);
 

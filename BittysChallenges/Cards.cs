@@ -4,7 +4,9 @@ using InscryptionAPI.Card;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using static BittysChallenges.Abilities;
 using static BittysChallenges.Plugin;
+using static DiskCardGame.CardAppearanceBehaviour;
 
 namespace BittysChallenges
 {
@@ -80,7 +82,7 @@ namespace BittysChallenges
             )
 
             //card appearance
-            .AddAppearances(CloverAppearance)
+            .AddAppearances(CAppearances.CloverAppearance)
             .AddSpecialAbilities(AddCloverReRollAbility.CloverReRollSpecialAbility)
 
             .SetPortraitAndEmission(Tools.LoadTexture("portrait_blank"), Tools.LoadTexture("portrait_blank"))
@@ -109,11 +111,11 @@ namespace BittysChallenges
             //cost
             .SetCost(bloodCost: 2)
 
-            .AddAbilities(Plugin.GiveFalseUnkillable.ability)
+            .AddAbilities(GiveFalseUnkillable.ability)
 
             .AddSpecialAbilities(AddTravelingOuroAbility.TravelingOuroSpecialAbility)
             //card appearance
-            .AddAppearances(CAppearances.Appearance.RareCardBackground)
+            .AddAppearances(Appearance.RareCardBackground)
 
             .SetPortraitAndEmission(Tools.LoadTexture("portrait_ouroboros.png"), Tools.LoadTexture("portrait_ouroboros_emission.png"))
 
@@ -149,7 +151,7 @@ namespace BittysChallenges
             //special ability
             .AddSpecialAbilities(AddGoldenSheepAbility.GoldenSheepSpecialAbility)
             //card appearance
-            .AddAppearances(CAppearances.Appearance.RareCardBackground)
+            .AddAppearances(Appearance.RareCardBackground)
             .AddAppearances(GoldEmission.Appearance.GoldEmission)
 
             .SetPortraitAndEmission(Tools.LoadTexture("portrait_goldram.png"), Tools.LoadTexture("portrait_goldram_emission.png"))
@@ -209,7 +211,7 @@ namespace BittysChallenges
 
             //free card
 
-            .AddAbilities(Plugin.GiveMuddy.ability)
+            .AddAbilities(GiveMuddy.ability)
             //card appearance
             .SetTerrain()
 
@@ -238,7 +240,7 @@ namespace BittysChallenges
 
             //free card
 
-            .AddAbilities(Plugin.GiveShelter.ability)
+            .AddAbilities(GiveShelter.ability)
             //card appearance
             .SetTerrain()
 
@@ -300,7 +302,7 @@ namespace BittysChallenges
             .AddAbilities(Sigils.GiveMushrooms.ability)
             //card appearance
             .AddTraits(Trait.Terrain)
-            .AddAppearances(CAppearances.Appearance.TerrainBackground)
+            .AddAppearances(Appearance.TerrainBackground)
 
             .SetPortraitAndEmission(Tools.LoadTexture("portrait_fungus.png"), Tools.LoadTexture("portrait_fungus.png"))
             ;
@@ -327,7 +329,7 @@ namespace BittysChallenges
 
             //free card
 
-            .AddAbilities(Plugin.GiveDynamite.ability)
+            .AddAbilities(GiveDynamite.ability)
             .AddAbilities(Ability.ExplodeOnDeath)
             //card appearance
             .SetTerrain()
@@ -413,7 +415,7 @@ namespace BittysChallenges
             )
 
             //free card
-            .AddAbilities(Plugin.GiveStrafeAvalanche.ability)
+            .AddAbilities(GiveStrafeAvalanche.ability)
             .AddAbilities(Ability.MadeOfStone)
             //card appearance
             .SetTerrain()
@@ -473,7 +475,7 @@ namespace BittysChallenges
             //free card
 
             .AddAbilities(Ability.MadeOfStone)
-            .AddAbilities(Plugin.GiveObeliskSlot.ability)
+            .AddAbilities(GiveObeliskSlot.ability)
             //card appearance
             .SetTerrain()
 
@@ -507,7 +509,7 @@ namespace BittysChallenges
             .AddAbilities(Ability.Submerge)
             .AddAbilities(Ability.SkeletonStrafe)
             //card appearance
-            .AddAppearances(CAppearances.Appearance.RareCardBackground)
+            .AddAppearances(Appearance.RareCardBackground)
 
             .SetIceCube(CardLoader.GetCardByName("SkeletonPirate"))
 
