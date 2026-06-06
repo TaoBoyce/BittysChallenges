@@ -301,278 +301,277 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="0Harmony">
-      <HintPath>..\..\..\..\..\..\AppData\Roaming\r2modmanPlus-local\Inscryption\profiles\Default\BepInEx\core\0Harmony.dll</HintPath>
-    </Reference>
+    <PackageReference Include="BepInEx.Core" Version="5.4.21" />
+    <PackageReference Include="Inscryption.GameLibs" Version="1.9.0-r.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="Assembly-CSharp">
       <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Steam\SteamApps\common\Inscryption\Inscryption_Data\Managed\publicized_assemblies\Assembly-CSharp_publicized.dll</HintPath>
     </Reference>
-    <Reference Include="BepInEx">
-      <HintPath>..\..\..\..\..\..\AppData\Roaming\r2modmanPlus-local\Inscryption\profiles\Default\BepInEx\core\BepInEx.dll</HintPath>
-    </Reference>
     <Reference Include="BittysSigils">
-      <HintPath>..\..\BittysSigils\BittysSigils\bin\Debug\netstandard2.0\BittysSigils.dll</HintPath>
+      <HintPath>..\..\..\..\AppData\Roaming\r2modmanPlus-local\Inscryption\profiles\Mod Dev\BepInEx\plugins\bitty45-BittysSigils\BittysSigils.dll</HintPath>
     </Reference>
     <Reference Include="GalaxyCSharp">
-      <HintPath>..\..\References\Inscryption\GalaxyCSharp.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\GalaxyCSharp.dll</HintPath>
     </Reference>
     <Reference Include="Ibuprogames.OilPaintAsset">
-      <HintPath>..\..\References\Inscryption\Ibuprogames.OilPaintAsset.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\Ibuprogames.OilPaintAsset.dll</HintPath>
     </Reference>
     <Reference Include="Ibuprogames.VideoGlitchesAsset">
-      <HintPath>..\..\References\Inscryption\Ibuprogames.VideoGlitchesAsset.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\Ibuprogames.VideoGlitchesAsset.dll</HintPath>
     </Reference>
     <Reference Include="InscryptionAPI">
-      <HintPath>..\..\..\..\..\..\AppData\Roaming\r2modmanPlus-local\Inscryption\profiles\Default\BepInEx\plugins\API_dev-API\InscryptionAPI.dll</HintPath>
+      <HintPath>..\..\..\..\AppData\Roaming\r2modmanPlus-local\Inscryption\profiles\Mod Dev\BepInEx\plugins\API_dev-API\InscryptionAPI.dll</HintPath>
     </Reference>
     <Reference Include="MergeSigils">
-      <HintPath>..\..\..\..\..\..\AppData\Roaming\r2modmanPlus-local\Inscryption\profiles\Default\BepInEx\plugins\SpecialAPI-MergeSigils\MergeSigils.dll</HintPath>
+      <HintPath>..\..\..\..\AppData\Roaming\r2modmanPlus-local\Inscryption\profiles\Mod Dev\BepInEx\plugins\SpecialAPI-MergeSigils\MergeSigils.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Security">
-      <HintPath>..\..\References\Inscryption\Mono.Security.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\Mono.Security.dll</HintPath>
     </Reference>
     <Reference Include="Parse">
-      <HintPath>..\..\References\Inscryption\Parse.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\Parse.dll</HintPath>
     </Reference>
     <Reference Include="Rewired_Core">
-      <HintPath>..\..\References\Inscryption\Rewired_Core.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\Rewired_Core.dll</HintPath>
     </Reference>
     <Reference Include="Rewired_Windows">
-      <HintPath>..\..\References\Inscryption\Rewired_Windows.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\Rewired_Windows.dll</HintPath>
     </Reference>
     <Reference Include="Sirenix.OdinInspector.Attributes">
-      <HintPath>..\..\References\Inscryption\Sirenix.OdinInspector.Attributes.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\Sirenix.OdinInspector.Attributes.dll</HintPath>
     </Reference>
     <Reference Include="Sirenix.OdinInspector.CompatibilityLayer">
-      <HintPath>..\..\References\Inscryption\Sirenix.OdinInspector.CompatibilityLayer.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\Sirenix.OdinInspector.CompatibilityLayer.dll</HintPath>
     </Reference>
     <Reference Include="Sirenix.Serialization">
-      <HintPath>..\..\References\Inscryption\Sirenix.Serialization.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\Sirenix.Serialization.dll</HintPath>
     </Reference>
     <Reference Include="Sirenix.Serialization.Config">
-      <HintPath>..\..\References\Inscryption\Sirenix.Serialization.Config.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\Sirenix.Serialization.Config.dll</HintPath>
     </Reference>
     <Reference Include="Sirenix.Utilities">
-      <HintPath>..\..\References\Inscryption\Sirenix.Utilities.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\Sirenix.Utilities.dll</HintPath>
     </Reference>
     <Reference Include="SonicBloom.Koreo">
-      <HintPath>..\..\References\Inscryption\SonicBloom.Koreo.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\SonicBloom.Koreo.dll</HintPath>
     </Reference>
     <Reference Include="SonicBloom.MIDI">
-      <HintPath>..\..\References\Inscryption\SonicBloom.MIDI.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\SonicBloom.MIDI.dll</HintPath>
     </Reference>
     <Reference Include="Unity.2D.PixelPerfect">
-      <HintPath>..\..\References\Inscryption\Unity.2D.PixelPerfect.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\Unity.2D.PixelPerfect.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Postprocessing.Runtime">
-      <HintPath>..\..\References\Inscryption\Unity.Postprocessing.Runtime.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\Unity.Postprocessing.Runtime.dll</HintPath>
     </Reference>
     <Reference Include="Unity.ProBuilder">
-      <HintPath>..\..\References\Inscryption\Unity.ProBuilder.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\Unity.ProBuilder.dll</HintPath>
     </Reference>
     <Reference Include="Unity.ProBuilder.Csg">
-      <HintPath>..\..\References\Inscryption\Unity.ProBuilder.Csg.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\Unity.ProBuilder.Csg.dll</HintPath>
     </Reference>
     <Reference Include="Unity.ProBuilder.KdTree">
-      <HintPath>..\..\References\Inscryption\Unity.ProBuilder.KdTree.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\Unity.ProBuilder.KdTree.dll</HintPath>
     </Reference>
     <Reference Include="Unity.ProBuilder.Poly2Tri">
-      <HintPath>..\..\References\Inscryption\Unity.ProBuilder.Poly2Tri.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\Unity.ProBuilder.Poly2Tri.dll</HintPath>
     </Reference>
     <Reference Include="Unity.ProBuilder.Stl">
-      <HintPath>..\..\References\Inscryption\Unity.ProBuilder.Stl.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\Unity.ProBuilder.Stl.dll</HintPath>
     </Reference>
     <Reference Include="Unity.ProGrids">
-      <HintPath>..\..\References\Inscryption\Unity.ProGrids.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\Unity.ProGrids.dll</HintPath>
     </Reference>
     <Reference Include="Unity.TextMeshPro">
-      <HintPath>..\..\References\Inscryption\Unity.TextMeshPro.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\Unity.TextMeshPro.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Timeline">
-      <HintPath>..\..\References\Inscryption\Unity.Timeline.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\Unity.Timeline.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>..\..\References\Inscryption\UnityEngine.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.AccessibilityModule">
-      <HintPath>..\..\References\Inscryption\UnityEngine.AccessibilityModule.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.AccessibilityModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.AIModule">
-      <HintPath>..\..\References\Inscryption\UnityEngine.AIModule.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.AIModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.AndroidJNIModule">
-      <HintPath>..\..\References\Inscryption\UnityEngine.AndroidJNIModule.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.AndroidJNIModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.AnimationModule">
-      <HintPath>..\..\References\Inscryption\UnityEngine.AnimationModule.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.AnimationModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.ARModule">
-      <HintPath>..\..\References\Inscryption\UnityEngine.ARModule.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.ARModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.AssetBundleModule">
-      <HintPath>..\..\References\Inscryption\UnityEngine.AssetBundleModule.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.AssetBundleModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.AudioModule">
-      <HintPath>..\..\References\Inscryption\UnityEngine.AudioModule.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.AudioModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.ClothModule">
-      <HintPath>..\..\References\Inscryption\UnityEngine.ClothModule.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.ClothModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.ClusterInputModule">
-      <HintPath>..\..\References\Inscryption\UnityEngine.ClusterInputModule.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.ClusterInputModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.ClusterRendererModule">
-      <HintPath>..\..\References\Inscryption\UnityEngine.ClusterRendererModule.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.ClusterRendererModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
-      <HintPath>..\..\References\Inscryption\UnityEngine.CoreModule.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.CrashReportingModule">
-      <HintPath>..\..\References\Inscryption\UnityEngine.CrashReportingModule.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.CrashReportingModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.DirectorModule">
-      <HintPath>..\..\References\Inscryption\UnityEngine.DirectorModule.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.DirectorModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.DSPGraphModule">
-      <HintPath>..\..\References\Inscryption\UnityEngine.DSPGraphModule.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.DSPGraphModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.GameCenterModule">
-      <HintPath>..\..\References\Inscryption\UnityEngine.GameCenterModule.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.GameCenterModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.GridModule">
-      <HintPath>..\..\References\Inscryption\UnityEngine.GridModule.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.GridModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.HotReloadModule">
-      <HintPath>..\..\References\Inscryption\UnityEngine.HotReloadModule.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.HotReloadModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.ImageConversionModule">
-      <HintPath>..\..\References\Inscryption\UnityEngine.ImageConversionModule.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.ImageConversionModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.IMGUIModule">
-      <HintPath>..\..\References\Inscryption\UnityEngine.IMGUIModule.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.IMGUIModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.InputLegacyModule">
-      <HintPath>..\..\References\Inscryption\UnityEngine.InputLegacyModule.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.InputLegacyModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.InputModule">
-      <HintPath>..\..\References\Inscryption\UnityEngine.InputModule.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.InputModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.JSONSerializeModule">
-      <HintPath>..\..\References\Inscryption\UnityEngine.JSONSerializeModule.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.JSONSerializeModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.LocalizationModule">
-      <HintPath>..\..\References\Inscryption\UnityEngine.LocalizationModule.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.LocalizationModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.ParticleSystemModule">
-      <HintPath>..\..\References\Inscryption\UnityEngine.ParticleSystemModule.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.ParticleSystemModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.PerformanceReportingModule">
-      <HintPath>..\..\References\Inscryption\UnityEngine.PerformanceReportingModule.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.PerformanceReportingModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.Physics2DModule">
-      <HintPath>..\..\References\Inscryption\UnityEngine.Physics2DModule.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.Physics2DModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.PhysicsModule">
-      <HintPath>..\..\References\Inscryption\UnityEngine.PhysicsModule.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.PhysicsModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.ProfilerModule">
-      <HintPath>..\..\References\Inscryption\UnityEngine.ProfilerModule.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.ProfilerModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.ScreenCaptureModule">
-      <HintPath>..\..\References\Inscryption\UnityEngine.ScreenCaptureModule.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.ScreenCaptureModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.SharedInternalsModule">
-      <HintPath>..\..\References\Inscryption\UnityEngine.SharedInternalsModule.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.SharedInternalsModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.SpriteMaskModule">
-      <HintPath>..\..\References\Inscryption\UnityEngine.SpriteMaskModule.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.SpriteMaskModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.SpriteShapeModule">
-      <HintPath>..\..\References\Inscryption\UnityEngine.SpriteShapeModule.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.SpriteShapeModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.StreamingModule">
-      <HintPath>..\..\References\Inscryption\UnityEngine.StreamingModule.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.StreamingModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.SubstanceModule">
-      <HintPath>..\..\References\Inscryption\UnityEngine.SubstanceModule.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.SubstanceModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.SubsystemsModule">
-      <HintPath>..\..\References\Inscryption\UnityEngine.SubsystemsModule.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.SubsystemsModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.TerrainModule">
-      <HintPath>..\..\References\Inscryption\UnityEngine.TerrainModule.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.TerrainModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.TerrainPhysicsModule">
-      <HintPath>..\..\References\Inscryption\UnityEngine.TerrainPhysicsModule.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.TerrainPhysicsModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.TextCoreModule">
-      <HintPath>..\..\References\Inscryption\UnityEngine.TextCoreModule.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.TextCoreModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.TextRenderingModule">
-      <HintPath>..\..\References\Inscryption\UnityEngine.TextRenderingModule.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.TextRenderingModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.TilemapModule">
-      <HintPath>..\..\References\Inscryption\UnityEngine.TilemapModule.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.TilemapModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.TLSModule">
-      <HintPath>..\..\References\Inscryption\UnityEngine.TLSModule.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.TLSModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UI">
-      <HintPath>..\..\References\Inscryption\UnityEngine.UI.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.UI.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UIElementsModule">
-      <HintPath>..\..\References\Inscryption\UnityEngine.UIElementsModule.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.UIElementsModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UIModule">
-      <HintPath>..\..\References\Inscryption\UnityEngine.UIModule.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.UIModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UmbraModule">
-      <HintPath>..\..\References\Inscryption\UnityEngine.UmbraModule.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.UmbraModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UNETModule">
-      <HintPath>..\..\References\Inscryption\UnityEngine.UNETModule.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.UNETModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UnityAnalyticsModule">
-      <HintPath>..\..\References\Inscryption\UnityEngine.UnityAnalyticsModule.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.UnityAnalyticsModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UnityConnectModule">
-      <HintPath>..\..\References\Inscryption\UnityEngine.UnityConnectModule.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.UnityConnectModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UnityTestProtocolModule">
-      <HintPath>..\..\References\Inscryption\UnityEngine.UnityTestProtocolModule.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.UnityTestProtocolModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UnityWebRequestAssetBundleModule">
-      <HintPath>..\..\References\Inscryption\UnityEngine.UnityWebRequestAssetBundleModule.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.UnityWebRequestAssetBundleModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UnityWebRequestAudioModule">
-      <HintPath>..\..\References\Inscryption\UnityEngine.UnityWebRequestAudioModule.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.UnityWebRequestAudioModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UnityWebRequestModule">
-      <HintPath>..\..\References\Inscryption\UnityEngine.UnityWebRequestModule.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.UnityWebRequestModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UnityWebRequestTextureModule">
-      <HintPath>..\..\References\Inscryption\UnityEngine.UnityWebRequestTextureModule.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.UnityWebRequestTextureModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UnityWebRequestWWWModule">
-      <HintPath>..\..\References\Inscryption\UnityEngine.UnityWebRequestWWWModule.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.UnityWebRequestWWWModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.VehiclesModule">
-      <HintPath>..\..\References\Inscryption\UnityEngine.VehiclesModule.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.VehiclesModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.VFXModule">
-      <HintPath>..\..\References\Inscryption\UnityEngine.VFXModule.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.VFXModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.VideoModule">
-      <HintPath>..\..\References\Inscryption\UnityEngine.VideoModule.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.VideoModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.VRModule">
-      <HintPath>..\..\References\Inscryption\UnityEngine.VRModule.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.VRModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.WindModule">
-      <HintPath>..\..\References\Inscryption\UnityEngine.WindModule.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.WindModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.XRModule">
-      <HintPath>..\..\References\Inscryption\UnityEngine.XRModule.dll</HintPath>
+      <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\UnityEngine.XRModule.dll</HintPath>
     </Reference>
   </ItemGroup>
 
