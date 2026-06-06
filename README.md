@@ -62,13 +62,13 @@ Thanks to:
 
 As with most mods, you need [BepInEx](https://inscryption.thunderstore.io/package/BepInEx/BepInExPack_Inscryption/) installed. You also need the [API](https://inscryption.thunderstore.io/package/API_dev/API/).
 
-## Changelog 5.3.0
-- Challenge: Champions
-- Nerfed Limoncello to only drop 3 boards maximum
-- Nerfed totem environment scaling
+## Changelog 6.0.0
+- Refactor to make future changes easier
 
 <details>
 <summary>Changelog</summary>
+
+- 6.0.0: Refactor
 - 5.3.0: Added Champions challenge, nerfed wood boards and totem environment
 - 5.2.0: Removed clover redraw from unfairhand challenge, added in a new anti-challenge for that instead
 - 5.1.0: Added clover redraw to unfairhand challenge
