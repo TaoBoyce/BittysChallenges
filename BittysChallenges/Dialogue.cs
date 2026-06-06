@@ -6,12 +6,9 @@ using System.Text;
 
 namespace BittysChallenges
 {
+    [HarmonyPatch]
     public class Dialogue
     {
-        public static void Register(Harmony harmony)
-        {
-            harmony.PatchAll(typeof(Dialogue));
-        }
         public static DialogueEvent.LineSet SetAbilityInfoDialogue(string dialogue)
         {
             return new DialogueEvent.LineSet(new List<DialogueEvent.Line>
