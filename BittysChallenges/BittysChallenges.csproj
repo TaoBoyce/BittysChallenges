@@ -154,7 +154,6 @@
     <None Remove="Resources\portrait_totem_emission.png" />
     <None Remove="Resources\portrait_woodenplank.png" />
     <None Remove="Resources\starterdeck_icon_pirate.png" />
-    <None Remove="Resources\testbundle" />
   </ItemGroup>
 
   <ItemGroup>
@@ -297,7 +296,6 @@
     <EmbeddedResource Include="Resources\portrait_totem_emission.png" />
     <EmbeddedResource Include="Resources\portrait_woodenplank.png" />
     <EmbeddedResource Include="Resources\starterdeck_icon_pirate.png" />
-    <EmbeddedResource Include="Resources\testbundle" />
   </ItemGroup>
 
   <ItemGroup>

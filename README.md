@@ -62,8 +62,9 @@ Thanks to:
 
 As with most mods, you need [BepInEx](https://inscryption.thunderstore.io/package/BepInEx/BepInExPack_Inscryption/) installed. You also need the [API](https://inscryption.thunderstore.io/package/API_dev/API/).
 
-## Changelog 6.0.0
+## Changelog 6.1.0
 - Refactor to make future changes easier
+- SFX now uses API
 
 <details>
 <summary>Changelog</summary>
