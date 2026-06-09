@@ -19,6 +19,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 using static BittysChallenges.Abilities;
@@ -47,7 +48,9 @@ namespace BittysChallenges
 			abundanceQuality = base.Config.Bind<int>("General", "Abundance Challenge Quality", 5, "The number of cards added to your side deck.");
 			allowedResets = base.Config.Bind<int>("General", "Extra Lives Allowed Resets", 3, "The max number of times that extra lives will reset the scales during a run.");
 
-            SoundManager.LoadAudioClip(PluginGuid, "Resources/sfx_vineBoom.ogg");
+            AssemblyLoc = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            //load audio
+            addedSfx.Add(SoundManager.LoadAudioClip(PluginGuid, AssemblyLoc+"/Resources/sfx_vineBoom.ogg"));
 
             //loading things into API
             Challenges.AddChallenges();
@@ -68,8 +71,8 @@ namespace BittysChallenges
 
         internal const string CardPrefix = "bitty";
 
-        public static AssetBundle assetBundle;
-		public static List<AudioClip> addedSfx = new List<AudioClip>();
+		public static string AssemblyLoc;
+        public static List<AudioClip> addedSfx = new List<AudioClip> { };
 
 		internal static ConfigEntry<int> famineRemoval;
 		internal static ConfigEntry<int> abundanceQuality;
@@ -86,7 +89,38 @@ namespace BittysChallenges
                 return result;
             }
         }
-	}
+
+        [HarmonyPatch(typeof(AudioController))]
+        public class AudioPatches
+        {
+            [HarmonyPrefix]
+            [HarmonyPatch("GetAudioClip")]
+            public static void AddAudiosClips(AudioController __instance, string soundId)
+            {
+                __instance.SFX.AddRange(from x in Plugin.addedSfx
+                                        where !__instance.SFX.Contains(x)
+                                        select x);
+            }
+
+            [HarmonyPrefix]
+            [HarmonyPatch("GetLoopClip")]
+            public static void AddLoopClips(AudioController __instance, string loopId)
+            {
+                __instance.Loops.AddRange(from x in Plugin.addedSfx
+                                          where !__instance.Loops.Contains(x)
+                                          select x);
+            }
+
+            [HarmonyPrefix]
+            [HarmonyPatch("GetLoop")]
+            public static void AddLoops(AudioController __instance, string loopName)
+            {
+                __instance.Loops.AddRange(from x in Plugin.addedSfx
+                                          where !__instance.Loops.Contains(x)
+                                          select x);
+            }
+        }
+    }
 }
 
 

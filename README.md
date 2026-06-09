@@ -4,7 +4,7 @@ This mod adds 15 new Challenges and 6 Anti-Challenges that you can select from w
 
 [P03_In_Kaycees_Mod Compatible!](https://inscryption.thunderstore.io/package/Infiniscryption/P03_In_Kaycees_Mod/)
 
-[Join the Modding discord server!](https://discord.gg/2GuxCVCaxN)
+[Join the Inscryption Modding discord server!](https://discord.gg/2GuxCVCaxN)
 
 Made by Bitty45 (discord: bitty45#5291), don't be afraid to ping me if you run into any errors!
 

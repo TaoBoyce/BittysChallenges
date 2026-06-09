@@ -1686,7 +1686,7 @@ namespace BittysChallenges
 
         }
 
-        [HarmonyPatch]
+        [HarmonyPatch(typeof(Opponent))]
         public class MiscEncounters
         {
             public static int TravelingOuroborosBuffs()
@@ -2127,7 +2127,7 @@ namespace BittysChallenges
             }
             public override IEnumerator OnOtherCardDie(PlayableCard card, CardSlot deathSlot, bool fromCombat, PlayableCard killer)
             {
-                AudioController.Instance.PlaySound2D(PluginGuid + "_sfx_vineBoom.ogg", MixerGroup.None, 4f, CustomRandom.RandomBetween(0f, 0.2f), new AudioParams.Pitch(AudioParams.Pitch.Variation.Large), null, null, null, false);
+                AudioController.Instance.PlaySound3D(PluginGuid + "_sfx_vineBoom.ogg", MixerGroup.None, deathSlot.transform.position, 1f, 0f, new AudioParams.Pitch(AudioParams.Pitch.Variation.Small), null, null, null, false);
                 yield break;
             }
             public override bool RespondsToOtherCardAssignedToSlot(PlayableCard otherCard)
