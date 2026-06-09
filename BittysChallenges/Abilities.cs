@@ -3,6 +3,7 @@ using DiskCardGame;
 using HarmonyLib;
 using InscryptionAPI.Card;
 using InscryptionAPI.Helpers.Extensions;
+using InscryptionAPI.Slots;
 using InscryptionAPI.Triggers;
 using InscryptionMod.Abilities;
 using Pixelplacement;
@@ -13,6 +14,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 using static BittysChallenges.Plugin;
+using static UnityEngine.GraphicsBuffer;
 using Object = UnityEngine.Object;
 
 namespace BittysChallenges
@@ -52,6 +54,86 @@ namespace BittysChallenges
             Log.LogInfo("End of champs");
         }
         #region Ability Loaders
+        private static void Add_Ability_ObeliskSlot()
+        {
+            AbilityInfo abilityInfo = AbilityManager.New(
+                PluginGuid,
+                "Sacrificial Slab",
+                "Other cards may be placed on top of [creature]; the other card will die.",
+                typeof(GiveObeliskSlot),
+                Tools.LoadTexture("ability_sacrificeslab.png")
+            )
+            .AddMetaCategories(AbilityMetaCategory.Part1Rulebook)
+            ;
+            abilityInfo.powerLevel = 0;
+
+            // Pass the ability to the API.
+            GiveObeliskSlot.ability = abilityInfo.ability;
+        }
+        private static void Add_Ability_Raft()
+        {
+            AbilityInfo abilityInfo = AbilityManager.New(
+                PluginGuid,
+                "Seaworthy",
+                "When played, converts the slot into a Raft.",
+                typeof(GiveRaft),
+                Tools.LoadTexture("ability_raft.png")
+            )
+            .AddMetaCategories(AbilityMetaCategory.Part1Rulebook)
+            ;
+            abilityInfo.powerLevel = 1;
+
+            // Pass the ability to the API.
+            GiveRaft.ability = abilityInfo.ability;
+        }
+        private static void Add_Ability_Muddy()
+        {
+            AbilityInfo abilityInfo = AbilityManager.New(
+                PluginGuid,
+                "Muddy",
+                "Other cards may be placed on top of [creature], but will be unable to attack for one turn and will gain Muddy. If [creature] is sacrificed, the sacrificing creature will be unable to attack for one turn.",
+                typeof(GiveMuddy),
+                Tools.LoadTexture("ability_mud.png")
+            ).AddMetaCategories(AbilityMetaCategory.Part1Rulebook)
+            ;
+            abilityInfo.powerLevel = -1;
+
+
+            // Pass the ability to the API.
+            GiveMuddy.ability = abilityInfo.ability;
+        }
+        private static void Add_Ability_Shelter()
+        {
+            AbilityInfo abilityInfo = AbilityManager.New(
+                PluginGuid,
+                "Shelter",
+                "Adjacent cards are sheltered from environmental effects.",
+                typeof(GiveShelter),
+                Tools.LoadTexture("ability_shelter.png")
+            ).AddMetaCategories(AbilityMetaCategory.Part1Rulebook)
+            ;
+            abilityInfo.powerLevel = 3;
+
+
+            // Pass the ability to the API.
+            GiveShelter.ability = abilityInfo.ability;
+        }
+        private static void Add_Ability_Dynamite()
+        {
+            AbilityInfo abilityInfo = AbilityManager.New(
+                PluginGuid,
+                "Explosive",
+                "Other cards may be placed on top of [creature]; the other card, adjacent cards, and opposing cards will all be dealt 10 damage.",
+                typeof(GiveDynamite),
+                Tools.LoadTexture("ability_dynamite.png")
+            ).AddMetaCategories(AbilityMetaCategory.Part1Rulebook)
+            ;
+            abilityInfo.powerLevel = -1;
+
+
+            // Pass the ability to the API.
+            GiveDynamite.ability = abilityInfo.ability;
+        }
         private static void Add_Ability_Warper()
         {
             AbilityInfo abilityInfo = AbilityManager.New(
@@ -113,54 +195,6 @@ namespace BittysChallenges
             // Pass the ability to the API.
             GiveParalysis.ability = abilityInfo.ability;
         }
-        private static void Add_Ability_Muddy()
-        {
-            AbilityInfo abilityInfo = AbilityManager.New(
-                PluginGuid,
-                "Muddy",
-                "Other cards may be placed on top of [creature], but will be unable to attack for one turn and will gain Muddy. If [creature] is sacrificed, the sacrificing creature will be unable to attack for one turn.",
-                typeof(GiveMuddy),
-                Tools.LoadTexture("ability_mud.png")
-            ).AddMetaCategories(AbilityMetaCategory.Part1Rulebook)
-            ;
-            abilityInfo.powerLevel = -1;
-
-
-            // Pass the ability to the API.
-            GiveMuddy.ability = abilityInfo.ability;
-        }
-        private static void Add_Ability_Shelter()
-        {
-            AbilityInfo abilityInfo = AbilityManager.New(
-                PluginGuid,
-                "Shelter",
-                "Adjacent cards are sheltered from environmental effects.",
-                typeof(GiveShelter),
-                Tools.LoadTexture("ability_shelter.png")
-            ).AddMetaCategories(AbilityMetaCategory.Part1Rulebook)
-            ;
-            abilityInfo.powerLevel = 3;
-
-
-            // Pass the ability to the API.
-            GiveShelter.ability = abilityInfo.ability;
-        }
-        private static void Add_Ability_Dynamite()
-        {
-            AbilityInfo abilityInfo = AbilityManager.New(
-                PluginGuid,
-                "Explosive",
-                "Other cards may be placed on top of [creature]; the other card, adjacent cards, and opposing cards will all be dealt 10 damage.",
-                typeof(GiveDynamite),
-                Tools.LoadTexture("ability_dynamite.png")
-            ).AddMetaCategories(AbilityMetaCategory.Part1Rulebook)
-            ;
-            abilityInfo.powerLevel = -1;
-
-
-            // Pass the ability to the API.
-            GiveDynamite.ability = abilityInfo.ability;
-        }
         private static void Add_Ability_StrafeKiller()
         {
             AbilityInfo abilityInfo = AbilityManager.New(
@@ -193,39 +227,8 @@ namespace BittysChallenges
             // Pass the ability to the API.
             GiveStrafeAvalanche.ability = abilityInfo.ability;
         }
-        private static void Add_Ability_ObeliskSlot()
-        {
-            AbilityInfo abilityInfo = AbilityManager.New(
-                PluginGuid,
-                "Sacrificial Slab",
-                "Other cards may be placed on top of [creature]; the other card will die.",
-                typeof(GiveObeliskSlot),
-                Tools.LoadTexture("ability_sacrificeslab.png")
-            )
-            .AddMetaCategories(AbilityMetaCategory.Part1Rulebook)
-            ;
-            abilityInfo.powerLevel = 0;
-
-            // Pass the ability to the API.
-            GiveObeliskSlot.ability = abilityInfo.ability;
-        }
-        private static void Add_Ability_Raft()
-        {
-            AbilityInfo abilityInfo = AbilityManager.New(
-                PluginGuid,
-                "Seaworthy",
-                "Other cards may be placed on top of [creature], any Waterborne sigils on the card will be negated.",
-                typeof(GiveRaft),
-                Tools.LoadTexture("ability_raft.png")
-            )
-            .AddMetaCategories(AbilityMetaCategory.Part1Rulebook)
-            ;
-            abilityInfo.powerLevel = 1;
-
-            // Pass the ability to the API.
-            GiveRaft.ability = abilityInfo.ability;
-        }
         //CHAMPION ABILITIES ------------------------------------------------
+        #region Champ Abilities
         private static void Add_Ability_RedChamp()
         {
             AbilityInfo abilityInfo = AbilityManager.New(
@@ -419,48 +422,9 @@ namespace BittysChallenges
             GiveBrightRedChamp.ability = abilityInfo.ability;
         }
         #endregion
+        #endregion
         #region Abilities
         #region abilities to be replaced or changed
-        public class GiveRaft : MergeKillSelf
-        {
-            //change this one to spawn the safe slot
-            public override Ability Ability
-            {
-                get
-                {
-                    return GiveRaft.ability;
-                }
-            }
-            public override bool IsActualDeath
-            {
-                get
-                {
-                    return false;
-                }
-            }
-            private void Start()
-            {
-                mod.singletonId = "bitty_mergeSigil";
-                mod.negateAbilities.Add(Ability.Submerge);
-                base.Card.AddTemporaryMod(mod);
-            }
-            public override IEnumerator OnPreCreatureMerge(PlayableCard mergeCard)
-            {
-                CardModificationInfo mod = new CardModificationInfo();
-                mod.negateAbilities.Add(Ability.Submerge);
-                mod.negateAbilities.Add(Ability.SubmergeSquid);
-                mergeCard.AddTemporaryMod(mod);
-                yield break;
-            }
-            public override IEnumerator OnPreMergeDeath(PlayableCard mergeCard)
-            {
-                yield break;
-            }
-
-            private CardModificationInfo mod = new CardModificationInfo();
-
-            public static Ability ability;
-        }
         public class GiveMuddy : MergeKillSelf
         {
             public override Ability Ability
@@ -660,10 +624,45 @@ namespace BittysChallenges
             public static Ability ability;
         }
         #endregion
+        public class GiveRaft : AbilityBehaviour
+        {
+            //change this one to spawn the safe slot
+            public override Ability Ability
+            {
+                get
+                {
+                    return GiveRaft.ability;
+                }
+            }
+            private void Start()
+            {
+                mod.singletonId = "bitty_spaceNotRequired";
+                base.Card.AddTemporaryMod(mod);
+            }
+            public override bool RespondsToResolveOnBoard()
+            {
+                return true;
+            }
+            public override IEnumerator OnResolveOnBoard()
+            {
+                yield return Card.Slot.SetSlotModification(SlotMods.SlotMod_Raft.SlotType);
+                yield break;
+            }
+
+            private CardModificationInfo mod = new CardModificationInfo();
+
+            public static Ability ability;
+        }
         public class AddCloverReRollAbility : SpecialCardBehaviour, IOnOtherCardResolveInHand
         {
             public readonly static SpecialTriggeredAbility CloverReRollSpecialAbility = SpecialTriggeredAbilityManager.Add(PluginGuid, "CloverReRollSpecialAbility", typeof(AddCloverReRollAbility)).Id;
 
+            private CardModificationInfo mod = new CardModificationInfo();
+            private void Start()
+            {
+                mod.singletonId = "bitty_spaceNotRequired";
+                base.PlayableCard.AddTemporaryMod(mod);
+            }
             public override bool RespondsToResolveOnBoard()
             {
                 return true;

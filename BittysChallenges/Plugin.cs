@@ -55,6 +55,7 @@ namespace BittysChallenges
             //loading things into API
             Challenges.AddChallenges();
 			Boons.AddBoons();
+            SlotMods.Add_SlotMods();
 			Abilities.AddAbilities();
 			Cards.AddCards();
             

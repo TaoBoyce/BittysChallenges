@@ -347,14 +347,14 @@ namespace BittysChallenges
         {
             [HarmonyPostfix]
             [HarmonyPatch(typeof(BoardManager), nameof(BoardManager.SacrificesCreateRoomForCard))]
-            public static void PlaceRoomBypass(ref bool __result)
+            public static void MergeSigilPatch(ref bool __result)
             {
                 foreach (CardSlot slot in Singleton<BoardManager>.Instance.PlayerSlotsCopy)
                 {
                     if (slot.Card != null)
                     {
-                        bool? required = CardExtensions.GetExtendedPropertyAsBool(slot.Card.Info, "bitty_spaceNotRequired");
-                        if (required.HasValue && required == true)
+                        CardModificationInfo cardModificationInfo = slot.Card.TemporaryMods.Find((CardModificationInfo x) => x.singletonId == "bitty_spaceNotRequired");
+                        if (cardModificationInfo != null)
                         {
                             __result = true;
                         }

@@ -158,6 +158,7 @@ namespace BittysChallenges
             CardManager.Add(CardPrefix, Obelisk);
         }
 
+        #endregion
         private static void Add_Card_Raft()
         {
             CardInfo Raft = CardManager.New(
@@ -186,7 +187,6 @@ namespace BittysChallenges
             // Pass the card to the API.
             CardManager.Add(CardPrefix, Raft);
         }
-        #endregion
         private static void Add_Card_AscenderBane()
         {
             CardInfo newCard = CardManager.New(
