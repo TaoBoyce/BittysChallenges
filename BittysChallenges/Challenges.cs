@@ -343,6 +343,26 @@ namespace BittysChallenges
         #endregion
         #region Challenge Patches
         [HarmonyPatch]
+        class MiscPatches
+        {
+            [HarmonyPostfix]
+            [HarmonyPatch(typeof(BoardManager), nameof(BoardManager.SacrificesCreateRoomForCard))]
+            public static void PlaceRoomBypass(ref bool __result)
+            {
+                foreach (CardSlot slot in Singleton<BoardManager>.Instance.PlayerSlotsCopy)
+                {
+                    if (slot.Card != null)
+                    {
+                        bool? required = CardExtensions.GetExtendedPropertyAsBool(slot.Card.Info, "bitty_spaceNotRequired");
+                        if (required.HasValue && required == true)
+                        {
+                            __result = true;
+                        }
+                    }
+                }
+            }
+        }
+        [HarmonyPatch]
         public class RandomPiratesPatch
         {
             [HarmonyPostfix]
@@ -1413,22 +1433,6 @@ namespace BittysChallenges
                 ClearEnvironmentBoons();
             }
 
-            [HarmonyPostfix]
-            [HarmonyPatch(typeof(BoardManager), nameof(BoardManager.SacrificesCreateRoomForCard))]
-            public static void MergeSigilPatch(ref bool __result)
-            {
-                foreach (CardSlot slot in Singleton<BoardManager>.Instance.PlayerSlotsCopy)
-                {
-                    if (slot.Card != null)
-                    {
-                        CardModificationInfo cardModificationInfo = slot.Card.TemporaryMods.Find((CardModificationInfo x) => x.singletonId == "bitty_mergeSigil");
-                        if (cardModificationInfo != null)
-                        {
-                            __result = true;
-                        }
-                    }
-                }
-            }
             public static void ClearEnvironmentBoons()
             {
                 if (RunState.Run.playerDeck.Boons.Count > 0)
