@@ -34,6 +34,7 @@ namespace BittysChallenges
             Add_Card_Raft();
             Add_Card_AscenderBane();
             Add_Card_CloverReRoll();
+            Add_Card_Test();
             Log.LogInfo("End of cards");
         }
         #region CardLoaders
@@ -159,6 +160,32 @@ namespace BittysChallenges
         }
 
         #endregion
+        private static void Add_Card_Test()
+        {
+            CardInfo Test = CardManager.New(
+
+                // Card ID Prefix
+                modPrefix: CardPrefix,
+                // Card internal name.
+                "ChallengeTest",
+                // Card display name.
+                "Test",
+                // Attack.
+                0,
+                // Health.
+                1,
+                // Description
+                description: "Testing Card."
+            )
+
+            //free card
+            .AddAbilities(GiveSlotSpawner.ability)
+
+            .SetPortraitAndEmission(Tools.LoadTexture("portrait_test.png"), Tools.LoadTexture("portrait_test.png"))
+            ;
+            // Pass the card to the API.
+            CardManager.Add(CardPrefix, Test);
+        }
         private static void Add_Card_Raft()
         {
             CardInfo Raft = CardManager.New(

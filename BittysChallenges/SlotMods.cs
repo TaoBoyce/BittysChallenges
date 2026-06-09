@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using static BittysChallenges.Abilities;
+using static BittysChallenges.Plugin;
 
 namespace BittysChallenges
 {
@@ -13,13 +14,15 @@ namespace BittysChallenges
     {
         public static void Add_SlotMods()
         {
+            Log.LogInfo("Start of slot mods");
             Add_Slot_Raft();
+            Log.LogInfo("End of slot mods");
         }
         #region SlotMod Loaders
         public static void Add_Slot_Raft()
         {
             SlotModificationManager.ModificationType SlotRaft = SlotModificationManager.New(
-            Plugin.PluginGuid,
+            PluginGuid,
             "SlotRaft",
             typeof(SlotMod_Raft),
             Tools.LoadTexture("card_slot_test.png")
@@ -35,19 +38,8 @@ namespace BittysChallenges
         }
         #endregion
         #region SlotMods
-        public abstract class SlotMod : SlotModificationBehaviour
+        public class SlotMod_Raft : SlotModificationBehaviour
         {
-            public abstract SlotModificationManager.ModificationType ModificationType { get; }
-        }
-        public class SlotMod_Raft : SlotMod
-        {
-            public override SlotModificationManager.ModificationType ModificationType
-            {
-                get
-                {
-                    return SlotType;
-                }
-            }
             public static SlotModificationManager.ModificationType SlotType;
 
             public override bool RespondsToOtherCardResolve(PlayableCard otherCard)

@@ -115,6 +115,7 @@
     <None Remove="Resources\boon_swamp.png" />
     <None Remove="Resources\boon_voidaura.png" />
     <None Remove="Resources\card_clover.png" />
+    <None Remove="Resources\card_slot_test.png" />
     <None Remove="Resources\card_slot_up.png" />
     <None Remove="Resources\particle_aura.png" />
     <None Remove="Resources\particle_cross.png" />
@@ -153,6 +154,7 @@
     <None Remove="Resources\portrait_totemheadless_emission.png" />
     <None Remove="Resources\portrait_totem_emission.png" />
     <None Remove="Resources\portrait_woodenplank.png" />
+    <None Remove="Resources\sfx_vineBoom.ogg" />
     <None Remove="Resources\starterdeck_icon_pirate.png" />
   </ItemGroup>
 
@@ -257,6 +259,7 @@
     <EmbeddedResource Include="Resources\boon_swamp.png" />
     <EmbeddedResource Include="Resources\boon_voidaura.png" />
     <EmbeddedResource Include="Resources\card_clover.png" />
+    <EmbeddedResource Include="Resources\card_slot_test.png" />
     <EmbeddedResource Include="Resources\card_slot_up.png" />
     <EmbeddedResource Include="Resources\particle_aura.png" />
     <EmbeddedResource Include="Resources\particle_cross.png" />
@@ -295,6 +298,7 @@
     <EmbeddedResource Include="Resources\portrait_totemheadless_emission.png" />
     <EmbeddedResource Include="Resources\portrait_totem_emission.png" />
     <EmbeddedResource Include="Resources\portrait_woodenplank.png" />
+    <EmbeddedResource Include="Resources\sfx_vineBoom.ogg" />
     <EmbeddedResource Include="Resources\starterdeck_icon_pirate.png" />
   </ItemGroup>
 

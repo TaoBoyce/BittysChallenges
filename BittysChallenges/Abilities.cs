@@ -3,6 +3,7 @@ using DiskCardGame;
 using HarmonyLib;
 using InscryptionAPI.Card;
 using InscryptionAPI.Helpers.Extensions;
+using InscryptionAPI.RuleBook;
 using InscryptionAPI.Slots;
 using InscryptionAPI.Triggers;
 using InscryptionMod.Abilities;
@@ -36,6 +37,7 @@ namespace BittysChallenges
             Add_Ability_StrafeAvalanche();
             Add_Ability_ObeliskSlot();
             Add_Ability_Raft();
+            Add_Ability_SlotSpawner();
             Log.LogInfo("End of sigils");
 
             Log.LogInfo("Start of champs");
@@ -69,22 +71,6 @@ namespace BittysChallenges
 
             // Pass the ability to the API.
             GiveObeliskSlot.ability = abilityInfo.ability;
-        }
-        private static void Add_Ability_Raft()
-        {
-            AbilityInfo abilityInfo = AbilityManager.New(
-                PluginGuid,
-                "Seaworthy",
-                "When played, converts the slot into a Raft.",
-                typeof(GiveRaft),
-                Tools.LoadTexture("ability_raft.png")
-            )
-            .AddMetaCategories(AbilityMetaCategory.Part1Rulebook)
-            ;
-            abilityInfo.powerLevel = 1;
-
-            // Pass the ability to the API.
-            GiveRaft.ability = abilityInfo.ability;
         }
         private static void Add_Ability_Muddy()
         {
@@ -133,6 +119,39 @@ namespace BittysChallenges
 
             // Pass the ability to the API.
             GiveDynamite.ability = abilityInfo.ability;
+        }
+        private static void Add_Ability_SlotSpawner()
+        {
+            AbilityInfo abilityInfo = AbilityManager.New(
+                PluginGuid,
+                "Slot Spawner",
+                "When played, spawns a slot.",
+                typeof(GiveSlotSpawner),
+                Tools.LoadTexture("ability_test.png")
+            )
+            .AddMetaCategories(AbilityMetaCategory.Part1Rulebook)
+            ;
+            abilityInfo.powerLevel = 1;
+
+            // Pass the ability to the API.
+            GiveRaft.ability = abilityInfo.ability;
+        }
+        private static void Add_Ability_Raft()
+        {
+            AbilityInfo abilityInfo = AbilityManager.New(
+                PluginGuid,
+                "Seaworthy",
+                "When played, converts the slot into a Raft.",
+                typeof(GiveRaft),
+                Tools.LoadTexture("ability_raft.png")
+            )
+            .AddMetaCategories(AbilityMetaCategory.Part1Rulebook)
+            .SetSlotRedirect("Raft", SlotMods.SlotMod_Raft.SlotType, GameColors.Instance.orange)
+            ;
+            abilityInfo.powerLevel = 1;
+
+            // Pass the ability to the API.
+            GiveRaft.ability = abilityInfo.ability;
         }
         private static void Add_Ability_Warper()
         {
@@ -624,20 +643,14 @@ namespace BittysChallenges
             public static Ability ability;
         }
         #endregion
-        public class GiveRaft : AbilityBehaviour
+        public class GiveSlotSpawner : AbilityBehaviour
         {
-            //change this one to spawn the safe slot
             public override Ability Ability
             {
                 get
                 {
-                    return GiveRaft.ability;
+                    return GiveSlotSpawner.ability;
                 }
-            }
-            private void Start()
-            {
-                mod.singletonId = "bitty_spaceNotRequired";
-                base.Card.AddTemporaryMod(mod);
             }
             public override bool RespondsToResolveOnBoard()
             {
@@ -646,10 +659,33 @@ namespace BittysChallenges
             public override IEnumerator OnResolveOnBoard()
             {
                 yield return Card.Slot.SetSlotModification(SlotMods.SlotMod_Raft.SlotType);
+                base.Card.Anim.PlayDeathAnimation(false);
+                Object.Destroy(base.Card.gameObject);
                 yield break;
             }
 
-            private CardModificationInfo mod = new CardModificationInfo();
+            public static Ability ability;
+        }
+        public class GiveRaft : AbilityBehaviour
+        {
+            public override Ability Ability
+            {
+                get
+                {
+                    return GiveRaft.ability;
+                }
+            }
+            public override bool RespondsToResolveOnBoard()
+            {
+                return true;
+            }
+            public override IEnumerator OnResolveOnBoard()
+            {
+                yield return Card.Slot.SetSlotModification(SlotMods.SlotMod_Raft.SlotType);
+                base.Card.Anim.PlayDeathAnimation(false);
+                Object.Destroy(base.Card.gameObject);
+                yield break;
+            }
 
             public static Ability ability;
         }
@@ -657,9 +693,9 @@ namespace BittysChallenges
         {
             public readonly static SpecialTriggeredAbility CloverReRollSpecialAbility = SpecialTriggeredAbilityManager.Add(PluginGuid, "CloverReRollSpecialAbility", typeof(AddCloverReRollAbility)).Id;
 
-            private CardModificationInfo mod = new CardModificationInfo();
             private void Start()
             {
+                CardModificationInfo mod = new CardModificationInfo();
                 mod.singletonId = "bitty_spaceNotRequired";
                 base.PlayableCard.AddTemporaryMod(mod);
             }

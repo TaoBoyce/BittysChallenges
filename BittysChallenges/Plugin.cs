@@ -50,7 +50,7 @@ namespace BittysChallenges
 
             AssemblyLoc = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             //load audio
-            addedSfx.Add(SoundManager.LoadAudioClip(PluginGuid, AssemblyLoc+"/Resources/sfx_vineBoom.ogg"));
+            addedSfx.Add(SoundManager.LoadAudioClip(PluginGuid, AssemblyLoc + "/Resources/sfx_vineBoom.ogg"));
 
             //loading things into API
             Challenges.AddChallenges();
