@@ -1396,12 +1396,15 @@ namespace BittysChallenges
             [HarmonyPatch(typeof(TurnManager), nameof(TurnManager.CleanupPhase))]
             public static void EnvironmentBoonCleanup()
             {
-                foreach (CardSlot slot in Singleton<BoardManager>.Instance.AllSlotsCopy)
+                if (AscensionSaveData.Data.ChallengeIsActive(Challenges.Challenge_environment.challengeType))
                 {
-                    slot.ResetSlotTexture();
+                    foreach (CardSlot slot in Singleton<BoardManager>.Instance.AllSlotsCopy)
+                    {
+                        slot.ResetSlotTexture();
+                    }
+                    Singleton<TableVisualEffectsManager>.Instance.ResetTableColors();
+                    ClearEnvironmentBoons();
                 }
-                Singleton<TableVisualEffectsManager>.Instance.ResetTableColors();
-                ClearEnvironmentBoons();
             }
 
             public static void ClearEnvironmentBoons()
