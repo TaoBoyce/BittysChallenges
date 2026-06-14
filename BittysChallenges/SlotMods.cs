@@ -1,6 +1,7 @@
 ﻿using BittysSigils;
 using DiskCardGame;
 using InscryptionAPI.Card;
+using InscryptionAPI.Dialogue;
 using InscryptionAPI.Helpers;
 using InscryptionAPI.RuleBook;
 using InscryptionAPI.Slots;
@@ -145,7 +146,7 @@ namespace BittysChallenges
             )
             .SetRulebook(
             "Growth Slot",
-            "When a creature is played in this slot, instantly evolve it if it has Evolve. If it does not have Evolve, it instead gains Evolve.",
+            "When a creature is played in this slot, instantly evolve it if it has Fledgeling. If it does not have Fledgling, it instead gains Fledgling.",
             Tools.LoadTexture("boonicon_flashgrowth.png"),
             SlotModificationManager.ModificationMetaCategory.Part1Rulebook
             )
@@ -218,18 +219,11 @@ namespace BittysChallenges
                 if (otherCard.Info.HasTrait(Trait.Goat) || otherCard.HasAbility(Ability.TripleBlood))
                 {
                     AudioController.Instance.PlaySound2D("creepy_rattle_lofi", MixerGroup.None, 1f, 0f, null, null, null, null, false);
-                    yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("WorthySacrifice", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
-                    DeckInfo currentDeck = SaveManager.SaveFile.CurrentDeck;
-                    CardInfo card = currentDeck.Cards.Find((CardInfo x) => x == otherCard.Info);
-                    if (card != null)
-                    {
-                        Plugin.Log.LogInfo("Removing: " + card.name);
-                        currentDeck.RemoveCard(card);
-                    }
+
+                    yield return DialogueManager.PlayDialogueEventSafe("WorthySacrifice", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait);
+                    yield return new WaitForSeconds(0.25f);
                     Singleton<ViewManager>.Instance.SwitchToView(View.Default);
                     yield return new WaitForSeconds(0.25f);
-                    RunState.Run.playerDeck.AddBoon(BoonData.Type.StartingBones);
-                    yield return Singleton<BoonsHandler>.Instance.PlayBoonAnimation(BoonData.Type.StartingBones);
                     yield return Singleton<ResourcesManager>.Instance.AddBones(8, null);
                     yield return new WaitForSeconds(0.25f);
                     properSacrifice = true;
@@ -245,16 +239,17 @@ namespace BittysChallenges
                     {
                         yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("TerrainSacrifice", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
                     }
+                    yield return new WaitForSeconds(0.25f);
                     List<CardSlot> opponentSlotsCopy = Singleton<BoardManager>.Instance.OpponentSlotsCopy;
                     opponentSlotsCopy.RemoveAll((CardSlot x) => x.Card == null || x.Card.Info.name != "bitty_Obelisk");
-                    if (opponentSlotsCopy != null)
+                    if (opponentSlotsCopy.Count > 0)
                     {
-                        CardInfo card = opponentSlotsCopy[0].Card.Info;
-                        card.Mods.Add(new CardModificationInfo(Ability.BuffNeighbours));
                         AudioController.Instance.PlaySound3D("dueldisk_card_played", MixerGroup.TableObjectsSFX, opponentSlotsCopy[0].Card.transform.position, 2f, 0f, null, null, null, null, false);
-
-                        opponentSlotsCopy[0].Card.OnStatsChanged();
-                        opponentSlotsCopy[0].Card.Anim.PlayTransformAnimation();
+                        for (int i = 0; i < opponentSlotsCopy.Count; i++)
+                        {
+                            opponentSlotsCopy[i].Card.AddTemporaryMod(mod);
+                            opponentSlotsCopy[i].Card.Anim.PlayTransformAnimation();
+                        }
                     }
                 }
                 else if (otherCard.name.Contains("Squirrel"))
@@ -265,18 +260,28 @@ namespace BittysChallenges
                     {
                         squirrelSacrifices.ToString()
                     }, null);
+                    yield return new WaitForSeconds(0.25f);
                 }
                 else
                 {
                     yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("NormalSacrifice", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
+
+                    yield return new WaitForSeconds(0.25f);
                 }
                 yield return otherCard.Die(false, null, true);
                 if (properSacrifice)
                 {
-                    Slot.ClearSlotModification();
+                    yield return Slot.ClearSlotModification();
                 }
                 yield break;
             }
+
+            CardModificationInfo mod = new CardModificationInfo(1, 0)
+            {
+                singletonId = "bitty_obeliskAnger",
+                abilities = new List<Ability>() { Ability.BuffNeighbours},
+                nonCopyable = true,
+            };
             private bool properSacrifice = false;
             public int squirrelSacrifices;
         }
@@ -343,8 +348,14 @@ namespace BittysChallenges
             }
             public override IEnumerator OnOtherCardResolve(PlayableCard otherCard)
             {
-                otherCard.TakeDamage(1, null);
-                otherCard.AddTemporaryMod(mod);
+                AudioController.Instance.PlaySound2D("teslacoil_overload", MixerGroup.TableObjectsSFX, 1f, 0f, null, null, null, null, false);
+                yield return otherCard.TakeDamage(1, null);
+                if(otherCard.Dead != true)
+                {
+                    yield return new WaitForSeconds(0.3f);
+                    otherCard.Anim.PlayTransformAnimation();
+                    otherCard.AddTemporaryMod(mod);
+                }
                 yield break;
             }
 

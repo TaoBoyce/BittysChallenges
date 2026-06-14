@@ -5,6 +5,7 @@ using InscryptionAPI.Ascension;
 using InscryptionAPI.Boons;
 using InscryptionAPI.Card;
 using InscryptionAPI.Saves;
+using InscryptionAPI.Slots;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -342,26 +343,6 @@ namespace BittysChallenges
         }
         #endregion
         #region Challenge Patches
-        [HarmonyPatch]
-        class MiscPatches
-        {
-            [HarmonyPostfix]
-            [HarmonyPatch(typeof(BoardManager), nameof(BoardManager.SacrificesCreateRoomForCard))]
-            public static void SpaceRequiredPatch(ref bool __result)
-            {
-                foreach (CardSlot slot in Singleton<BoardManager>.Instance.PlayerSlotsCopy)
-                {
-                    if (slot.Card != null)
-                    {
-                        CardModificationInfo cardModificationInfo = slot.Card.TemporaryMods.Find((CardModificationInfo x) => x.singletonId == "bitty_spaceNotRequired");
-                        if (cardModificationInfo != null)
-                        {
-                            __result = true;
-                        }
-                    }
-                }
-            }
-        }
         [HarmonyPatch]
         public class RandomPiratesPatch
         {
@@ -1286,6 +1267,12 @@ namespace BittysChallenges
                 {
                     ClearEnvironmentBoons();
                     IncreaseEnviroNumber();
+
+                    bool boonActive = SeededRandom.Bool(SaveManager.SaveFile.GetCurrentRandomSeed() + 2);
+                    if (!boonActive)
+                    {
+                        return true;
+                    }
                     List<BoonData.Type> boons = new List<BoonData.Type>();
                     if (!Plugin.IsP03Run)
                     {
@@ -1395,7 +1382,6 @@ namespace BittysChallenges
                         Plugin.Log.LogInfo("Added Electrical Storm to boons pool: " + ChallengeBoonElectricStorm.boo);
                     }
                     int i = EnvironmentNumber() % boons.Count;
-                    bool boonActive = SeededRandom.Bool(SaveManager.SaveFile.GetCurrentRandomSeed() + 2);
                     if (boonActive && boons != null)
                     {
                         RunState.Run.playerDeck.AddBoon(boons[i]);
@@ -1412,22 +1398,7 @@ namespace BittysChallenges
             {
                 foreach (CardSlot slot in Singleton<BoardManager>.Instance.AllSlotsCopy)
                 {
-                    if (SaveManager.SaveFile.IsPart1)
-                    {
-                        slot.SetTexture(ResourceBank.Get<Texture>("Art/Cards/card_slot"));
-                    }
-                    if (SaveManager.SaveFile.IsPart3)
-                    {
-                        slot.SetTexture(ResourceBank.Get<Texture>("Art/Cards/card_slot_tech"));
-                    }
-                    if (SaveManager.SaveFile.IsGrimora)
-                    {
-                        slot.SetTexture(ResourceBank.Get<Texture>("Art/Cards/card_slot_undead"));
-                    }
-                    if (SaveManager.SaveFile.IsMagnificus)
-                    {
-                        slot.SetTexture(ResourceBank.Get<Texture>("Art/Cards/card_slot_wizard"));
-                    }
+                    slot.ResetSlotTexture();
                 }
                 Singleton<TableVisualEffectsManager>.Instance.ResetTableColors();
                 ClearEnvironmentBoons();

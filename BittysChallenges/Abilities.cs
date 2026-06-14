@@ -6,7 +6,6 @@ using InscryptionAPI.Helpers.Extensions;
 using InscryptionAPI.RuleBook;
 using InscryptionAPI.Slots;
 using InscryptionAPI.Triggers;
-using InscryptionMod.Abilities;
 using Pixelplacement;
 using System;
 using System.Collections;
@@ -390,7 +389,7 @@ namespace BittysChallenges
             }
             public override IEnumerator OnResolveOnBoard()
             {
-                yield return Card.Slot.SetSlotModification(SlotMods.SlotMod_Breeze.SlotType);
+                yield return Card.Slot.SetSlotModification(SlotMods.SlotMod_Obelisk.SlotType);
                 base.Card.Anim.PlayDeathAnimation(false);
                 Object.Destroy(base.Card.gameObject);
                 yield break;
@@ -425,12 +424,6 @@ namespace BittysChallenges
         {
             public readonly static SpecialTriggeredAbility CloverReRollSpecialAbility = SpecialTriggeredAbilityManager.Add(PluginGuid, "CloverReRollSpecialAbility", typeof(AddCloverReRollAbility)).Id;
 
-            private void Start()
-            {
-                CardModificationInfo mod = new CardModificationInfo();
-                mod.singletonId = "bitty_spaceNotRequired";
-                base.PlayableCard.AddTemporaryMod(mod);
-            }
             public override bool RespondsToResolveOnBoard()
             {
                 return true;

@@ -393,8 +393,7 @@ namespace BittysChallenges
                 DialogueHelper.AddOrModifySimpleDialogEvent("WorthySacrifice", new string[]
                 {
                 "The obelisk trembles in delight.",
-                "This is truly a worthy sacrifice.",
-                "You won't be seeing it again."
+                "This is truly a worthy sacrifice."
                 }, null, null, Emotion.Neutral, "NewRunDealtDeckDefault");
                 DialogueHelper.AddOrModifySimpleDialogEvent("PeltSacrifice", new string[]
                 {
