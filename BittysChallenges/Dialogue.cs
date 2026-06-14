@@ -390,16 +390,26 @@ namespace BittysChallenges
                 "A stone tablet sits in front of it, clearly made for sacrifices.",
                 "Perhaps a certain creature may cause a reaction?"
                 }, null, null, Emotion.Neutral, "NewRunDealtDeckDefault");
-                DialogueHelper.AddOrModifySimpleDialogEvent("GoatSacrifice", new string[]
+                DialogueHelper.AddOrModifySimpleDialogEvent("WorthySacrifice", new string[]
                 {
                 "The obelisk trembles in delight.",
-                "A goat is truly a worthy sacrifice.",
+                "This is truly a worthy sacrifice.",
                 "You won't be seeing it again."
                 }, null, null, Emotion.Neutral, "NewRunDealtDeckDefault");
                 DialogueHelper.AddOrModifySimpleDialogEvent("PeltSacrifice", new string[]
                 {
                 "The obelisk rumbles with anger.",
                 "A pelt is a truly pitiful sacrifice."
+                }, null, null, Emotion.Neutral, "NewRunDealtDeckDefault");
+                DialogueHelper.AddOrModifySimpleDialogEvent("TerrainSacrifice", new string[]
+                {
+                "The obelisk rumbles with anger.",
+                "Such a thing... does not bleed."
+                }, null, null, Emotion.Neutral, "NewRunDealtDeckDefault");
+                DialogueHelper.AddOrModifySimpleDialogEvent("NormalSacrifice", new string[]
+                {
+                "The obelisk does not react.",
+                "Perhaps, something greater."
                 }, null, null, Emotion.Neutral, "NewRunDealtDeckDefault");
                 DialogueHelper.AddOrModifySimpleDialogEvent("SquirrelSacrifice", new string[]
                 {
@@ -421,7 +431,7 @@ namespace BittysChallenges
                 },
                 new string[]
                 {
-                    "[v:0]..."
+                    "[v:0] squirrels..."
                 }
                 }, null, Emotion.Neutral, "NewRunDealtDeckDefault");
                 DialogueHelper.AddOrModifySimpleDialogEvent("MinicelloBoonIntro", new string[]

@@ -18,16 +18,12 @@ namespace BittysChallenges
             Add_Card_TravelingOuroboros();
             Add_Card_GoldenSheep();
             Add_Card_WoodenBoard();
-            Add_Card_Mud();
-            Add_Card_Shelter();
             Add_Card_Cliff();
             Add_Card_Mushrooms();
-            Add_Card_Dynamite();
             Add_Card_IceCube();
             Add_Card_Totem();
             Add_Card_Avalanche();
             Add_Card_Obelisk();
-            Add_Card_ObeliskSpace();
             Add_Card_Minicello();
             Add_Card_DeckSkeletonPirate();
             Add_Card_DeckSkeletonParrot();
@@ -38,128 +34,6 @@ namespace BittysChallenges
             Log.LogInfo("End of cards");
         }
         #region CardLoaders
-        #region Cards to be replaced or changed
-        private static void Add_Card_Mud()
-        {
-            CardInfo Mud = CardManager.New(
-
-                // Card ID Prefix
-                modPrefix: CardPrefix,
-                // Card internal name.
-                "Mud",
-                // Card display name.
-                "Mud",
-                // Attack.
-                0,
-                // Health.
-                1,
-                // Description
-                description: "A pile of mud."
-            )
-
-            //free card
-
-            .AddAbilities(GiveMuddy.ability)
-            //card appearance
-            .SetTerrain()
-
-            .SetPortraitAndEmission(Tools.LoadTexture("portrait_Swamp_Mud.png"), Tools.LoadTexture("portrait_Swamp_Mud.png"))
-            ;
-            // Pass the card to the API.
-            CardManager.Add(CardPrefix, Mud);
-        }
-        private static void Add_Card_Shelter()
-        {
-            CardInfo shelter = CardManager.New(
-
-                // Card ID Prefix
-                modPrefix: CardPrefix,
-                // Card internal name.
-                "Shelter",
-                // Card display name.
-                "Shelter",
-                // Attack.
-                0,
-                // Health.
-                2,
-                // Description
-                description: "Shelter from the storm."
-            )
-
-            //free card
-
-            .AddAbilities(GiveShelter.ability)
-            //card appearance
-            .SetTerrain()
-
-            .SetPortraitAndEmission(Tools.LoadTexture("portrait_shelter.png"), Tools.LoadTexture("portrait_shelter.png"))
-            ;
-            // Pass the card to the API.
-            CardManager.Add(CardPrefix, shelter);
-        }
-        private static void Add_Card_Dynamite()
-        {
-            CardInfo Dynamite = CardManager.New(
-
-                // Card ID Prefix
-                modPrefix: CardPrefix,
-                // Card internal name.
-                "Dynamite",
-                // Card display name.
-                "Dynamite",
-                // Attack.
-                0,
-                // Health.
-                1,
-                // Description
-                description: "A box of dynamite."
-            )
-
-            //free card
-
-            .AddAbilities(GiveDynamite.ability)
-            .AddAbilities(Ability.ExplodeOnDeath)
-            //card appearance
-            .SetTerrain()
-
-            .SetPortraitAndEmission(Tools.LoadTexture("portrait_dynamite.png"), Tools.LoadTexture("portrait_dynamite.png"))
-            ;
-            // Pass the card to the API.
-            CardManager.Add(CardPrefix, Dynamite);
-        }
-
-        private static void Add_Card_ObeliskSpace()
-        {
-            CardInfo Obelisk = CardManager.New(
-
-                // Card ID Prefix
-                modPrefix: CardPrefix,
-                // Card internal name.
-                "ObeliskSpace",
-                // Card display name.
-                "Sacrificial Altar",
-                // Attack.
-                0,
-                // Health.
-                5,
-                // Description
-                description: "A flat mysterious stone."
-            )
-
-            //free card
-
-            .AddAbilities(Ability.MadeOfStone)
-            .AddAbilities(GiveObeliskSlot.ability)
-            //card appearance
-            .SetTerrain()
-
-            .SetPortraitAndEmission(Tools.LoadTexture("portrait_sacrificeslab.png"), Tools.LoadTexture("portrait_sacrificeslab.png"))
-            ;
-            // Pass the card to the API.
-            CardManager.Add(CardPrefix, Obelisk);
-        }
-
-        #endregion
         private static void Add_Card_Test()
         {
             CardInfo Test = CardManager.New(
@@ -369,8 +243,7 @@ namespace BittysChallenges
             ;
             // Pass the card to the API.
             CardManager.Add(CardPrefix, WoodenBoard);
-        }
-        
+        }     
         private static void Add_Card_Cliff()
         {
             CardInfo cliff = CardManager.New(
@@ -431,8 +304,7 @@ namespace BittysChallenges
             mushrooms.defaultEvolutionName = "Mega Mushrooms";
             // Pass the card to the API.
             CardManager.Add(CardPrefix, mushrooms);
-        }
-        
+        }      
         private static void Add_Card_IceCube()
         {
             CardInfo IceCube = CardManager.New(

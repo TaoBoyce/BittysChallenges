@@ -347,7 +347,7 @@ namespace BittysChallenges
         {
             [HarmonyPostfix]
             [HarmonyPatch(typeof(BoardManager), nameof(BoardManager.SacrificesCreateRoomForCard))]
-            public static void MergeSigilPatch(ref bool __result)
+            public static void SpaceRequiredPatch(ref bool __result)
             {
                 foreach (CardSlot slot in Singleton<BoardManager>.Instance.PlayerSlotsCopy)
                 {
