@@ -326,9 +326,6 @@
     <Reference Include="InscryptionAPI">
       <HintPath>..\..\..\..\AppData\Roaming\r2modmanPlus-local\Inscryption\profiles\Mod Dev\BepInEx\plugins\API_dev-API\InscryptionAPI.dll</HintPath>
     </Reference>
-    <Reference Include="MergeSigils">
-      <HintPath>..\..\..\..\AppData\Roaming\r2modmanPlus-local\Inscryption\profiles\Mod Dev\BepInEx\plugins\SpecialAPI-MergeSigils\MergeSigils.dll</HintPath>
-    </Reference>
     <Reference Include="Mono.Security">
       <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\Mono.Security.dll</HintPath>
     </Reference>

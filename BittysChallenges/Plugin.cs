@@ -12,7 +12,6 @@ using InscryptionAPI.Helpers.Extensions;
 using InscryptionAPI.Saves;
 using InscryptionAPI.Sound;
 using InscryptionAPI.Triggers;
-using InscryptionMod.Abilities;
 using Pixelplacement;
 using System;
 using System.Collections;
@@ -28,13 +27,12 @@ using Object = UnityEngine.Object;
 ///Changelog: 6.1.0
 ///Updates to existing challenges
 ///SFX uses API
-///
+///Environments use Slot Modifications instead of merge cards
 ///Credit:
 namespace BittysChallenges
 {
     [BepInPlugin(PluginGuid, PluginName, PluginVersion)]
     [BepInDependency("cyantist.inscryption.api", BepInDependency.DependencyFlags.HardDependency)]
-	[BepInDependency("spapi.inscryption.mergesigils", BepInDependency.DependencyFlags.HardDependency)]
 	[BepInDependency("bitty45.inscryption.sigils", BepInDependency.DependencyFlags.HardDependency)]
     public partial class Plugin : BaseUnityPlugin
     {

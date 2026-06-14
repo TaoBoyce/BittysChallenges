@@ -63,8 +63,8 @@ Thanks to:
 As with most mods, you need [BepInEx](https://inscryption.thunderstore.io/package/BepInEx/BepInExPack_Inscryption/) installed. You also need the [API](https://inscryption.thunderstore.io/package/API_dev/API/).
 
 ## Changelog 6.1.0
-- Refactor to make future changes easier
 - SFX now uses API
+- Environments use Slot Modifications instead of merge cards
 
 <details>
 <summary>Changelog</summary>
