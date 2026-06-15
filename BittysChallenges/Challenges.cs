@@ -1374,8 +1374,6 @@ namespace BittysChallenges
                         Plugin.Log.LogInfo("Added Graveyard to boons pool: " + ChallengeBoonGraveyard.boo);
                         boons.Add(ChallengeBoonFlashGrowth.boo);
                         Plugin.Log.LogInfo("Added Flash Growth to boons pool: " + ChallengeBoonFlashGrowth.boo);
-                        boons.Add(ChallengeBoonConveyor.boo);
-                        Plugin.Log.LogInfo("Added Conveyor to boons pool: " + ChallengeBoonConveyor.boo);
                         boons.Add(ChallengeBoonGemSanctuary.boo);
                         Plugin.Log.LogInfo("Added Gem Sanctuary to boons pool: " + ChallengeBoonGemSanctuary.boo);
                         boons.Add(ChallengeBoonElectricStorm.boo);
@@ -1449,7 +1447,6 @@ namespace BittysChallenges
                 ChallengeBoonBlizzard.boo,
 
 				//p03
-				ChallengeBoonConveyor.boo,
                 ChallengeBoonGemSanctuary.boo,
                 ChallengeBoonElectricStorm.boo
             };
@@ -1825,31 +1822,18 @@ namespace BittysChallenges
                         }
 
                         ChallengeActivationUI.Instance.ShowActivation(Challenges.Challenge_travelingOuro.challengeType);
-                        if (!Plugin.IsP03Run && !DialogueEventsData.EventIsPlayed("OuroIntro"))
-                        {
-                            yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("OuroIntro", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
-                        }
-                        else if (Plugin.IsP03Run && !DialogueEventsData.EventIsPlayed("P03OuroIntro"))
-                        {
-                            yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("P03OuroIntro", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null,
-                                new Action<DialogueEvent.Line>(Dialogue.P03HappyCloseUp));
-                        }
-                        else if (!Plugin.IsP03Run && Singleton<Opponent>.Instance.OpponentType == Opponent.Type.PirateSkullBoss)
-                        {
-
+                        if(Singleton<Opponent>.Instance.OpponentType == Opponent.Type.PirateSkullBoss)
+                        { 
+                            //nothing
                         }
                         else if (!Plugin.IsP03Run)
                         {
-                            int currentRandomSeed = SaveManager.SaveFile.GetCurrentRandomSeed();
-                            List<string> list = new List<string>
+                            yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("OuroIntro", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
+                        }
+                        else if (Plugin.IsP03Run)
                         {
-                            "OuroZoom1",
-                            "OuroZoom2",
-                            "OuroZoom3",
-                            "OuroZoom4"
-                        };
-                            string zoom = list[SeededRandom.Range(0, list.Count, currentRandomSeed++)];
-                            yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent(zoom, TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
+                            yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("P03OuroIntro", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null,
+                                new Action<DialogueEvent.Line>(Dialogue.P03HappyCloseUp));
                         }
 
                         yield return new WaitForSeconds(0.5f);
@@ -1889,24 +1873,8 @@ namespace BittysChallenges
                         }
 
                         ChallengeActivationUI.Instance.ShowActivation(Challenges.Challenge_goldenSheep.challengeType);
-                        if (!DialogueEventsData.EventIsPlayed("GoldenSheepIntro"))
-                        {
-                            yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("GoldenSheepIntro", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
-                        }
-                        else
-                        {
-                            int currentRandomSeed = SaveManager.SaveFile.GetCurrentRandomSeed();
-                            List<string> list = new List<string>
-                        {
-                            "GoldenSheepZoom1",
-                            "GoldenSheepZoom2",
-                            "GoldenSheepZoom3",
-                            "GoldenSheepZoom4"
-                        };
-                            string zoom = list[SeededRandom.Range(0, list.Count, currentRandomSeed++)];
-                            yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent(zoom, TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
-                        }
-
+                        yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("GoldenSheepIntro", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
+                        
                         yield return new WaitForSeconds(0.5f);
                         Singleton<ViewManager>.Instance.SwitchToView(oldView, false, false);
                         targetPos = null;
@@ -2016,17 +1984,13 @@ namespace BittysChallenges
                     yield return Singleton<LifeManager>.Instance.ShowResetSequence();
                     if (LifeRepeats() < Math.Max(0, Plugin.allowedResets.Value))
                     {
-                        if (!DialogueEventsData.EventIsPlayed("InfiniteLivesIntro"))
-                        {
-                            yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("InfiniteLivesIntro", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
-                        }
-                        else if (Singleton<Opponent>.Instance.OpponentType == Opponent.Type.PirateSkullBoss)
+                        if (Singleton<Opponent>.Instance.OpponentType == Opponent.Type.PirateSkullBoss)
                         {
                             yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("InfiniteLivesRoyal", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
                         }
                         else
                         {
-                            yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("InfiniteLivesRepeat", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
+                            yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("InfiniteLivesIntro", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
                         }
                     }
                     else if (LifeRepeats() == Math.Max(0, Plugin.allowedResets.Value))

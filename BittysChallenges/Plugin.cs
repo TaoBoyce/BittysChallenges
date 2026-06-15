@@ -56,6 +56,7 @@ namespace BittysChallenges
             SlotMods.Add_SlotMods();
 			Abilities.AddAbilities();
 			Cards.AddCards();
+            Dialogue.Add_Dialogue();
             
 			//Load all patches
 			harmony.PatchAll();

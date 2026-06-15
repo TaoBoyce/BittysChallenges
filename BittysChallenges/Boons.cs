@@ -35,7 +35,6 @@ namespace BittysChallenges
             Add_Boon_Breeze();
             Add_Boon_Graveyard();
             Add_Boon_FlashGrowth();
-            Add_Boon_Conveyor();
             Add_Boon_GemSanctuary();
             Add_Boon_ElectricalStorm();
             Log.LogInfo("End of boons");
@@ -166,13 +165,6 @@ namespace BittysChallenges
             Texture boonCardArt = Tools.LoadTexture("boon_flashgrowth");
             BoonData.Type boon = BoonManager.New(PluginGuid, "Environment: Flash Growth", typeof(ChallengeBoonFlashGrowth), "When a card is played, any sigils that activate at the start of the turn are activated.", boonRulebookIcon, boonCardArt, false, false, true);
             ChallengeBoonFlashGrowth.boo = boon;
-        }
-        private static void Add_Boon_Conveyor()
-        {
-            Texture boonRulebookIcon = Tools.LoadTexture("boonicon_breeze");
-            Texture boonCardArt = Tools.LoadTexture("boon_blank");
-            BoonData.Type boon = BoonManager.New(PluginGuid, "Environment: Factory", typeof(ChallengeBoonConveyor), "On Upkeep, all cards are rotated clockwise.", boonRulebookIcon, boonCardArt, false, false, false);
-            ChallengeBoonConveyor.boo = boon;
         }
         private static void Add_Boon_GemSanctuary()
         {
@@ -1021,14 +1013,14 @@ namespace BittysChallenges
 
                 if (SaveFile.IsAscension && DialogueEventsData.EventIsPlayed("EnvironmentsIntro"))
                 {
+                    yield return new WaitForSeconds(0.7f);
+                    Singleton<ViewManager>.Instance.SwitchToView(View.Board);
                     if (SaveFile.IsAscension && !DialogueEventsData.EventIsPlayed("MinicelloBoonIntro"))
                     {
-                        yield return new WaitForSeconds(0.7f);
-                        Singleton<ViewManager>.Instance.SwitchToView(View.Board);
                         yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("MinicelloBoonIntro", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
-                        yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("MinicelloBoonIntro2", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
-                        Singleton<ViewManager>.Instance.SwitchToView(View.Default);
                     }
+                    yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("MinicelloBoonIntro", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
+                    Singleton<ViewManager>.Instance.SwitchToView(View.Default);
                 }
 
                 yield break;
@@ -1271,17 +1263,10 @@ namespace BittysChallenges
                         GameColors.Instance.gray, brownOrange, GameColors.Instance.gray,
                         GameColors.Instance.gray);
                 string P03 = Plugin.IsP03Run ? "P03" : "";
-                if (SaveFile.IsAscension && DialogueEventsData.EventIsPlayed(P03 + "EnvironmentsIntro")
-                    && SaveFile.IsAscension && !DialogueEventsData.EventIsPlayed(P03 + "GraveyardBoonIntro"))
+                if (SaveFile.IsAscension && DialogueEventsData.EventIsPlayed(P03 + "EnvironmentsIntro"))
                 {
                     yield return new WaitForSeconds(0.7f);
                     yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent(P03 + "GraveyardBoonIntro", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
-                }
-                else if (SaveFile.IsAscension && DialogueEventsData.EventIsPlayed(P03 + "EnvironmentsIntro")
-                    && SaveFile.IsAscension && DialogueEventsData.EventIsPlayed(P03 + "GraveyardBoonIntro"))
-                {
-                    yield return new WaitForSeconds(0.7f);
-                    yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent(P03 + "GraveyardBoonIntro2", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
                 }
 
                 if (!Plugin.IsP03Run && RunState.CurrentRegionTier >= 1)
@@ -1344,17 +1329,10 @@ namespace BittysChallenges
                         GameColors.Instance.brightLimeGreen, brownOrange, GameColors.Instance.limeGreen,
                         GameColors.Instance.brightLimeGreen);
                 string P03 = Plugin.IsP03Run ? "P03" : "";
-                if (SaveFile.IsAscension && DialogueEventsData.EventIsPlayed(P03 + "EnvironmentsIntro")
-                    && SaveFile.IsAscension && !DialogueEventsData.EventIsPlayed(P03 + "FlashGrowthBoonIntro"))
+                if (SaveFile.IsAscension && DialogueEventsData.EventIsPlayed(P03 + "EnvironmentsIntro"))
                 {
                     yield return new WaitForSeconds(0.7f);
                     yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent(P03 + "FlashGrowthBoonIntro", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
-                }
-                else if (SaveFile.IsAscension && DialogueEventsData.EventIsPlayed(P03 + "EnvironmentsIntro")
-                    && SaveFile.IsAscension && DialogueEventsData.EventIsPlayed(P03 + "FlashGrowthBoonIntro"))
-                {
-                    yield return new WaitForSeconds(0.7f);
-                    yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent(P03 + "FlashGrowthBoonIntro2", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
                 }
 
                 List<CardSlot> opponentSlotsCopy = Singleton<BoardManager>.Instance.OpponentSlotsCopy;
@@ -1372,62 +1350,6 @@ namespace BittysChallenges
                 }
 
             }
-        }
-        public class ChallengeBoonConveyor : ChallengeBoonBase
-        {
-            internal static BoonData.Type boo;
-
-            protected override BoonData.Type boonType
-            {
-                get
-                {
-                    return boo;
-                }
-            }
-            public override bool RespondsToPreBoonActivation()
-            {
-                return true;
-            }
-            public override IEnumerator OnPreBoonActivation()
-            {
-                for (int i = 0; i < Singleton<BoardManager>.Instance.opponentSlots.Count - 1; i++)
-                {
-                    Singleton<BoardManager>.Instance.opponentSlots[i].SetTexture(Resources.Load<Texture2D>("art/cards/card_slot_left"));
-                }
-                Singleton<BoardManager>.Instance.opponentSlots[Singleton<BoardManager>.Instance.opponentSlots.Count - 1].SetTexture(Tools.LoadTexture("card_slot_up"));
-                for (int j = 1; j < Singleton<BoardManager>.Instance.playerSlots.Count; j++)
-                {
-                    Singleton<BoardManager>.Instance.playerSlots[j].SetTexture(Resources.Load<Texture2D>("art/cards/card_slot_left"));
-                }
-                Singleton<BoardManager>.Instance.playerSlots[0].SetTexture(Tools.LoadTexture("card_slot_up"));
-
-                string P03 = "P03";
-                if (SaveFile.IsAscension && DialogueEventsData.EventIsPlayed(P03 + "EnvironmentsIntro")
-                    && SaveFile.IsAscension && !DialogueEventsData.EventIsPlayed(P03 + "ConveyorBoonIntro"))
-                {
-                    yield return new WaitForSeconds(0.7f);
-                    yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent(P03 + "ConveyorBoonIntro", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
-                }
-                else if (SaveFile.IsAscension && DialogueEventsData.EventIsPlayed(P03 + "EnvironmentsIntro")
-                    && SaveFile.IsAscension && DialogueEventsData.EventIsPlayed(P03 + "ConveyorBoonIntro"))
-                {
-                    yield return new WaitForSeconds(0.7f);
-                    yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent(P03 + "ConveyorBoonIntro2", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
-                }
-                yield break;
-            }
-            public override bool RespondsToUpkeep(bool playerUpkeep)
-            {
-                return Singleton<TurnManager>.Instance.TurnNumber != 1 && playerUpkeep;
-            }
-            public override IEnumerator OnUpkeep(bool playerUpkeep)
-            {
-                yield return new WaitForSeconds(0.25f);
-                yield return Singleton<BoardManager>.Instance.MoveAllCardsClockwise();
-                yield return new WaitForSeconds(0.25f);
-                yield break;
-            }
-
         }
         public class ChallengeBoonGemSanctuary : ChallengeBoonBase
         {

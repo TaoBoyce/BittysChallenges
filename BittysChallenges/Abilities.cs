@@ -33,9 +33,7 @@ namespace BittysChallenges
             Add_Ability_StrafeAvalanche();
             Add_Ability_Raft();
             Add_Ability_SlotSpawner();
-            Log.LogInfo("End of sigils");
 
-            Log.LogInfo("Start of champs");
             Add_Ability_RedChamp();
             Add_Ability_YellowChamp();
             Add_Ability_GreenChamp();
@@ -48,7 +46,7 @@ namespace BittysChallenges
             Add_Ability_LightBlueChamp();
             Add_Ability_LightGreenChamp();
             Add_Ability_BrightRedChamp();
-            Log.LogInfo("End of champs");
+            Log.LogInfo("End of sigils");
         }
         #region Ability Loaders
         private static void Add_Ability_SlotSpawner()
@@ -140,8 +138,7 @@ namespace BittysChallenges
             ).AddMetaCategories(AbilityMetaCategory.Part1Rulebook)
             ;
             abilityInfo.powerLevel = -1;
-            abilityInfo.abilityLearnedDialogue = Dialogue.SetAbilityInfoDialogue("Stunned and confused.");
-
+            
             // Pass the ability to the API.
             GiveParalysis.ability = abilityInfo.ability;
         }
@@ -537,41 +534,24 @@ namespace BittysChallenges
             public override IEnumerator OnDie(bool wasSacrifice, PlayableCard killer)
             {
                 Challenges.MiscEncounters.IncreaseOuro();
-                int currentRandomSeed = SaveManager.SaveFile.GetCurrentRandomSeed();
-                List<string> list = new List<string>
-                    {
-                        "OuroDies1",
-                        "OuroDies2",
-                        "OuroDies3"
-                    };
+
+                string zoom = "OuroDies";
 
                 if (Singleton<Opponent>.Instance.OpponentType == Opponent.Type.PirateSkullBoss)
                 {
                     if (killer != null && killer.OpponentCard == false)
                     {
-                        list = new List<string>
-                        {
-                        "RoyalOuroDiesPlayer"
-                        };
+                        zoom = "RoyalOuroDiesPlayer";
                     }
                     else
                     {
-                        list = new List<string>
-                        {
-                        "RoyalOuroDies"
-                        };
+                        zoom = "RoyalOuroDies";
                     }
                 }
                 if (IsP03Run)
                 {
-                    list = new List<string>
-                    {
-                        "P03OuroDies1",
-                        "P03OuroDies2",
-                        "P03OuroDies3"
-                    };
+                    zoom = "P03OuroDies";
                 }
-                string zoom = list[SeededRandom.Range(0, list.Count, currentRandomSeed++)];
                 yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent(zoom, TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
                 yield break;
             }
@@ -583,25 +563,17 @@ namespace BittysChallenges
 
             public override bool RespondsToDie(bool wasSacrifice, PlayableCard killer)
             {
-                return killer != null || wasSacrifice;
+                return true;
             }
             public override IEnumerator OnDie(bool wasSacrifice, PlayableCard killer)
             {
                 Challenges.MiscEncounters.GoldenSheepKill();
-                yield return this.BreakCage(true);
-                int currentRandomSeed = SaveManager.SaveFile.GetCurrentRandomSeed();
-                List<string> list = new List<string>
-                    {
-                        "SheepDies1",
-                        "SheepDies2",
-                        "SheepDies3"
-                    };
-                string zoom = list[SeededRandom.Range(0, list.Count, currentRandomSeed++)];
-                yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent(zoom, TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
+                yield return this.GiveWool(true);
+                yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("SheepDies", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
 
                 yield break;
             }
-            private IEnumerator BreakCage(bool fromBattle)
+            private IEnumerator GiveWool(bool fromBattle)
             {
                 yield return new WaitForSeconds(0.5f);
                 if (fromBattle)
@@ -626,20 +598,12 @@ namespace BittysChallenges
             public override IEnumerator OnUpkeep(bool playerUpkeep)
             {
                 turnCount++;
-                Plugin.Log.LogInfo("turn count: " + turnCount);
                 if (turnCount > MAX_TURNS)
                 {
-                    int currentRandomSeed = SaveManager.SaveFile.GetCurrentRandomSeed();
-                    List<string> list = new List<string>
-                        {
-                            "SheepEscapes1",
-                            "SheepEscapes2",
-                            "SheepEscapes3"
-                        };
-                    string zoom = list[SeededRandom.Range(0, list.Count, currentRandomSeed++)];
-                    yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent(zoom, TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
+                    yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("SheepEscapes", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
 
-                    yield return base.PlayableCard.Die(false, null, false);
+                    base.PlayableCard.Anim.PlayDeathAnimation(false);
+                    Object.Destroy(base.PlayableCard.gameObject);
                 }
                 yield break;
             }
