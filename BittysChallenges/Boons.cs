@@ -301,7 +301,7 @@ namespace BittysChallenges
             {
                 if (SaveFile.IsAscension && DialogueEventsData.EventIsPlayed("EnvironmentsIntro"))
                 {
-                    if (SaveFile.IsAscension && !DialogueEventsData.EventIsPlayed("MudBoonIntro"))
+                    if (!DialogueEventsData.EventIsPlayed("MudBoonIntro"))
                     {
                         yield return new WaitForSeconds(0.7f);
                         yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("MudBoonIntro", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
@@ -363,24 +363,37 @@ namespace BittysChallenges
                         GameColors.Instance.brightNearWhite);
                 if (SaveFile.IsAscension && DialogueEventsData.EventIsPlayed("EnvironmentsIntro"))
                 {
-                    if (SaveFile.IsAscension && !DialogueEventsData.EventIsPlayed("HailBoonIntro"))
+                    if (!DialogueEventsData.EventIsPlayed("HailBoonIntro"))
                     {
                         yield return new WaitForSeconds(0.7f);
                         yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("HailBoonIntro", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
                     }
                 }
 
-                if (RunState.CurrentRegionTier >= 1)
+                List<CardSlot> opponentSlotsCopy = Singleton<BoardManager>.Instance.OpponentSlotsCopy;
+                opponentSlotsCopy.RemoveAll((CardSlot x) => x.Card != null);
+
+                List<CardSlot> slotsO = SelectRandomSlots(3 - RunState.CurrentRegionTier, opponentSlotsCopy);
+
+                for (int i = 0; i < slotsO.Count; i++)
                 {
-                    List<CardSlot> allSlotsCopy = Singleton<BoardManager>.Instance.AllSlotsCopy;
-                    allSlotsCopy.RemoveAll((CardSlot x) => x.Card != null);
+                    yield return slotsO[i].SetSlotModification(SlotMods.SlotMod_Hail.SlotType);
+                }
 
-                    List<CardSlot> slots = SelectRandomSlots(3, allSlotsCopy);
 
-                    for (int i = 0; i < slots.Count; i++)
-                    {
-                        yield return slots[i].SetSlotModification(SlotMods.SlotMod_Hail.SlotType);
-                    }
+                List<CardSlot> playerSlotsCopy = Singleton<BoardManager>.Instance.PlayerSlotsCopy;
+                playerSlotsCopy.RemoveAll((CardSlot x) => x.Card != null);
+
+                int playerHail = 2;
+                if(RunState.CurrentRegionTier >= 2)
+                {
+                    playerHail = 3;
+                }
+                List<CardSlot> slotsP = SelectRandomSlots(playerHail, playerSlotsCopy);
+
+                for (int i = 0; i < slotsP.Count; i++)
+                {
+                    yield return slotsP[i].SetSlotModification(SlotMods.SlotMod_Hail.SlotType);
                 }
                 yield break;
             }
@@ -404,7 +417,7 @@ namespace BittysChallenges
             {
                 if (SaveFile.IsAscension && DialogueEventsData.EventIsPlayed("EnvironmentsIntro"))
                 {
-                    if (SaveFile.IsAscension && !DialogueEventsData.EventIsPlayed("CliffsBoonIntro"))
+                    if (!DialogueEventsData.EventIsPlayed("CliffsBoonIntro"))
                     {
                         yield return new WaitForSeconds(0.7f);
                         yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("CliffsBoonIntro", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
@@ -412,12 +425,11 @@ namespace BittysChallenges
                 }
                 List<CardSlot> opponentSlotsCopy = Singleton<BoardManager>.Instance.OpponentSlotsCopy;
 
-                PlayableCard card = new PlayableCard();
-                card.Info = CardLoader.GetCardByName("bitty_Cliff");
-                yield return Singleton<BoardManager>.Instance.CreateCardInSlot(card.Info, opponentSlotsCopy[0]);
-                yield return Singleton<BoardManager>.Instance.CreateCardInSlot(card.Info, opponentSlotsCopy[0].opposingSlot);
+                CardInfo cardInfo = CardLoader.GetCardByName("bitty_Cliff");
+                yield return Singleton<BoardManager>.Instance.CreateCardInSlot(cardInfo, opponentSlotsCopy[0]);
+                yield return Singleton<BoardManager>.Instance.CreateCardInSlot(cardInfo, opponentSlotsCopy[0].opposingSlot);
 
-                yield return Singleton<Opponent>.Instance.QueueCard(card.Info, opponentSlotsCopy[0], true, false);
+                yield return Singleton<Opponent>.Instance.QueueCard(cardInfo, opponentSlotsCopy[0], true, false);
                 yield break;
             }
         }
@@ -527,7 +539,7 @@ namespace BittysChallenges
             {
                 if (SaveFile.IsAscension && DialogueEventsData.EventIsPlayed("EnvironmentsIntro"))
                 {
-                    if (SaveFile.IsAscension && !DialogueEventsData.EventIsPlayed("BaitBoonIntro"))
+                    if (!DialogueEventsData.EventIsPlayed("BaitBoonIntro"))
                     {
                         yield return new WaitForSeconds(0.7f);
                         yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("BaitBoonIntro", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
@@ -594,7 +606,7 @@ namespace BittysChallenges
             {
                 if (SaveFile.IsAscension && DialogueEventsData.EventIsPlayed("EnvironmentsIntro"))
                 {
-                    if (SaveFile.IsAscension && !DialogueEventsData.EventIsPlayed("TrapBoonIntro"))
+                    if (!DialogueEventsData.EventIsPlayed("TrapBoonIntro"))
                     {
                         yield return new WaitForSeconds(0.7f);
                         yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("TrapBoonIntro", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
@@ -652,7 +664,7 @@ namespace BittysChallenges
             {
                 if (SaveFile.IsAscension && DialogueEventsData.EventIsPlayed("EnvironmentsIntro"))
                 {
-                    if (SaveFile.IsAscension && !DialogueEventsData.EventIsPlayed("TotemBoonIntro"))
+                    if (!DialogueEventsData.EventIsPlayed("TotemBoonIntro"))
                     {
                         yield return new WaitForSeconds(0.7f);
                         yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("TotemBoonIntro", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
@@ -870,7 +882,7 @@ namespace BittysChallenges
                         GameColors.Instance.brightNearWhite);
                 if (SaveFile.IsAscension && DialogueEventsData.EventIsPlayed("EnvironmentsIntro"))
                 {
-                    if (SaveFile.IsAscension && !DialogueEventsData.EventIsPlayed("BlizzardBoonIntro"))
+                    if (!DialogueEventsData.EventIsPlayed("BlizzardBoonIntro"))
                     {
                         yield return new WaitForSeconds(0.7f);
                         yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("BlizzardBoonIntro", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
@@ -878,8 +890,7 @@ namespace BittysChallenges
                 }
                 List<CardSlot> playerSlotsCopy = Singleton<BoardManager>.Instance.PlayerSlotsCopy;
 
-                PlayableCard card = new PlayableCard();
-                card.Info = CardLoader.GetCardByName("bitty_Avalanche");
+                CardInfo cardInfo = CardLoader.GetCardByName("bitty_Avalanche");
                 if (playerSlotsCopy[0].Card != null)
                 {
                     yield return playerSlotsCopy[0].Card.TakeDamage(10, null);
@@ -888,8 +899,8 @@ namespace BittysChallenges
                 {
                     yield return playerSlotsCopy[0].opposingSlot.Card.TakeDamage(10, null);
                 }
-                yield return Singleton<BoardManager>.Instance.CreateCardInSlot(card.Info, playerSlotsCopy[0]);
-                yield return Singleton<BoardManager>.Instance.CreateCardInSlot(card.Info, playerSlotsCopy[0].opposingSlot);
+                yield return Singleton<BoardManager>.Instance.CreateCardInSlot(cardInfo, playerSlotsCopy[0]);
+                yield return Singleton<BoardManager>.Instance.CreateCardInSlot(cardInfo, playerSlotsCopy[0].opposingSlot);
                 yield break;
             }
             public override bool RespondsToUpkeep(bool playerUpkeep)
@@ -917,8 +928,7 @@ namespace BittysChallenges
 
                     List<CardSlot> playerSlotsCopy = Singleton<BoardManager>.Instance.PlayerSlotsCopy;
 
-                    PlayableCard card = new PlayableCard();
-                    card.Info = CardLoader.GetCardByName("bitty_Avalanche");
+                    CardInfo cardInfo = CardLoader.GetCardByName("bitty_Avalanche");
                     if (playerSlotsCopy[0].Card != null)
                     {
                         yield return playerSlotsCopy[0].Card.TakeDamage(10, null);
@@ -927,8 +937,8 @@ namespace BittysChallenges
                     {
                         yield return playerSlotsCopy[0].opposingSlot.Card.TakeDamage(10, null);
                     }
-                    yield return Singleton<BoardManager>.Instance.CreateCardInSlot(card.Info, playerSlotsCopy[0]);
-                    yield return Singleton<BoardManager>.Instance.CreateCardInSlot(card.Info, playerSlotsCopy[0].opposingSlot);
+                    yield return Singleton<BoardManager>.Instance.CreateCardInSlot(cardInfo, playerSlotsCopy[0]);
+                    yield return Singleton<BoardManager>.Instance.CreateCardInSlot(cardInfo, playerSlotsCopy[0].opposingSlot);
                 }
                 yield return new WaitForSeconds(0.5f);
                 Singleton<ViewManager>.Instance.SwitchToView(View.Default, false, false);
@@ -964,12 +974,12 @@ namespace BittysChallenges
                     {
                         yield return slots[i].opposingSlot.Card.Die(false, null, false);
                     }
-                    slots[i].opposingSlot.SetSlotModification(SlotMods.SlotMod_Obelisk.SlotType);
+                    yield return slots[i].opposingSlot.SetSlotModification(SlotMods.SlotMod_Obelisk.SlotType);
                 }
 
                 if (SaveFile.IsAscension && DialogueEventsData.EventIsPlayed("EnvironmentsIntro"))
                 {
-                    if (SaveFile.IsAscension && !DialogueEventsData.EventIsPlayed("ObeliskBoonIntro"))
+                    if (!DialogueEventsData.EventIsPlayed("ObeliskBoonIntro"))
                     {
                         yield return new WaitForSeconds(0.7f);
                         yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("ObeliskBoonIntro", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
@@ -1015,7 +1025,7 @@ namespace BittysChallenges
                 {
                     yield return new WaitForSeconds(0.7f);
                     Singleton<ViewManager>.Instance.SwitchToView(View.Board);
-                    if (SaveFile.IsAscension && !DialogueEventsData.EventIsPlayed("MinicelloBoonIntro"))
+                    if (!DialogueEventsData.EventIsPlayed("MinicelloBoonIntro"))
                     {
                         yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("MinicelloBoonIntro", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
                     }
@@ -1104,7 +1114,7 @@ namespace BittysChallenges
 
                 if (SaveFile.IsAscension && DialogueEventsData.EventIsPlayed("EnvironmentsIntro"))
                 {
-                    if (SaveFile.IsAscension && !DialogueEventsData.EventIsPlayed("DarkForestBoonIntro"))
+                    if (!DialogueEventsData.EventIsPlayed("DarkForestBoonIntro"))
                     {
                         yield return new WaitForSeconds(0.7f);
                         Singleton<ViewManager>.Instance.SwitchToView(View.Board);
@@ -1160,38 +1170,35 @@ namespace BittysChallenges
                         GameColors.Instance.brightNearWhite);
                 if (SaveFile.IsAscension && DialogueEventsData.EventIsPlayed("EnvironmentsIntro"))
                 {
-                    if (SaveFile.IsAscension && !DialogueEventsData.EventIsPlayed("FloodBoonIntro"))
+                    if (!DialogueEventsData.EventIsPlayed("FloodBoonIntro"))
                     {
                         yield return new WaitForSeconds(0.7f);
                         yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("FloodBoonIntro", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
                         yield return new WaitForSeconds(0.7f);
                     }
                 }
-                for (int i = 0; i < 4 - RunState.CurrentRegionTier; i++)
+                for (int i = 0; i < 3 - RunState.CurrentRegionTier; i++)
                 {
                     yield return Singleton<CardSpawner>.Instance.SpawnCardToHand(CardLoader.GetCardByName("bitty_Raft"));
                     yield return new WaitForSeconds(0.2f);
                 }
 
-                if (RunState.CurrentRegionTier >= 1)
+                List<CardSlot> opponentSlotsCopy = Singleton<BoardManager>.Instance.OpponentSlotsCopy;
+                opponentSlotsCopy.RemoveAll((CardSlot x) => x.Card != null);
+
+                List<CardSlot> opponentSlots = SelectRandomSlots(2, opponentSlotsCopy);
+
+                for (int i = 0; i < opponentSlots.Count; i++)
                 {
-                    List<CardSlot> opponentSlotsCopy = Singleton<BoardManager>.Instance.OpponentSlotsCopy;
-                    opponentSlotsCopy.RemoveAll((CardSlot x) => x.Card != null);
+                    yield return opponentSlots[i].SetSlotModification(SlotMods.SlotMod_Flood.SlotType);
+                }
 
-                    List<CardSlot> opponentSlots = SelectRandomSlots(2, opponentSlotsCopy);
+                List<CardSlot> playerSlots = Singleton<BoardManager>.Instance.AllSlotsCopy;
+                playerSlots.RemoveAll((CardSlot x) => x.Card != null);
 
-                    for (int i = 0; i < opponentSlots.Count; i++)
-                    {
-                        yield return opponentSlots[i].SetSlotModification(SlotMods.SlotMod_Flood.SlotType);
-                    }
-
-                    List<CardSlot> playerSlots = Singleton<BoardManager>.Instance.AllSlotsCopy;
-                    playerSlots.RemoveAll((CardSlot x) => x.Card != null);
-
-                    for (int i = 0; i < playerSlots.Count; i++)
-                    {
-                        yield return playerSlots[i].SetSlotModification(SlotMods.SlotMod_Flood.SlotType);
-                    }
+                for (int i = 0; i < playerSlots.Count; i++)
+                {
+                    yield return playerSlots[i].SetSlotModification(SlotMods.SlotMod_Flood.SlotType);
                 }
                 yield break;
             }
@@ -1215,24 +1222,21 @@ namespace BittysChallenges
             {
                 if (SaveFile.IsAscension && DialogueEventsData.EventIsPlayed("EnvironmentsIntro"))
                 {
-                    if (SaveFile.IsAscension && !DialogueEventsData.EventIsPlayed("BreezeBoonIntro"))
+                    if (!DialogueEventsData.EventIsPlayed("BreezeBoonIntro"))
                     {
                         yield return new WaitForSeconds(0.7f);
                         yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("BreezeBoonIntro", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
                     }
                 }
 
-                if (RunState.CurrentRegionTier >= 1)
+                List<CardSlot> allSlotsCopy = Singleton<BoardManager>.Instance.AllSlotsCopy;
+                allSlotsCopy.RemoveAll((CardSlot x) => x.Card != null);
+
+                List<CardSlot> slots = SelectRandomSlots(6, allSlotsCopy);
+
+                for (int i = 0; i < slots.Count; i++)
                 {
-                    List<CardSlot> allSlotsCopy = Singleton<BoardManager>.Instance.AllSlotsCopy;
-                    allSlotsCopy.RemoveAll((CardSlot x) => x.Card != null);
-
-                    List<CardSlot> slots = SelectRandomSlots(6, allSlotsCopy);
-
-                    for (int i = 0; i < slots.Count; i++)
-                    {
-                        yield return slots[i].SetSlotModification(SlotMods.SlotMod_Breeze.SlotType);
-                    }
+                    yield return slots[i].SetSlotModification(SlotMods.SlotMod_Breeze.SlotType);
                 }
                 yield break;
             }
@@ -1298,7 +1302,7 @@ namespace BittysChallenges
                 List<CardSlot> allSlotsCopy = Singleton<BoardManager>.Instance.AllSlotsCopy;
                 for(int i = 0; i < allSlotsCopy.Count; i++)
                 {
-                    allSlotsCopy[i].SetSlotModification(SlotMods.SlotMod_Grave.SlotType);
+                    yield return allSlotsCopy[i].SetSlotModification(SlotMods.SlotMod_Grave.SlotType);
                 }
                 yield break;
             }
@@ -1336,17 +1340,17 @@ namespace BittysChallenges
                 }
 
                 List<CardSlot> opponentSlotsCopy = Singleton<BoardManager>.Instance.OpponentSlotsCopy;
-                List<CardSlot> slots = SelectRandomSlots(RunState.CurrentRegionTier, opponentSlotsCopy);
+                List<CardSlot> slots = SelectRandomSlots(RunState.CurrentRegionTier+1, opponentSlotsCopy);
                 for(int i = 0; i < slots.Count; i++)
                 {
-                    slots[i].SetSlotModification(SlotMods.SlotMod_Growth.SlotType);
+                    yield return slots[i].SetSlotModification(SlotMods.SlotMod_Growth.SlotType);
                 }
 
                 List<CardSlot> playerSlotsCopy = Singleton<BoardManager>.Instance.PlayerSlotsCopy;
                 List<CardSlot> slots2 = SelectRandomSlots(2, playerSlotsCopy);
                 for (int i = 0; i < slots2.Count; i++)
                 {
-                    slots2[i].SetSlotModification(SlotMods.SlotMod_Growth.SlotType);
+                    yield return slots2[i].SetSlotModification(SlotMods.SlotMod_Growth.SlotType);
                 }
 
             }
@@ -1400,17 +1404,10 @@ namespace BittysChallenges
                 }
 
                 string P03 = "P03";
-                if (SaveFile.IsAscension && DialogueEventsData.EventIsPlayed(P03 + "EnvironmentsIntro")
-                    && SaveFile.IsAscension && !DialogueEventsData.EventIsPlayed(P03 + "GemSanctuaryBoonIntro"))
+                if (SaveFile.IsAscension && DialogueEventsData.EventIsPlayed(P03 + "EnvironmentsIntro"))
                 {
                     yield return new WaitForSeconds(0.7f);
                     yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent(P03 + "GemSanctuaryBoonIntro", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
-                }
-                else if (SaveFile.IsAscension && DialogueEventsData.EventIsPlayed(P03 + "EnvironmentsIntro")
-                    && SaveFile.IsAscension && DialogueEventsData.EventIsPlayed(P03 + "GemSanctuaryBoonIntro"))
-                {
-                    yield return new WaitForSeconds(0.7f);
-                    yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent(P03 + "GemSanctuaryBoonIntro2", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
                 }
                 yield break;
             }
@@ -1433,24 +1430,17 @@ namespace BittysChallenges
             public override IEnumerator OnPreBoonActivation()
             {
                 string P03 = "P03";
-                if (SaveFile.IsAscension && DialogueEventsData.EventIsPlayed(P03 + "EnvironmentsIntro")
-                    && SaveFile.IsAscension && !DialogueEventsData.EventIsPlayed(P03 + "ElectricStormBoonIntro"))
+                if (SaveFile.IsAscension && DialogueEventsData.EventIsPlayed(P03 + "EnvironmentsIntro"))
                 {
                     yield return new WaitForSeconds(0.7f);
                     yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent(P03 + "ElectricStormBoonIntro", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, new Action<DialogueEvent.Line>(Dialogue.P03HappyCloseUp));
-                }
-                else if (SaveFile.IsAscension && DialogueEventsData.EventIsPlayed(P03 + "EnvironmentsIntro")
-                    && SaveFile.IsAscension && DialogueEventsData.EventIsPlayed(P03 + "ElectricStormBoonIntro"))
-                {
-                    yield return new WaitForSeconds(0.7f);
-                    yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent(P03 + "ElectricStormBoonIntro2", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, new Action<DialogueEvent.Line>(Dialogue.P03HappyCloseUp));
                 }
 
                 List<CardSlot> allSlotsCopy = Singleton<BoardManager>.Instance.AllSlotsCopy;
                 List<CardSlot> slots = SelectRandomSlots(6, allSlotsCopy);
                 for (int i = 0; i < slots.Count; i++)
                 {
-                    slots[i].SetSlotModification(SlotMods.SlotMod_Overclock.SlotType);
+                    yield return slots[i].SetSlotModification(SlotMods.SlotMod_Overclock.SlotType);
                 }
                 yield break;
             }

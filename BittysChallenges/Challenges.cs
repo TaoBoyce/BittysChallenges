@@ -376,7 +376,6 @@ namespace BittysChallenges
                         {
                             idealTurn = 1;
                         }
-                        Plugin.Log.LogInfo(idealTurn);
                         if (tp[idealTurn].Count < lanes)
                         {
                             Plugin.Log.LogInfo("Adding Skeleton to turn plan...");
@@ -477,7 +476,6 @@ namespace BittysChallenges
                         mod.abilities.Add(Ability.WhackAMole);
                         for (int i = 1; i <= AscensionStatsData.GetStatValue(AscensionStat.Type.BossesDefeated, false); i++)
                         {
-                            Plugin.Log.LogInfo(i);
                             mod.abilities.Add(MiscEncounters.ValidAbilities(i).ability);
                         }
                         mod.attackAdjustment = MiscEncounters.TravelingOuroborosBuffs();
@@ -938,7 +936,6 @@ namespace BittysChallenges
 
                     ChallengeActivationUI.TryShowActivation(Challenges.Challenge_abundance.challengeType);
                     CardInfo info = Singleton<CardDrawPiles3D>.Instance.SideDeck.cards.Count > 0 ? Singleton<CardDrawPiles3D>.Instance.SideDeck.cards[0] : CardLoader.GetCardByName("Bee");
-                    Plugin.Log.LogInfo(info.displayedName);
                     for (int i = 0; i < (abundancesActive * Plugin.abundanceQuality.Value); i++)
                     {
                         Singleton<CardDrawPiles3D>.Instance.sidePile.CreateCards(1);
@@ -1245,7 +1242,6 @@ namespace BittysChallenges
                 int num = ModdedSaveManager.RunState.GetValueAsInt(Plugin.PluginGuid, "BittysChallenges.EnvironmentNumber") + by;
                 Plugin.Log.LogInfo(string.Format("Increasing Environment Number by {0} to {1}", by, num));
                 ModdedSaveManager.RunState.SetValue(Plugin.PluginGuid, "BittysChallenges.EnvironmentNumber", num.ToString());
-                Plugin.Log.LogInfo(EnvironmentNumber());
             }
 
             [HarmonyPostfix]
@@ -1268,7 +1264,7 @@ namespace BittysChallenges
                     ClearEnvironmentBoons();
                     IncreaseEnviroNumber();
 
-                    bool boonActive = SeededRandom.Bool(SaveManager.SaveFile.GetCurrentRandomSeed() + 2);
+                    bool boonActive = 2 <= SeededRandom.Range(1,3,(SaveManager.SaveFile.GetCurrentRandomSeed() + 2));
                     if (!boonActive)
                     {
                         return true;
@@ -1380,7 +1376,7 @@ namespace BittysChallenges
                         Plugin.Log.LogInfo("Added Electrical Storm to boons pool: " + ChallengeBoonElectricStorm.boo);
                     }
                     int i = EnvironmentNumber() % boons.Count;
-                    if (boonActive && boons != null)
+                    if (boons != null)
                     {
                         RunState.Run.playerDeck.AddBoon(boons[i]);
                         Plugin.Log.LogInfo("Using boon: " + boons[i]);
@@ -1666,7 +1662,6 @@ namespace BittysChallenges
         {
             public static int TravelingOuroborosBuffs()
             {
-                Plugin.Log.LogInfo(ModdedSaveManager.RunState.GetValueAsInt(Plugin.PluginGuid, "BittysChallenges.TravelingOuroborosBuffs"));
                 return ModdedSaveManager.RunState.GetValueAsInt(Plugin.PluginGuid, "BittysChallenges.TravelingOuroborosBuffs");
             }
             public static void ResetOuro(int value = 0)
@@ -1679,7 +1674,6 @@ namespace BittysChallenges
                 int num = ModdedSaveManager.RunState.GetValueAsInt(Plugin.PluginGuid, "BittysChallenges.TravelingOuroborosBuffs") + by;
                 Plugin.Log.LogInfo(string.Format("Increasing Traveling Ouroboros by {0} to {1}", by, num));
                 ModdedSaveManager.RunState.SetValue(Plugin.PluginGuid, "BittysChallenges.TravelingOuroborosBuffs", num.ToString());
-                Plugin.Log.LogInfo(TravelingOuroborosBuffs());
             }
             public static int TimesGoldenSheepKilled()
             {
@@ -1690,7 +1684,6 @@ namespace BittysChallenges
                 int num = ModdedSaveManager.RunState.GetValueAsInt(Plugin.PluginGuid, "BittysChallenges.GoldenSheepKilled") + by;
                 Plugin.Log.LogInfo(string.Format("Increasing Golden Sheep Killed by {0} to {1}", by, num));
                 ModdedSaveManager.RunState.SetValue(Plugin.PluginGuid, "BittysChallenges.GoldenSheepKilled", num.ToString());
-                Plugin.Log.LogInfo(TimesGoldenSheepKilled());
             }
 
             public static bool RollForOuro(CardBattleNodeData nodeData)

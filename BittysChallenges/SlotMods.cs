@@ -78,7 +78,7 @@ namespace BittysChallenges
             )
             .SetRulebook(
             "Hail Slot",
-            "At the end of the owner\'s turn, the creature in this slot takes 1 damage.",
+            "At the start of the owner\'s turn, the creature in this slot takes 1 damage.",
             Tools.LoadTexture("boonicon_hail.png"),
             SlotModificationManager.ModificationMetaCategory.Part1Rulebook
             )
@@ -112,7 +112,7 @@ namespace BittysChallenges
             )
             .SetRulebook(
             "Windy Slot",
-            "At the end of the turn, a creature in this slot will alternate between flying and not flying. This effect is ignored if the card naturally flies.",
+            "At the start of the owner\'s turn, a creature in this slot will alternate between flying and not flying. This effect is ignored if the card naturally flies.",
             Tools.LoadTexture("boonicon_flood.png"),
             SlotModificationManager.ModificationMetaCategory.Part1Rulebook
             )

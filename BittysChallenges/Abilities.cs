@@ -54,7 +54,7 @@ namespace BittysChallenges
             AbilityInfo abilityInfo = AbilityManager.New(
                 PluginGuid,
                 "Slot Spawner",
-                "When played, spawns a slot.",
+                "When played, spawns a slot. Used for testing.",
                 typeof(GiveSlotSpawner),
                 Tools.LoadTexture("ability_test.png")
             )
@@ -681,7 +681,6 @@ namespace BittysChallenges
                 {
                     destination = (this.movingLeft ? toLefttwice : toRighttwice);
                 }
-                Plugin.Log.LogInfo(destination.Index);
                 yield return base.StartCoroutine(this.MoveToSlot(destination));
                 yield break;
             }
@@ -1058,7 +1057,8 @@ namespace BittysChallenges
         {
             try
             {
-                Singleton<GiveCannoneer>.Instance.ClearAllTargetIcons();
+                GiveCannoneer cannon = new GiveCannoneer();
+                cannon.ClearAllTargetIcons();
             }
             catch
             {

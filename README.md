@@ -63,8 +63,9 @@ Thanks to:
 As with most mods, you need [BepInEx](https://inscryption.thunderstore.io/package/BepInEx/BepInExPack_Inscryption/) installed. You also need the [API](https://inscryption.thunderstore.io/package/API_dev/API/).
 
 ## Changelog 6.1.0
-- SFX now uses API
 - Environments use Slot Modifications instead of merge cards
+- SFX now uses API
+- Dialogue now uses API
 
 <details>
 <summary>Changelog</summary>
@@ -74,21 +75,13 @@ As with most mods, you need [BepInEx](https://inscryption.thunderstore.io/packag
 - 5.2.0: Removed clover redraw from unfairhand challenge, added in a new anti-challenge for that instead
 - 5.1.0: Added clover redraw to unfairhand challenge
 - 5.0.0: 2 new challenges, Muddy sigil is changed
-- 4.1.3: Only cards with more than 0 power can be placed on mud
-- 4.1.2: Made angler's pool buckets drop sharks
-- 4.1.1: Environments now check the name
 - 4.1.0: Added cap to revives graveyard environment can do in one turn, and changed how environments are selected
-- 4.0.2: Fixed P03 run checker
-- 4.0.1: fixed textures not being found
 - 4.0.0: P03 KCM compatability, abundance, explosive results, runaway sidedeck
 - 3.2.0: Harder Bosses, API update
-- 3.1.2: Fixed Angler's Pond environment
-- 3.1.1: Changed how Environments are handled, nerfed Totem environment
 - 3.1.0: Replaced Brittle Starters, fixed fecund nerf dialogue
 - 3.0.0: Environment Challenge, +16 Environments, replaced fatigued starters, new starter deck
 - 2.1.0: Points readjustment, new dialogue, sigils showing up in the rulebook
 - 2.0.0: 3 new challenges & 3 new Anti-Challenges, Encounters fixed (again)
-- 1.0.2: Fixed Ouro
 - 1.0.1: 7 Challenges & 1 Anti-Challenge
 
 </details>
