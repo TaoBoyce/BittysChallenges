@@ -386,7 +386,13 @@ namespace BittysChallenges
             }
             public override IEnumerator OnResolveOnBoard()
             {
-                yield return Card.Slot.SetSlotModification(SlotMods.SlotMod_Obelisk.SlotType);
+                List<CardSlot> playerSlots = Singleton<BoardManager3D>.Instance.PlayerSlotsCopy;
+                for(int i = 0; i < playerSlots.Count; i++)
+                {
+                    if (i == 0) { yield return playerSlots[0].SetSlotModification(SlotMods.SlotMod_Flood.SlotType); }
+                    if (i == 0) { yield return playerSlots[1].SetSlotModification(SlotMods.SlotMod_Growth.SlotType); }
+                    if (i == 0) { yield return playerSlots[2].SetSlotModification(SlotMods.SlotMod_Obelisk.SlotType); }
+                }
                 base.Card.Anim.PlayDeathAnimation(false);
                 Object.Destroy(base.Card.gameObject);
                 yield break;

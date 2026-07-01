@@ -215,17 +215,19 @@ namespace BittysChallenges
                 SetSceneEffectsShown(false);
                 yield break;
             }
+            private static int randomMod = 0;
             public List<CardSlot> SelectRandomSlots(int amount, List<CardSlot> slotsCopy)
             {
                 List<CardSlot> slots = new List<CardSlot>();
-                int currentRandomSeed = SaveManager.SaveFile.GetCurrentRandomSeed();
+                randomMod += amount;
+                int currentRandomSeed = SaveManager.SaveFile.GetCurrentRandomSeed() + randomMod;
                 for (int i = 0; i < amount; i++)
                 {
                     if (i >= slotsCopy.Count)
                     {
                         return slots;
                     }
-                    int randomSlot = SeededRandom.Range(0, slotsCopy.Count, currentRandomSeed + i);
+                    int randomSlot = SeededRandom.Range(0, slotsCopy.Count, currentRandomSeed*i);
                     slots.Add(slotsCopy[randomSlot]);
                     slotsCopy.Remove(slotsCopy[randomSlot]);
                 }

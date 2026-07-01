@@ -40,11 +40,11 @@ namespace BittysChallenges
             PluginGuid,
             "SlotRaft",
             typeof(SlotMod_Raft),
-            Tools.LoadTexture("card_slot_test.png")
+            Tools.LoadTexture("card_slot_raft.png")
             )
             .SetRulebook(
             "Raft Slot",
-            "Prevents creatures from submerging into the water.",
+            "Prevents creatures on this slot from submerging into the water.",
             Tools.LoadTexture("ability_raft.png"),
             SlotModificationManager.ModificationMetaCategory.Part1Rulebook
             )
@@ -57,7 +57,7 @@ namespace BittysChallenges
             PluginGuid,
             "SlotMuddy",
             typeof(SlotMod_Muddy),
-            Tools.LoadTexture("card_slot_test.png")
+            Tools.LoadTexture("card_slot_mud.png")
             )
             .SetRulebook(
             "Muddy Slot",
@@ -74,11 +74,11 @@ namespace BittysChallenges
             PluginGuid,
             "SlotHail",
             typeof(SlotMod_Hail),
-            Tools.LoadTexture("card_slot_test.png")
+            Tools.LoadTexture("card_slot_hail.png")
             )
             .SetRulebook(
             "Hail Slot",
-            "At the start of the owner\'s turn, the creature in this slot takes 1 damage.",
+            "At the start of the owner\'s turn, a creature in this slot takes 1 damage.",
             Tools.LoadTexture("boonicon_hail.png"),
             SlotModificationManager.ModificationMetaCategory.Part1Rulebook
             )
@@ -91,7 +91,7 @@ namespace BittysChallenges
             PluginGuid,
             "SlotFlood",
             typeof(SlotMod_Flood),
-            Tools.LoadTexture("card_slot_test.png")
+            Tools.LoadTexture("card_slot_flood.png")
             )
             .SetRulebook(
             "Flooded Slot",
@@ -108,7 +108,7 @@ namespace BittysChallenges
             PluginGuid,
             "SlotBreeze",
             typeof(SlotMod_Breeze),
-            Tools.LoadTexture("card_slot_test.png")
+            Tools.LoadTexture("card_slot_breeze.png")
             )
             .SetRulebook(
             "Windy Slot",
@@ -125,7 +125,7 @@ namespace BittysChallenges
             PluginGuid,
             "SlotGrave",
             typeof(SlotMod_Grave),
-            Tools.LoadTexture("card_slot_test.png")
+            Tools.LoadTexture("card_slot_grave.png")
             )
             .SetRulebook(
             "Grim Slot",
@@ -142,7 +142,7 @@ namespace BittysChallenges
             PluginGuid,
             "SlotGrowth",
             typeof(SlotMod_Growth),
-            Tools.LoadTexture("card_slot_test.png")
+            Tools.LoadTexture("card_slot_overgrowth.png")
             )
             .SetRulebook(
             "Growth Slot",
@@ -176,7 +176,7 @@ namespace BittysChallenges
             PluginGuid,
             "SlotDynamite",
             typeof(SlotMod_Dynamite),
-            Tools.LoadTexture("card_slot_test.png")
+            Tools.LoadTexture("card_slot_dynamite.png")
             )
             .SetRulebook(
             "Dynamite Slot",
@@ -193,7 +193,7 @@ namespace BittysChallenges
             PluginGuid,
             "SlotObelisk",
             typeof(SlotMod_Obelisk),
-            Tools.LoadTexture("card_slot_test.png")
+            Tools.LoadTexture("card_slot_obelisk.png")
             )
             .SetRulebook(
             "Obelisk Tablet",

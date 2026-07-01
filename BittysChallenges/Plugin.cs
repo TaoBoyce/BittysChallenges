@@ -29,6 +29,9 @@ using Object = UnityEngine.Object;
 ///SFX uses API
 ///Environments use Slot Modifications instead of merge cards
 ///Credit:
+///Keks for Mud, Hail, Breeze, Overclock, Dynamite slots art
+///Prof. Eggnog for Grave, Raft, Flood, Obelisk, Growth slots art
+///
 namespace BittysChallenges
 {
     [BepInPlugin(PluginGuid, PluginName, PluginVersion)]

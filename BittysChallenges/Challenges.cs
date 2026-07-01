@@ -507,6 +507,7 @@ namespace BittysChallenges
                         mod.attackAdjustment = 1;
                         mod.healthAdjustment = 4;
                         mod.abilities.Add(Ability.BuffNeighbours);
+                        mod.abilities.Add(Ability.DeathShield);
                         mod.nameReplacement = "Mole Firstmate";
                         mole.AddAppearances(GoldEmission.Appearance.GoldEmission);
                         mole.mods.Add(mod);
@@ -1089,21 +1090,14 @@ namespace BittysChallenges
                     {
                         if (card.Info.name == "Mule")
                         {
-                            Plugin.Log.LogInfo("Mule Check");
                             CardModificationInfo mod = new CardModificationInfo();
                             mod.abilities.Add(Ability.Sentry);
                             ApplyMods(mod, card);
                         }
-                        if (card.Info.name == "Bloodhound")
+                        if (card.Info.name == "Bloodhound" ||
+                            card.Info.name == "Coyote" ||
+                            card.Info.name == "Wolverine")
                         {
-                            Plugin.Log.LogInfo("Bloodhound Check");
-                            CardModificationInfo mod = new CardModificationInfo();
-                            mod.abilities.Add(Ability.Deathtouch);
-                            ApplyMods(mod, card);
-                        }
-                        if (card.Info.name == "Coyote")
-                        {
-                            Plugin.Log.LogInfo("Coyote Check");
                             CardModificationInfo mod = new CardModificationInfo();
                             mod.abilities.Add(Ability.Deathtouch);
                             ApplyMods(mod, card);
@@ -1113,14 +1107,12 @@ namespace BittysChallenges
                     {
                         if (card.Info.name == "Kingfisher")
                         {
-                            Plugin.Log.LogInfo("Kingfisher Check");
                             CardModificationInfo mod = new CardModificationInfo();
                             mod.abilities.Add(Ability.BuffNeighbours);
                             ApplyMods(mod, card);
                         }
                         if (card.Info.name == "BaitBucket")
                         {
-                            Plugin.Log.LogInfo("BaitBucket Check");
                             CardModificationInfo mod = new CardModificationInfo();
                             mod.abilities.Add(Ability.Reach);
                             ApplyMods(mod, card);
@@ -1130,7 +1122,6 @@ namespace BittysChallenges
                     {
                         if (card.Info.name == "Bullfrog")
                         {
-                            Plugin.Log.LogInfo("Bullfrog Check");
                             CardModificationInfo mod = new CardModificationInfo();
                             mod.abilities.Add(Ability.SteelTrap);
                             ApplyMods(mod, card);
@@ -1138,14 +1129,12 @@ namespace BittysChallenges
                         }
                         if (card.Info.name == "Rabbit")
                         {
-                            Plugin.Log.LogInfo("Rabbit Check");
                             CardModificationInfo mod = new CardModificationInfo();
                             mod.abilities.Add(Ability.WhackAMole);
                             ApplyMods(mod, card);
                         }
                         if (card.Info.name == "TrapFrog")
                         {
-                            Plugin.Log.LogInfo("TrapFrog Check");
                             CardModificationInfo mod = new CardModificationInfo();
                             mod.abilities.Add(Ability.GuardDog);
                             ApplyMods(mod, card);
@@ -1155,21 +1144,18 @@ namespace BittysChallenges
                     {
                         if (card.Info.name == "Amalgam")
                         {
-                            Plugin.Log.LogInfo("Amalgam Check");
                             CardModificationInfo mod = new CardModificationInfo();
                             mod.abilities.Add(Ability.Sharp);
                             ApplyMods(mod, card);
                         }
                         if (card.Info.name == "MantisGod")
                         {
-                            Plugin.Log.LogInfo("MantisGod Check");
                             CardModificationInfo mod = new CardModificationInfo();
                             mod.abilities.Add(Ability.SplitStrike);
                             ApplyMods(mod, card);
                         }
                         if (card.Info.name == "Mantis")
                         {
-                            Plugin.Log.LogInfo("Mantis Check");
                             CardModificationInfo mod = new CardModificationInfo();
                             mod.abilities.Add(Ability.DoubleStrike);
                             ApplyMods(mod, card);
@@ -1179,21 +1165,18 @@ namespace BittysChallenges
                     {
                         if (card.Info.name == "MoleSeaman")
                         {
-                            Plugin.Log.LogInfo("MoleSeaman Check");
                             CardModificationInfo mod = new CardModificationInfo();
                             mod.abilities.Add(Ability.ConduitBuffAttack);
                             ApplyMods(mod, card);
                         }
                         if (card.Info.name == "SkeletonPirate")
                         {
-                            Plugin.Log.LogInfo("SkeletonPirate Check");
                             CardModificationInfo mod = new CardModificationInfo();
                             mod.abilities.Add(Ability.Deathtouch);
                             ApplyMods(mod, card);
                         }
                         if (card.Info.name == "SkeletonParrot")
                         {
-                            Plugin.Log.LogInfo("SkeletonParrot Check");
                             CardModificationInfo mod = new CardModificationInfo();
                             mod.abilities.Add(Ability.IceCube);
 
@@ -1202,7 +1185,6 @@ namespace BittysChallenges
                         }
                         if (card.Info.name == "Maggots")
                         {
-                            Plugin.Log.LogInfo("Maggots Check");
                             CardModificationInfo mod = new CardModificationInfo();
                             mod.abilities.Add(Ability.Brittle);
                             ApplyMods(mod, card);
@@ -1212,7 +1194,6 @@ namespace BittysChallenges
             }
             public static void ApplyMods(CardModificationInfo mod, PlayableCard card)
             {
-                Plugin.Log.LogInfo("Adding Mods...");
                 mod.fromCardMerge = true;
                 card.AddTemporaryMod(mod);
                 if (!CardDisplayer3D.EmissionEnabledForCard(card.renderInfo, card))
@@ -1229,7 +1210,6 @@ namespace BittysChallenges
         {
             public static int EnvironmentNumber()
             {
-                Plugin.Log.LogInfo(ModdedSaveManager.RunState.GetValueAsInt(Plugin.PluginGuid, "BittysChallenges.EnvironmentNumber"));
                 return ModdedSaveManager.RunState.GetValueAsInt(Plugin.PluginGuid, "BittysChallenges.EnvironmentNumber");
             }
             public static void ResetEnviroNumber(int value = 0)
@@ -1242,6 +1222,21 @@ namespace BittysChallenges
                 int num = ModdedSaveManager.RunState.GetValueAsInt(Plugin.PluginGuid, "BittysChallenges.EnvironmentNumber") + by;
                 Plugin.Log.LogInfo(string.Format("Increasing Environment Number by {0} to {1}", by, num));
                 ModdedSaveManager.RunState.SetValue(Plugin.PluginGuid, "BittysChallenges.EnvironmentNumber", num.ToString());
+            }
+            public static int PrevEnvironment()
+            {
+                return ModdedSaveManager.RunState.GetValueAsInt(Plugin.PluginGuid, "BittysChallenges.PreviousEnvironment");
+            }
+            public static void ResetPrevEnviro(int value = 0)
+            {
+                Plugin.Log.LogInfo(string.Format("Resetting Prev Environment Number to {0}", value));
+                ModdedSaveManager.RunState.SetValue(Plugin.PluginGuid, "BittysChallenges.PreviousEnvironment", value);
+            }
+            public static void IncreasePrevEnviro(int by = 1)
+            {
+                int num = ModdedSaveManager.RunState.GetValueAsInt(Plugin.PluginGuid, "BittysChallenges.PreviousEnvironment") + by;
+                Plugin.Log.LogInfo(string.Format("Increasing Prev Environment Number by {0} to {1}", by, num));
+                ModdedSaveManager.RunState.SetValue(Plugin.PluginGuid, "BittysChallenges.PreviousEnvironment", num.ToString());
             }
 
             [HarmonyPostfix]
@@ -1264,11 +1259,14 @@ namespace BittysChallenges
                     ClearEnvironmentBoons();
                     IncreaseEnviroNumber();
 
-                    bool boonActive = 2 <= SeededRandom.Range(1,3,(SaveManager.SaveFile.GetCurrentRandomSeed() + 2));
-                    if (!boonActive)
+                    bool boonActive = SeededRandom.Bool(SaveManager.SaveFile.GetCurrentRandomSeed() + 2);
+                    if (PrevEnvironment() < 3 && !boonActive)
                     {
+                        IncreasePrevEnviro();
                         return true;
                     }
+
+                    ResetPrevEnviro();
                     List<BoonData.Type> boons = new List<BoonData.Type>();
                     if (!Plugin.IsP03Run)
                     {

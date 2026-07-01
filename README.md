@@ -42,21 +42,25 @@ Made by Bitty45 (discord: bitty45#5291), don't be afraid to ping me if you run i
 
 ## Credits
 
+I, Bitty45 coded up pretty much all of this mod myself, but it couldn't be done without the help of the inscryption modding discord server.
+
 Thanks to:
 
 - Lily/Sylvie for the **Asleep** and **Warper** Sigils
 - divisionbyzorro/infiniscryption for the **Curses mod** that I used to create **Traveling Ouro**
 - amphany for the **Wooden Plank** card art
-- Sire for the **Golden Ram** and **Sacrifices Slab** card art
+- dawnholiday1225 for the **Golden Ram** card art
 - AllTheSigils for **Paralysis** Sigil concept
-- SpecialAPI for **mergesigils** mod
+- SpecialAPI for **mergesigils** mod which used to be used for environments
 - Degi & Liz45d from the Fanscryption server for **Environmental Effects** idea
 - Degi for **Cliffs, Mushrooms, Pirates, Breeze, Swamp** boon backgrounds and **Cliffs** boon icon
-- keks307 for **Mud, Shelter, Cliffs, Fungus, Avalanche** portraits
+- keks307 for **Cliffs, Fungus, Avalanche** portraits
+- keks307 (again) for **Mud, Hail, Breeze, Overclock, Dynamite** slots art
+- Prof. Eggnog for **Grave, Raft, Flood, Obelisk, Growth** slots art
 - Spooky B. for **Blood Moon** boon background and icon
 - Makako for **Skeleton Crew** and **Undead Parrot** pixel portraits
-- Sebastian for fleeting squirrels challenge icon base
-- Amy for the champion sigil arts
+- Sebastian for **fleeting squirrels** challenge icon base
+- Amy for the **champion** sigil arts
 
 ## Requirements
 
