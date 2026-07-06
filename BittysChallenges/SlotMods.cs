@@ -45,7 +45,7 @@ namespace BittysChallenges
             .SetRulebook(
             "Raft Slot",
             "Prevents creatures on this slot from submerging into the water.",
-            Tools.LoadTexture("ability_raft.png"),
+            Tools.LoadTexture("rulebookitemicon_raft.png"),
             SlotModificationManager.ModificationMetaCategory.Part1Rulebook
             )
         ;
@@ -62,7 +62,7 @@ namespace BittysChallenges
             .SetRulebook(
             "Muddy Slot",
             "When a creature is played on this slot, it cannot attack for one turn.",
-            Tools.LoadTexture("ability_mud.png"),
+            Tools.LoadTexture("rulebookitemicon_mud.png"),
             SlotModificationManager.ModificationMetaCategory.Part1Rulebook
             )
         ;
@@ -79,7 +79,7 @@ namespace BittysChallenges
             .SetRulebook(
             "Hail Slot",
             "At the start of the owner\'s turn, a creature in this slot takes 1 damage.",
-            Tools.LoadTexture("boonicon_hail.png"),
+            Tools.LoadTexture("rulebookitemicon_hail.png"),
             SlotModificationManager.ModificationMetaCategory.Part1Rulebook
             )
         ;
@@ -96,7 +96,7 @@ namespace BittysChallenges
             .SetRulebook(
             "Flooded Slot",
             "When a creature is played in this slot, it gets submerged in the water unless it is flying.",
-            Tools.LoadTexture("boonicon_flood.png"),
+            Tools.LoadTexture("rulebookitemicon_flood.png"),
             SlotModificationManager.ModificationMetaCategory.Part1Rulebook
             )
         ;
@@ -113,7 +113,7 @@ namespace BittysChallenges
             .SetRulebook(
             "Windy Slot",
             "At the start of the owner\'s turn, a creature in this slot will alternate between flying and not flying. This effect is ignored if the card naturally flies.",
-            Tools.LoadTexture("boonicon_flood.png"),
+            Tools.LoadTexture("rulebookitemicon_breeze.png"),
             SlotModificationManager.ModificationMetaCategory.Part1Rulebook
             )
         ;
@@ -130,7 +130,7 @@ namespace BittysChallenges
             .SetRulebook(
             "Grim Slot",
             "When a creature dies in this slot, it dies again.",
-            Tools.LoadTexture("boonicon_graveyard.png"),
+            Tools.LoadTexture("rulebookitemicon_grave.png"),
             SlotModificationManager.ModificationMetaCategory.Part1Rulebook
             )
         ;
@@ -147,7 +147,7 @@ namespace BittysChallenges
             .SetRulebook(
             "Growth Slot",
             "When a creature is played in this slot, instantly evolve it if it has Fledgeling. If it does not have Fledgling, it instead gains Fledgling.",
-            Tools.LoadTexture("boonicon_flashgrowth.png"),
+            Tools.LoadTexture("rulebookitemicon_overgrowth.png"),
             SlotModificationManager.ModificationMetaCategory.Part1Rulebook
             )
         ;
@@ -159,13 +159,14 @@ namespace BittysChallenges
             PluginGuid,
             "SlotOverclock",
             typeof(SlotMod_Overclock),
-            Tools.LoadTexture("card_slot_test.png")
+            Tools.LoadTexture("card_slot_overclock.png")
             )
             .SetRulebook(
             "Overclocking Slot",
             "When a creature is played in this slot, it takes 1 damage and gains 1 attack.",
-            Tools.LoadTexture("ability_test.png"),
-            SlotModificationManager.ModificationMetaCategory.Part3Rulebook
+            Tools.LoadTexture("rulebookitemicon_overclock.png"),
+            SlotModificationManager.ModificationMetaCategory.Part3Rulebook,
+            SlotModificationManager.ModificationMetaCategory.Part1Rulebook
             )
         ;
             SlotMod_Overclock.SlotType = SlotOverclock;
@@ -181,7 +182,7 @@ namespace BittysChallenges
             .SetRulebook(
             "Dynamite Slot",
             "When a creature is played in this slot, it takes 10 damage and explodes. The dynamite is removed.",
-            Tools.LoadTexture("ability_test.png"),
+            Tools.LoadTexture("rulebookitemicon_dynamite.png"),
             SlotModificationManager.ModificationMetaCategory.Part1Rulebook
             )
         ;
@@ -198,7 +199,7 @@ namespace BittysChallenges
             .SetRulebook(
             "Obelisk Tablet",
             "When a creature is played in this slot, it is sacrificed.",
-            Tools.LoadTexture("ability_test.png"),
+            Tools.LoadTexture("rulebookitemicon_obelisk.png"),
             SlotModificationManager.ModificationMetaCategory.Part1Rulebook
             )
         ;

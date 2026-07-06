@@ -389,9 +389,10 @@ namespace BittysChallenges
                 List<CardSlot> playerSlots = Singleton<BoardManager3D>.Instance.PlayerSlotsCopy;
                 for(int i = 0; i < playerSlots.Count; i++)
                 {
-                    if (i == 0) { yield return playerSlots[0].SetSlotModification(SlotMods.SlotMod_Flood.SlotType); }
-                    if (i == 0) { yield return playerSlots[1].SetSlotModification(SlotMods.SlotMod_Growth.SlotType); }
-                    if (i == 0) { yield return playerSlots[2].SetSlotModification(SlotMods.SlotMod_Obelisk.SlotType); }
+                    if (i == 0) { yield return playerSlots[0].SetSlotModification(SlotMods.SlotMod_Overclock.SlotType); }
+                    if (i == 1) { yield return playerSlots[1].SetSlotModification(SlotMods.SlotMod_Dynamite.SlotType); }
+                    if (i == 2) { yield return playerSlots[2].SetSlotModification(SlotMods.SlotMod_Hail.SlotType); }
+                    if (i == 3) { yield return playerSlots[3].SetSlotModification(SlotMods.SlotMod_Muddy.SlotType); }
                 }
                 base.Card.Anim.PlayDeathAnimation(false);
                 Object.Destroy(base.Card.gameObject);

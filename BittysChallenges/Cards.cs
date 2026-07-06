@@ -299,7 +299,7 @@ namespace BittysChallenges
             .AddTraits(Trait.Terrain)
             .AddAppearances(Appearance.TerrainBackground)
 
-            .SetPortraitAndEmission(Tools.LoadTexture("portrait_fungus.png"), Tools.LoadTexture("portrait_fungus.png"))
+            .SetPortraitAndEmission(Tools.LoadTexture("portrait_mushroom.png"), Tools.LoadTexture("portrait_fungus.png"))
             ;
             mushrooms.defaultEvolutionName = "Mega Mushrooms";
             // Pass the card to the API.

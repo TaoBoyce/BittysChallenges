@@ -55,8 +55,8 @@ Thanks to:
 - Degi & Liz45d from the Fanscryption server for **Environmental Effects** idea
 - Degi for **Cliffs, Mushrooms, Pirates, Breeze, Swamp** boon backgrounds and **Cliffs** boon icon
 - keks307 for **Cliffs, Fungus, Avalanche** portraits
-- keks307 (again) for **Mud, Hail, Breeze, Overclock, Dynamite** slots art
-- Prof. Eggnog for **Grave, Raft, Flood, Obelisk, Growth** slots art
+- keks307 (again) for **Mud, Hail, Breeze, Overclock, Dynamite** slots/slots rulebook art
+- Prof. Eggnog for **Grave, Raft, Flood, Obelisk, Growth** slots/slots rulebook art
 - Spooky B. for **Blood Moon** boon background and icon
 - Makako for **Skeleton Crew** and **Undead Parrot** pixel portraits
 - Sebastian for **fleeting squirrels** challenge icon base
