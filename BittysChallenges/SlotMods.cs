@@ -490,7 +490,7 @@ namespace BittysChallenges
             }
             public override IEnumerator OnUpkeep(bool playerUpkeep)
             {
-                yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("BreezeActivation", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.CancelSelf, null, null);
+                //yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("BreezeActivation", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.CancelSelf, null, null);
 
                 CardModificationInfo cardModificationInfo = Slot.Card.TemporaryMods.Find((CardModificationInfo x) => x.singletonId == "bitty_airborne");
                 if (cardModificationInfo != null)

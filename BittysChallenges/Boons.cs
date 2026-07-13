@@ -509,7 +509,7 @@ namespace BittysChallenges
 
                 for (int i = 0; i < slots.Count; i++)
                 {
-                    slots[i].FadeToSlotMod(SlotMods.SlotMod_Dynamite.SlotType);
+                    yield return slots[i].FadeToSlotMod(SlotMods.SlotMod_Dynamite.SlotType);
                 }
 
                 if (RunState.CurrentRegionTier >= 2)
@@ -1303,8 +1303,9 @@ namespace BittysChallenges
                         yield return Singleton<BoardManager>.Instance.CreateCardInSlot(CardLoader.GetCardByName(name), slots[i]);
                     }
                 }
-                List<CardSlot> allSlotsCopy = Singleton<BoardManager>.Instance.AllSlotsCopy;
-                for(int i = 0; i < allSlotsCopy.Count; i++)
+                List<CardSlot> allSlotsCopy = Singleton<BoardManager>.Instance.AllSlotsCopy; 
+                allSlotsCopy = SelectRandomSlots(6, allSlotsCopy);
+                for (int i = 0; i < allSlotsCopy.Count; i++)
                 {
                     yield return allSlotsCopy[i].FadeToSlotMod(SlotMods.SlotMod_Grave.SlotType);
                 }
