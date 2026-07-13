@@ -17,6 +17,7 @@ namespace BittysChallenges
         public static readonly string REGION_MAGMA = "Magma_bitty";
         public static void Init_EnviroBoonList()
         {
+            Log.LogInfo("Init EnviroBoons");
             EnviroBoonList = new List<EnviroBoon>();
             EnviroBoonList.Add(new EnviroBoon("Cliffs", ChallengeBoonCliffs.boo, REGION_ANY, 0, MOD_MODE.KCM));
             EnviroBoonList.Add(new EnviroBoon("Breeze", ChallengeBoonBreeze.boo, REGION_ANY, 1, MOD_MODE.KCM));
@@ -53,7 +54,7 @@ namespace BittysChallenges
                 this.regionName = regionName;
                 this.regionTier = regionTier;
                 this.modes = modes;
-                this.condition = null;
+                this.condition = new ECond_Default();
             }
             public EnviroBoon(string boonName, BoonData.Type boonType, string regionName, int regionTier, EnviroCondition condition, params List<MOD_MODE> modes)
             {
@@ -64,9 +65,17 @@ namespace BittysChallenges
                 this.modes = modes;
                 this.condition = condition;
             }
+            public bool RegionMatch(string regionName)
+            {
+                if(this.regionName == REGION_ANY || this.regionName == regionName)
+                {
+                    return true;
+                }
+                return false;
+            }
             public string boonName;
             public BoonData.Type boonType;
-            public string regionName;
+            private string regionName;
             public int regionTier;
             public EnviroCondition condition;
             public List<MOD_MODE> modes;
@@ -74,6 +83,13 @@ namespace BittysChallenges
         public abstract class EnviroCondition
         {
             public abstract bool IsActive();
+        }
+        public class ECond_Default : EnviroCondition
+        {
+            public override bool IsActive()
+            {
+                return true;
+            }
         }
         public class ECond_Challenge_Inclusive : EnviroCondition
         {

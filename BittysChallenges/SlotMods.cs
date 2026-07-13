@@ -65,9 +65,11 @@ namespace BittysChallenges
             "Prevents creatures on this slot from submerging into the water.",
             Tools.LoadTexture("rulebookitemicon_raft.png"),
             SlotModificationManager.ModificationMetaCategory.Part1Rulebook
-            )
-            .SetAbilityRedirect("submerging", Ability.Submerge, GameColors.instance.orange)
+            );
+            //Log.LogInfo("pre redirect");
+            //SlotRaft.SetAbilityRedirect("submerging", Ability.Submerge, GameColors.instance.orange)
         ;
+            //Log.LogInfo("post redirect");
             SlotMod_Raft.SlotType = SlotRaft;
         }
         public static void Add_Slot_Muddy()
@@ -84,7 +86,7 @@ namespace BittysChallenges
             Tools.LoadTexture("rulebookitemicon_mud.png"),
             SlotModificationManager.ModificationMetaCategory.Part1Rulebook
             )
-            .SetAbilityRedirect("cannot attack", Sigils.GiveCantAttack.ability, GameColors.instance.orange)
+            //.SetAbilityRedirect("cannot attack", Sigils.GiveCantAttack.ability, GameColors.instance.orange)
         ;
             SlotMod_Muddy.SlotType = SlotMuddy;
         }
@@ -118,7 +120,8 @@ namespace BittysChallenges
             "When a creature is played in this slot, it gets submerged in the water unless it is flying.",
             Tools.LoadTexture("rulebookitemicon_flood.png"),
             SlotModificationManager.ModificationMetaCategory.Part1Rulebook
-            ).SetAbilityRedirect("flying", Ability.Flying, GameColors.Instance.orange)
+            )
+            //.SetAbilityRedirect("flying", Ability.Flying, GameColors.Instance.orange)
         ;
             SlotMod_Flood.SlotType = SlotFlood;
         }
@@ -135,10 +138,11 @@ namespace BittysChallenges
             "At the start of the owner\'s turn, a creature in this slot will alternate between flying and not flying. This effect is ignored if the creature naturally flies, submerges, or burrows.",
             Tools.LoadTexture("rulebookitemicon_breeze.png"),
             SlotModificationManager.ModificationMetaCategory.Part1Rulebook
-            ).SetAbilityRedirect("flying",Ability.Flying,GameColors.Instance.orange)
-            .SetAbilityRedirect("flies", Ability.Flying,GameColors.Instance.orange)
-            .SetAbilityRedirect("submerges", Ability.Submerge,GameColors.Instance.brightSeafoam)
-            .SetAbilityRedirect("burrows", Ability.WhackAMole,GameColors.Instance.gold)
+            )
+            //.SetAbilityRedirect("flying",Ability.Flying,GameColors.Instance.orange)
+            //.SetAbilityRedirect("flies", Ability.Flying,GameColors.Instance.orange)
+            //.SetAbilityRedirect("submerges", Ability.Submerge,GameColors.Instance.brightSeafoam)
+            //.SetAbilityRedirect("burrows", Ability.WhackAMole,GameColors.Instance.gold)
         ;
             SlotMod_Breeze.SlotType = SlotBreeze;
         }
@@ -174,7 +178,7 @@ namespace BittysChallenges
             SlotModificationManager.ModificationMetaCategory.Part1Rulebook,
             SlotModificationManager.ModificationMetaCategory.Part3Rulebook
             )
-            .SetAbilityRedirect("Fledgeling", Ability.Evolve, GameColors.Instance.orange)
+            //.SetAbilityRedirect("Fledgeling", Ability.Evolve, GameColors.Instance.orange)
         ;
             SlotMod_Growth.SlotType = SlotGrowth;
         }
@@ -227,7 +231,7 @@ namespace BittysChallenges
             Tools.LoadTexture("rulebookitemicon_obelisk.png"),
             SlotModificationManager.ModificationMetaCategory.Part1Rulebook
             )
-            .SetStatIconRedirect("sacrificed", SpecialStatIcon.SacrificesThisTurn, GameColors.instance.orange)
+            //.SetStatIconRedirect("sacrificed", SpecialStatIcon.SacrificesThisTurn, GameColors.instance.orange)
         ;
             SlotMod_Obelisk.SlotType = SlotObelisk;
         }
@@ -594,6 +598,7 @@ namespace BittysChallenges
         }
         public class SlotMod_Raft : SlotModificationBehaviour
         {
+            
             public static SlotModificationManager.ModificationType SlotType;
 
             public override bool RespondsToOtherCardAssignedToSlot(PlayableCard otherCard)
@@ -602,7 +607,8 @@ namespace BittysChallenges
             }
             public override IEnumerator OnOtherCardAssignedToSlot(PlayableCard otherCard)
             {
-                CardModificationInfo cardModificationInfo = otherCard.TemporaryMods.Find((CardModificationInfo x) => x.singletonId == "bitty_flood");
+                CardModificationInfo cardModificationInfo = otherCard.TemporaryMods.Find((CardModificationInfo x) 
+                    => x.singletonId == "bitty_flood");
                 if (cardModificationInfo != null)
                 {
                     otherCard.RemoveTemporaryMod(cardModificationInfo);

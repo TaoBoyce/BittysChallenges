@@ -68,6 +68,7 @@ As with most mods, you need [BepInEx](https://inscryption.thunderstore.io/packag
 
 ## Changelog 6.1.0
 - Environments use Slot Modifications instead of merge cards
+- Reworked Enviroment handling and updated some Enviroments
 - SFX now uses API
 - Dialogue now uses API
 

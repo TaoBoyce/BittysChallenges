@@ -28,6 +28,7 @@ using Object = UnityEngine.Object;
 ///Updates to existing challenges
 ///SFX uses API
 ///Environments use Slot Modifications instead of merge cards
+///Reworked enviroment handling
 ///Credit:
 ///Keks for Mud, Hail, Breeze, Overclock, Dynamite slots art and rulebook art
 ///Prof. Eggnog for Grave, Raft, Flood, Obelisk, Growth slots art and rulebook art

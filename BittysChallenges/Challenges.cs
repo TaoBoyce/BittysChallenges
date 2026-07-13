@@ -1275,7 +1275,7 @@ namespace BittysChallenges
                     foreach(EnviroBoon enviroBoon in EnviroBoonList)
                     {
                         if(enviroBoon.regionTier <= RunState.CurrentRegionTier &&
-                            enviroBoon.regionName == RunState.CurrentMapRegion.name &&
+                            enviroBoon.RegionMatch(RunState.CurrentMapRegion.name) &&
                             enviroBoon.condition.IsActive() &&
                             enviroBoon.modes.Contains(getModMode()))
                         {
