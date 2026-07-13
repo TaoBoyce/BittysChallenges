@@ -3,8 +3,9 @@ using DiskCardGame;
 using HarmonyLib;
 using InscryptionAPI.Card;
 using InscryptionAPI.Helpers.Extensions;
+using InscryptionAPI.RuleBook;
+using InscryptionAPI.Slots;
 using InscryptionAPI.Triggers;
-using InscryptionMod.Abilities;
 using Pixelplacement;
 using System;
 using System.Collections;
@@ -13,10 +14,12 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 using static BittysChallenges.Plugin;
+using static UnityEngine.GraphicsBuffer;
 using Object = UnityEngine.Object;
 
 namespace BittysChallenges
 {
+    [HarmonyPatch]
     public class Abilities
     {
         public static void AddAbilities()
@@ -26,16 +29,10 @@ namespace BittysChallenges
             Add_Ability_Warper();
             Add_Ability_Fragile();
             Add_Ability_Paralysis();
-            Add_Ability_Muddy();
-            Add_Ability_Shelter();
-            Add_Ability_Dynamite();
             Add_Ability_StrafeKiller();
             Add_Ability_StrafeAvalanche();
-            Add_Ability_ObeliskSlot();
-            Add_Ability_Raft();
-            Log.LogInfo("End of sigils");
+            Add_Ability_SlotSpawner();
 
-            Log.LogInfo("Start of champs");
             Add_Ability_RedChamp();
             Add_Ability_YellowChamp();
             Add_Ability_GreenChamp();
@@ -48,9 +45,48 @@ namespace BittysChallenges
             Add_Ability_LightBlueChamp();
             Add_Ability_LightGreenChamp();
             Add_Ability_BrightRedChamp();
-            Log.LogInfo("End of champs");
+            Log.LogInfo("End of sigils");
+        }
+        public static void Add_Reliant_Abilities()
+        {
+            Log.LogInfo("Start of reliant sigils");
+            Add_Ability_Raft();
+            Log.LogInfo("End of reliant sigils");
         }
         #region Ability Loaders
+        private static void Add_Ability_SlotSpawner()
+        {
+            AbilityInfo abilityInfo = AbilityManager.New(
+                PluginGuid,
+                "Slot Spawner",
+                "When played, spawns a slot. Used for testing.",
+                typeof(GiveSlotSpawner),
+                Tools.LoadTexture("ability_test.png")
+            )
+            .AddMetaCategories(AbilityMetaCategory.Part1Rulebook)
+            ;
+            abilityInfo.powerLevel = 1;
+
+            // Pass the ability to the API.
+            GiveSlotSpawner.ability = abilityInfo.ability;
+        }
+        private static void Add_Ability_Raft()
+        {
+            AbilityInfo abilityInfo = AbilityManager.New(
+                PluginGuid,
+                "Seaworthy",
+                "When played, converts the slot into a Raft.",
+                typeof(GiveRaft),
+                Tools.LoadTexture("ability_raft.png")
+            )
+            .AddMetaCategories(AbilityMetaCategory.Part1Rulebook)
+            .SetSlotRedirect("Raft", SlotMods.SlotMod_Raft.SlotType, GameColors.Instance.orange)
+            ;
+            abilityInfo.powerLevel = 1;
+
+            // Pass the ability to the API.
+            GiveRaft.ability = abilityInfo.ability;
+        }
         private static void Add_Ability_Warper()
         {
             AbilityInfo abilityInfo = AbilityManager.New(
@@ -107,58 +143,9 @@ namespace BittysChallenges
             ).AddMetaCategories(AbilityMetaCategory.Part1Rulebook)
             ;
             abilityInfo.powerLevel = -1;
-            abilityInfo.abilityLearnedDialogue = Dialogue.SetAbilityInfoDialogue("Stunned and confused.");
-
+            
             // Pass the ability to the API.
             GiveParalysis.ability = abilityInfo.ability;
-        }
-        private static void Add_Ability_Muddy()
-        {
-            AbilityInfo abilityInfo = AbilityManager.New(
-                PluginGuid,
-                "Muddy",
-                "Other cards may be placed on top of [creature], but will be unable to attack for one turn and will gain Muddy. If [creature] is sacrificed, the sacrificing creature will be unable to attack for one turn.",
-                typeof(GiveMuddy),
-                Tools.LoadTexture("ability_mud.png")
-            ).AddMetaCategories(AbilityMetaCategory.Part1Rulebook)
-            ;
-            abilityInfo.powerLevel = -1;
-
-
-            // Pass the ability to the API.
-            GiveMuddy.ability = abilityInfo.ability;
-        }
-        private static void Add_Ability_Shelter()
-        {
-            AbilityInfo abilityInfo = AbilityManager.New(
-                PluginGuid,
-                "Shelter",
-                "Adjacent cards are sheltered from environmental effects.",
-                typeof(GiveShelter),
-                Tools.LoadTexture("ability_shelter.png")
-            ).AddMetaCategories(AbilityMetaCategory.Part1Rulebook)
-            ;
-            abilityInfo.powerLevel = 3;
-
-
-            // Pass the ability to the API.
-            GiveShelter.ability = abilityInfo.ability;
-        }
-        private static void Add_Ability_Dynamite()
-        {
-            AbilityInfo abilityInfo = AbilityManager.New(
-                PluginGuid,
-                "Explosive",
-                "Other cards may be placed on top of [creature]; the other card, adjacent cards, and opposing cards will all be dealt 10 damage.",
-                typeof(GiveDynamite),
-                Tools.LoadTexture("ability_dynamite.png")
-            ).AddMetaCategories(AbilityMetaCategory.Part1Rulebook)
-            ;
-            abilityInfo.powerLevel = -1;
-
-
-            // Pass the ability to the API.
-            GiveDynamite.ability = abilityInfo.ability;
         }
         private static void Add_Ability_StrafeKiller()
         {
@@ -192,39 +179,8 @@ namespace BittysChallenges
             // Pass the ability to the API.
             GiveStrafeAvalanche.ability = abilityInfo.ability;
         }
-        private static void Add_Ability_ObeliskSlot()
-        {
-            AbilityInfo abilityInfo = AbilityManager.New(
-                PluginGuid,
-                "Sacrificial Slab",
-                "Other cards may be placed on top of [creature]; the other card will die.",
-                typeof(GiveObeliskSlot),
-                Tools.LoadTexture("ability_sacrificeslab.png")
-            )
-            .AddMetaCategories(AbilityMetaCategory.Part1Rulebook)
-            ;
-            abilityInfo.powerLevel = 0;
-
-            // Pass the ability to the API.
-            GiveObeliskSlot.ability = abilityInfo.ability;
-        }
-        private static void Add_Ability_Raft()
-        {
-            AbilityInfo abilityInfo = AbilityManager.New(
-                PluginGuid,
-                "Seaworthy",
-                "Other cards may be placed on top of [creature], any Waterborne sigils on the card will be negated.",
-                typeof(GiveRaft),
-                Tools.LoadTexture("ability_raft.png")
-            )
-            .AddMetaCategories(AbilityMetaCategory.Part1Rulebook)
-            ;
-            abilityInfo.powerLevel = 1;
-
-            // Pass the ability to the API.
-            GiveRaft.ability = abilityInfo.ability;
-        }
         //CHAMPION ABILITIES ------------------------------------------------
+        #region Champ Abilities
         private static void Add_Ability_RedChamp()
         {
             AbilityInfo abilityInfo = AbilityManager.New(
@@ -418,22 +374,65 @@ namespace BittysChallenges
             GiveBrightRedChamp.ability = abilityInfo.ability;
         }
         #endregion
+        #endregion
         #region Abilities
+        public class GiveSlotSpawner : AbilityBehaviour
+        {
+            public override Ability Ability
+            {
+                get
+                {
+                    return GiveSlotSpawner.ability;
+                }
+            }
+            public override bool RespondsToResolveOnBoard()
+            {
+                return true;
+            }
+            public override IEnumerator OnResolveOnBoard()
+            {
+                List<CardSlot> playerSlots = Singleton<BoardManager3D>.Instance.PlayerSlotsCopy;
+                for(int i = 0; i < playerSlots.Count; i++)
+                {
+                    if (i == 0) { yield return playerSlots[0].FadeToSlotMod(SlotMods.SlotMod_Growth.SlotType); }
+                    if (i == 1) { yield return playerSlots[1].FadeToSlotMod(SlotMods.SlotMod_Grave.SlotType); }
+                    if (i == 2) { yield return playerSlots[2].FadeToSlotMod(SlotMods.SlotMod_Flood.SlotType); }
+                    if (i == 3) { yield return playerSlots[3].FadeToSlotMod(SlotMods.SlotMod_Obelisk.SlotType); }
+                }
+                base.Card.Anim.PlayDeathAnimation(false);
+                Object.Destroy(base.Card.gameObject);
+                yield break;
+            }
+
+            public static Ability ability;
+        }
+        public class GiveRaft : AbilityBehaviour
+        {
+            public override Ability Ability
+            {
+                get
+                {
+                    return GiveRaft.ability;
+                }
+            }
+            public override bool RespondsToResolveOnBoard()
+            {
+                return true;
+            }
+            public override IEnumerator OnResolveOnBoard()
+            {
+                yield return Card.Slot.SetSlotModification(SlotMods.SlotMod_Raft.SlotType);
+                base.Card.Anim.PlayDeathAnimation(false);
+                Object.Destroy(base.Card.gameObject);
+                yield break;
+            }
+
+            public static Ability ability;
+        }
         public class AddCloverReRollAbility : SpecialCardBehaviour, IOnOtherCardResolveInHand
         {
             public readonly static SpecialTriggeredAbility CloverReRollSpecialAbility = SpecialTriggeredAbilityManager.Add(PluginGuid, "CloverReRollSpecialAbility", typeof(AddCloverReRollAbility)).Id;
 
-            private CardModificationInfo mod = new CardModificationInfo();
-            public override bool RespondsToDrawn()
-            {
-                return true;
-            }
-            public override IEnumerator OnDrawn()
-            {
-                mod.singletonId = "bitty_mergeSigil";
-                base.PlayableCard.AddTemporaryMod(mod);
-                yield break;
-            }
             public override bool RespondsToResolveOnBoard()
             {
                 return true;
@@ -547,41 +546,24 @@ namespace BittysChallenges
             public override IEnumerator OnDie(bool wasSacrifice, PlayableCard killer)
             {
                 Challenges.MiscEncounters.IncreaseOuro();
-                int currentRandomSeed = SaveManager.SaveFile.GetCurrentRandomSeed();
-                List<string> list = new List<string>
-                    {
-                        "OuroDies1",
-                        "OuroDies2",
-                        "OuroDies3"
-                    };
+
+                string zoom = "OuroDies";
 
                 if (Singleton<Opponent>.Instance.OpponentType == Opponent.Type.PirateSkullBoss)
                 {
                     if (killer != null && killer.OpponentCard == false)
                     {
-                        list = new List<string>
-                        {
-                        "RoyalOuroDiesPlayer"
-                        };
+                        zoom = "RoyalOuroDiesPlayer";
                     }
                     else
                     {
-                        list = new List<string>
-                        {
-                        "RoyalOuroDies"
-                        };
+                        zoom = "RoyalOuroDies";
                     }
                 }
-                if (IsP03Run)
+                if (modModeActive(MOD_MODE.P03))
                 {
-                    list = new List<string>
-                    {
-                        "P03OuroDies1",
-                        "P03OuroDies2",
-                        "P03OuroDies3"
-                    };
+                    zoom = "P03OuroDies";
                 }
-                string zoom = list[SeededRandom.Range(0, list.Count, currentRandomSeed++)];
                 yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent(zoom, TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
                 yield break;
             }
@@ -593,25 +575,17 @@ namespace BittysChallenges
 
             public override bool RespondsToDie(bool wasSacrifice, PlayableCard killer)
             {
-                return killer != null || wasSacrifice;
+                return true;
             }
             public override IEnumerator OnDie(bool wasSacrifice, PlayableCard killer)
             {
                 Challenges.MiscEncounters.GoldenSheepKill();
-                yield return this.BreakCage(true);
-                int currentRandomSeed = SaveManager.SaveFile.GetCurrentRandomSeed();
-                List<string> list = new List<string>
-                    {
-                        "SheepDies1",
-                        "SheepDies2",
-                        "SheepDies3"
-                    };
-                string zoom = list[SeededRandom.Range(0, list.Count, currentRandomSeed++)];
-                yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent(zoom, TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
+                yield return this.GiveWool(true);
+                yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("SheepDies", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
 
                 yield break;
             }
-            private IEnumerator BreakCage(bool fromBattle)
+            private IEnumerator GiveWool(bool fromBattle)
             {
                 yield return new WaitForSeconds(0.5f);
                 if (fromBattle)
@@ -636,20 +610,12 @@ namespace BittysChallenges
             public override IEnumerator OnUpkeep(bool playerUpkeep)
             {
                 turnCount++;
-                Plugin.Log.LogInfo("turn count: " + turnCount);
                 if (turnCount > MAX_TURNS)
                 {
-                    int currentRandomSeed = SaveManager.SaveFile.GetCurrentRandomSeed();
-                    List<string> list = new List<string>
-                        {
-                            "SheepEscapes1",
-                            "SheepEscapes2",
-                            "SheepEscapes3"
-                        };
-                    string zoom = list[SeededRandom.Range(0, list.Count, currentRandomSeed++)];
-                    yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent(zoom, TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
+                    yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("SheepEscapes", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
 
-                    yield return base.PlayableCard.Die(false, null, false);
+                    base.PlayableCard.Anim.PlayDeathAnimation(false);
+                    Object.Destroy(base.PlayableCard.gameObject);
                 }
                 yield break;
             }
@@ -727,7 +693,6 @@ namespace BittysChallenges
                 {
                     destination = (this.movingLeft ? toLefttwice : toRighttwice);
                 }
-                Plugin.Log.LogInfo(destination.Index);
                 yield return base.StartCoroutine(this.MoveToSlot(destination));
                 yield break;
             }
@@ -856,127 +821,6 @@ namespace BittysChallenges
 
             public static Ability ability;
         }
-        public class GiveMuddy : MergeKillSelf
-        {
-            public override Ability Ability
-            {
-                get
-                {
-                    return GiveMuddy.ability;
-                }
-            }
-            private void Start()
-            {
-                mod.singletonId = "bitty_mergeSigil";
-                base.Card.AddTemporaryMod(mod);
-            }
-            public override bool CanMergeWith(PlayableCard mergeCard)
-            {
-                return true;
-            }
-            public override IEnumerator OnPreMergeDeath(PlayableCard mergeCard)
-            {
-                yield break;
-            }
-            public override IEnumerator OnPreCreatureMerge(PlayableCard mergeCard)
-            {
-                CardModificationInfo mod = new CardModificationInfo();
-                mod.abilities.Add(Sigils.GiveCantAttack.ability);
-                mod.RemoveOnUpkeep = true;
-                mergeCard.AddTemporaryMod(mod);
-                mergeCard.AddTemporaryMod(new CardModificationInfo(GiveMuddy.ability) { fromCardMerge = true });
-
-                if (!Plugin.IsP03Run && !CardDisplayer3D.EmissionEnabledForCard(mergeCard.renderInfo, mergeCard))
-                {
-                    mergeCard.RenderInfo.forceEmissivePortrait = true;
-                    mergeCard.StatsLayer.SetEmissionColor(GameColors.Instance.gold);
-                }
-                mergeCard.RenderCard();
-                yield break;
-            }
-            public override bool RespondsToSacrifice()
-            {
-                return true;
-            }
-            public override IEnumerator OnSacrifice()
-            {
-                yield return base.PreSuccessfulTriggerSequence();
-                CardModificationInfo mod = new CardModificationInfo();
-                mod.abilities.Add(Sigils.GiveCantAttack.ability);
-                mod.RemoveOnUpkeep = true;
-                Singleton<BoardManager>.Instance.CurrentSacrificeDemandingCard.AddTemporaryMod(mod);
-                yield return base.LearnAbility(0f);
-                yield break;
-            }
-
-            private CardModificationInfo mod = new CardModificationInfo();
-
-            public static Ability ability;
-        }
-        public class GiveShelter : AbilityBehaviour
-        {
-            public override Ability Ability
-            {
-                get
-                {
-                    return GiveShelter.ability;
-                }
-            }
-
-            public static Ability ability;
-        }
-        public class GiveDynamite : MergeKillSelf
-        {
-            public override Ability Ability
-            {
-                get
-                {
-                    return GiveDynamite.ability;
-                }
-            }
-            private void Start()
-            {
-                mod.singletonId = "bitty_mergeSigil";
-                base.Card.AddTemporaryMod(mod);
-            }
-            public override IEnumerator OnPreMergeDeath(PlayableCard mergeCard)
-            {
-                yield return base.PreSuccessfulTriggerSequence();
-                yield return this.ExplodeFromSlot(mergeCard.Slot);
-                yield return mergeCard.TakeDamage(10, base.Card);
-                yield return base.LearnAbility(0.25f);
-                yield break;
-            }
-            public override IEnumerator OnPreCreatureMerge(PlayableCard mergeCard)
-            {
-                yield break;
-            }
-            protected IEnumerator ExplodeFromSlot(CardSlot slot)
-            {
-                List<CardSlot> adjacentSlots = Singleton<BoardManager>.Instance.GetAdjacentSlots(slot);
-                if (adjacentSlots.Count > 0 && adjacentSlots[0].Index < slot.Index)
-                {
-                    if (adjacentSlots[0].Card != null && !adjacentSlots[0].Card.Dead)
-                    {
-                        yield return adjacentSlots[0].Card.TakeDamage(10, null);
-                    }
-                    adjacentSlots.RemoveAt(0);
-                }
-                if (slot.opposingSlot.Card != null && !slot.opposingSlot.Card.Dead)
-                {
-                    yield return slot.opposingSlot.Card.TakeDamage(10, null);
-                }
-                if (adjacentSlots.Count > 0 && adjacentSlots[0].Card != null && !adjacentSlots[0].Card.Dead)
-                {
-                    yield return adjacentSlots[0].Card.TakeDamage(10, null);
-                }
-                yield break;
-            }
-
-            private CardModificationInfo mod = new CardModificationInfo();
-
-            public static Ability ability;
-        }
         public class GiveStrafeKiller : Strafe
         {
             public override Ability Ability
@@ -1077,83 +921,6 @@ namespace BittysChallenges
                 }
                 yield break;
             }
-
-            public static Ability ability;
-        }
-        public class GiveObeliskSlot : MergeKillOther
-        {
-            public override Ability Ability
-            {
-                get
-                {
-                    return GiveObeliskSlot.ability;
-                }
-            }
-            private void Start()
-            {
-                mod.singletonId = "bitty_mergeSigil";
-                base.Card.AddTemporaryMod(mod);
-            }
-            public override IEnumerator OnPreMergeDeath(PlayableCard mergeCard)
-            {
-                yield return base.PreSuccessfulTriggerSequence();
-                yield return base.LearnAbility(0.25f);
-
-                if (mergeCard.Info.HasTrait(Trait.Goat))
-                {
-                    AudioController.Instance.PlaySound2D("creepy_rattle_lofi", MixerGroup.None, 1f, 0f, null, null, null, null, false);
-                    yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("GoatSacrifice", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
-                    DeckInfo currentDeck = SaveManager.SaveFile.CurrentDeck;
-                    CardInfo card = currentDeck.Cards.Find((CardInfo x) => x == mergeCard.Info);
-                    if (card != null)
-                    {
-                        Plugin.Log.LogInfo("Removing: " + card.name);
-                        currentDeck.RemoveCard(card);
-                    }
-                    Singleton<ViewManager>.Instance.SwitchToView(View.Default);
-                    yield return new WaitForSeconds(0.25f);
-                    RunState.Run.playerDeck.AddBoon(BoonData.Type.StartingBones);
-                    yield return Singleton<BoonsHandler>.Instance.PlayBoonAnimation(BoonData.Type.StartingBones);
-                    yield return Singleton<ResourcesManager>.Instance.AddBones(8, null);
-                    yield return new WaitForSeconds(0.25f);
-                }
-                else if (mergeCard.HasTrait(Trait.Pelt))
-                {
-                    yield return new WaitForSeconds(0.7f);
-                    yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("PeltSacrifice", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
-
-                    List<CardSlot> opponentSlotsCopy = Singleton<BoardManager>.Instance.OpponentSlotsCopy;
-                    opponentSlotsCopy.RemoveAll((CardSlot x) => x.Card == null || x.Card.Info.name != "bitty_Obelisk");
-                    if (opponentSlotsCopy != null)
-                    {
-                        CardInfo card = opponentSlotsCopy[0].Card.Info;
-                        card.Mods.Add(new CardModificationInfo(Ability.BuffNeighbours));
-                        AudioController.Instance.PlaySound3D("dueldisk_card_played", MixerGroup.TableObjectsSFX, opponentSlotsCopy[0].Card.transform.position, 2f, 0f, null, null, null, null, false);
-
-                        opponentSlotsCopy[0].Card.OnStatsChanged();
-                        opponentSlotsCopy[0].Card.Anim.PlayTransformAnimation();
-                    }
-                }
-                else if (mergeCard.name.Contains("Squirrel"))
-                {
-                    yield return new WaitForSeconds(0.7f);
-                    squirrelSacrifices++;
-                    yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("SquirrelSacrifice", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, new string[]
-                    {
-                        squirrelSacrifices.ToString()
-                    }, null);
-                }
-                yield break;
-            }
-            public override IEnumerator OnPreCreatureMerge(PlayableCard mergeCard)
-            {
-
-                yield break;
-            }
-
-            public int squirrelSacrifices;
-
-            private CardModificationInfo mod = new CardModificationInfo();
 
             public static Ability ability;
         }
@@ -1302,51 +1069,13 @@ namespace BittysChallenges
         {
             try
             {
-                Singleton<GiveCannoneer>.Instance.ClearAllTargetIcons();
+                GiveCannoneer cannon = new GiveCannoneer();
+                cannon.ClearAllTargetIcons();
             }
             catch
             {
                 Plugin.Log.LogInfo("Did not find Cannoneer Instance");
             }
-        }
-        public class GiveRaft : MergeKillSelf
-        {
-            public override Ability Ability
-            {
-                get
-                {
-                    return GiveRaft.ability;
-                }
-            }
-            public override bool IsActualDeath
-            {
-                get
-                {
-                    return false;
-                }
-            }
-            private void Start()
-            {
-                mod.singletonId = "bitty_mergeSigil";
-                mod.negateAbilities.Add(Ability.Submerge);
-                base.Card.AddTemporaryMod(mod);
-            }
-            public override IEnumerator OnPreCreatureMerge(PlayableCard mergeCard)
-            {
-                CardModificationInfo mod = new CardModificationInfo();
-                mod.negateAbilities.Add(Ability.Submerge);
-                mod.negateAbilities.Add(Ability.SubmergeSquid);
-                mergeCard.AddTemporaryMod(mod);
-                yield break;
-            }
-            public override IEnumerator OnPreMergeDeath(PlayableCard mergeCard)
-            {
-                yield break;
-            }
-
-            private CardModificationInfo mod = new CardModificationInfo();
-
-            public static Ability ability;
         }
         public class GiveRedChamp : AbilityBehaviour
         {

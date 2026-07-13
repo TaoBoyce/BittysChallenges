@@ -115,6 +115,17 @@
     <None Remove="Resources\boon_swamp.png" />
     <None Remove="Resources\boon_voidaura.png" />
     <None Remove="Resources\card_clover.png" />
+    <None Remove="Resources\card_slot_breeze.png" />
+    <None Remove="Resources\card_slot_dynamite.png" />
+    <None Remove="Resources\card_slot_flood.png" />
+    <None Remove="Resources\card_slot_grave.png" />
+    <None Remove="Resources\card_slot_hail.png" />
+    <None Remove="Resources\card_slot_mud.png" />
+    <None Remove="Resources\card_slot_obelisk.png" />
+    <None Remove="Resources\card_slot_overclock.png" />
+    <None Remove="Resources\card_slot_overgrowth.png" />
+    <None Remove="Resources\card_slot_raft.png" />
+    <None Remove="Resources\card_slot_test.png" />
     <None Remove="Resources\card_slot_up.png" />
     <None Remove="Resources\particle_aura.png" />
     <None Remove="Resources\particle_cross.png" />
@@ -134,6 +145,7 @@
     <None Remove="Resources\portrait_icecube.png" />
     <None Remove="Resources\portrait_minicello.png" />
     <None Remove="Resources\portrait_minicello_emission.png" />
+    <None Remove="Resources\portrait_mushroom.png" />
     <None Remove="Resources\portrait_obelisk.png" />
     <None Remove="Resources\portrait_obelisk2.png" />
     <None Remove="Resources\portrait_ouroboros.png" />
@@ -153,8 +165,18 @@
     <None Remove="Resources\portrait_totemheadless_emission.png" />
     <None Remove="Resources\portrait_totem_emission.png" />
     <None Remove="Resources\portrait_woodenplank.png" />
+    <None Remove="Resources\rulebookitemicon_breeze.png" />
+    <None Remove="Resources\rulebookitemicon_dynamite.png" />
+    <None Remove="Resources\rulebookitemicon_flood.png" />
+    <None Remove="Resources\rulebookitemicon_grave.png" />
+    <None Remove="Resources\rulebookitemicon_hail.png" />
+    <None Remove="Resources\rulebookitemicon_mud.png" />
+    <None Remove="Resources\rulebookitemicon_obelisk.png" />
+    <None Remove="Resources\rulebookitemicon_overclock.png" />
+    <None Remove="Resources\rulebookitemicon_overgrowth.png" />
+    <None Remove="Resources\rulebookitemicon_raft.png" />
+    <None Remove="Resources\sfx_vineBoom.ogg" />
     <None Remove="Resources\starterdeck_icon_pirate.png" />
-    <None Remove="Resources\testbundle" />
   </ItemGroup>
 
   <ItemGroup>
@@ -258,6 +280,17 @@
     <EmbeddedResource Include="Resources\boon_swamp.png" />
     <EmbeddedResource Include="Resources\boon_voidaura.png" />
     <EmbeddedResource Include="Resources\card_clover.png" />
+    <EmbeddedResource Include="Resources\card_slot_breeze.png" />
+    <EmbeddedResource Include="Resources\card_slot_dynamite.png" />
+    <EmbeddedResource Include="Resources\card_slot_flood.png" />
+    <EmbeddedResource Include="Resources\card_slot_grave.png" />
+    <EmbeddedResource Include="Resources\card_slot_hail.png" />
+    <EmbeddedResource Include="Resources\card_slot_mud.png" />
+    <EmbeddedResource Include="Resources\card_slot_obelisk.png" />
+    <EmbeddedResource Include="Resources\card_slot_overclock.png" />
+    <EmbeddedResource Include="Resources\card_slot_overgrowth.png" />
+    <EmbeddedResource Include="Resources\card_slot_raft.png" />
+    <EmbeddedResource Include="Resources\card_slot_test.png" />
     <EmbeddedResource Include="Resources\card_slot_up.png" />
     <EmbeddedResource Include="Resources\particle_aura.png" />
     <EmbeddedResource Include="Resources\particle_cross.png" />
@@ -277,6 +310,7 @@
     <EmbeddedResource Include="Resources\portrait_icecube.png" />
     <EmbeddedResource Include="Resources\portrait_minicello.png" />
     <EmbeddedResource Include="Resources\portrait_minicello_emission.png" />
+    <EmbeddedResource Include="Resources\portrait_mushroom.png" />
     <EmbeddedResource Include="Resources\portrait_obelisk.png" />
     <EmbeddedResource Include="Resources\portrait_obelisk2.png" />
     <EmbeddedResource Include="Resources\portrait_ouroboros.png" />
@@ -296,12 +330,22 @@
     <EmbeddedResource Include="Resources\portrait_totemheadless_emission.png" />
     <EmbeddedResource Include="Resources\portrait_totem_emission.png" />
     <EmbeddedResource Include="Resources\portrait_woodenplank.png" />
+    <EmbeddedResource Include="Resources\rulebookitemicon_breeze.png" />
+    <EmbeddedResource Include="Resources\rulebookitemicon_dynamite.png" />
+    <EmbeddedResource Include="Resources\rulebookitemicon_flood.png" />
+    <EmbeddedResource Include="Resources\rulebookitemicon_grave.png" />
+    <EmbeddedResource Include="Resources\rulebookitemicon_hail.png" />
+    <EmbeddedResource Include="Resources\rulebookitemicon_mud.png" />
+    <EmbeddedResource Include="Resources\rulebookitemicon_obelisk.png" />
+    <EmbeddedResource Include="Resources\rulebookitemicon_overclock.png" />
+    <EmbeddedResource Include="Resources\rulebookitemicon_overgrowth.png" />
+    <EmbeddedResource Include="Resources\rulebookitemicon_raft.png" />
+    <EmbeddedResource Include="Resources\sfx_vineBoom.ogg" />
     <EmbeddedResource Include="Resources\starterdeck_icon_pirate.png" />
-    <EmbeddedResource Include="Resources\testbundle" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="BepInEx.Core" Version="5.4.21" />
+    <PackageReference Include="BepInEx.Core" Version="5.4.19" />
     <PackageReference Include="Inscryption.GameLibs" Version="1.9.0-r.0" />
   </ItemGroup>
 
@@ -323,9 +367,6 @@
     </Reference>
     <Reference Include="InscryptionAPI">
       <HintPath>..\..\..\..\AppData\Roaming\r2modmanPlus-local\Inscryption\profiles\Mod Dev\BepInEx\plugins\API_dev-API\InscryptionAPI.dll</HintPath>
-    </Reference>
-    <Reference Include="MergeSigils">
-      <HintPath>..\..\..\..\AppData\Roaming\r2modmanPlus-local\Inscryption\profiles\Mod Dev\BepInEx\plugins\SpecialAPI-MergeSigils\MergeSigils.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Security">
       <HintPath>..\..\..\..\OneDrive\Desktop\Inscryption\Unity\Mono.Security.dll</HintPath>

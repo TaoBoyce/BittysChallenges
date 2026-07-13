@@ -1,36 +1,42 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using BepInEx;
+﻿using BepInEx;
+using BepInEx.Bootstrap;
+using BepInEx.Configuration;
 using BepInEx.Logging;
+using BittysSigils;
 using DiskCardGame;
 using HarmonyLib;
-using UnityEngine;
 using InscryptionAPI.Ascension;
-using InscryptionAPI.Card;
-using InscryptionAPI.Saves;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using BepInEx.Configuration;
 using InscryptionAPI.Boons;
-using InscryptionAPI.Triggers;
-using InscryptionMod.Abilities;
-using Pixelplacement;
-using Object = UnityEngine.Object;
-using BittysSigils;
-using BepInEx.Bootstrap;
+using InscryptionAPI.Card;
 using InscryptionAPI.Helpers.Extensions;
+using InscryptionAPI.Saves;
+using InscryptionAPI.Sound;
+using InscryptionAPI.Triggers;
+using Pixelplacement;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using UnityEngine;
 using static BittysChallenges.Abilities;
+using Object = UnityEngine.Object;
 
-///Changelog: 6.0.0
-///Refactor to make future modification easier.
-///
+///Changelog: 6.1.0
+///Updates to existing challenges
+///SFX uses API
+///Environments use Slot Modifications instead of merge cards
+///Reworked enviroment handling
 ///Credit:
+///Keks for Mud, Hail, Breeze, Overclock, Dynamite slots art and rulebook art
+///Prof. Eggnog for Grave, Raft, Flood, Obelisk, Growth slots art and rulebook art
+///
 namespace BittysChallenges
 {
     [BepInPlugin(PluginGuid, PluginName, PluginVersion)]
     [BepInDependency("cyantist.inscryption.api", BepInDependency.DependencyFlags.HardDependency)]
-	[BepInDependency("spapi.inscryption.mergesigils", BepInDependency.DependencyFlags.HardDependency)]
 	[BepInDependency("bitty45.inscryption.sigils", BepInDependency.DependencyFlags.HardDependency)]
     public partial class Plugin : BaseUnityPlugin
     {
@@ -43,21 +49,21 @@ namespace BittysChallenges
 			famineRemoval = base.Config.Bind<int>("General", "Famine Challenge Severity", 3, "The number of cards removed from your side deck.");
 			abundanceQuality = base.Config.Bind<int>("General", "Abundance Challenge Quality", 5, "The number of cards added to your side deck.");
 			allowedResets = base.Config.Bind<int>("General", "Extra Lives Allowed Resets", 3, "The max number of times that extra lives will reset the scales during a run.");
-			
-			using (var s = Tools.CurrentAssembly.GetManifestResourceStream("BittysChallenges.Resources.testbundle"))
-			{
-				assetBundle = AssetBundle.LoadFromStream(s);
-				addedSfx = new List<AudioClip>
-				{
-					assetBundle.LoadAsset<AudioClip>("vine-boom")
-				};
-			}
 
-			//loading things into API
-			Challenges.AddChallenges();
+            AssemblyLoc = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            //load audio
+            addedSfx.Add(SoundManager.LoadAudioClip(PluginGuid, AssemblyLoc + "/Resources/sfx_vineBoom.ogg"));
+
+            //loading things into API
+            Challenges.AddChallenges();
 			Boons.AddBoons();
+            SlotMods.Add_SlotMods();
 			Abilities.AddAbilities();
+            SlotMods.Add_Reliant_SlotMods();
+            Abilities.Add_Reliant_Abilities();
 			Cards.AddCards();
+            Dialogue.Add_Dialogue();
+            Decks.AddDecks();
             
 			//Load all patches
 			harmony.PatchAll();
@@ -68,12 +74,12 @@ namespace BittysChallenges
 
 		internal const string PluginName = "Bitty's Challenges";
 
-		internal const string PluginVersion = "6.0.0";
+		internal const string PluginVersion = "6.1.0";
 
         internal const string CardPrefix = "bitty";
 
-        public static AssetBundle assetBundle;
-		public static List<AudioClip> addedSfx = new List<AudioClip>();
+		public static string AssemblyLoc;
+        public static List<AudioClip> addedSfx = new List<AudioClip> { };
 
 		internal static ConfigEntry<int> famineRemoval;
 		internal static ConfigEntry<int> abundanceQuality;
@@ -81,41 +87,65 @@ namespace BittysChallenges
 
 		internal static ManualLogSource Log;
 
-        public static bool IsP03Run
+        public enum MOD_MODE
         {
-            get
+            KCM,
+            P03
+        }
+        public static MOD_MODE getModMode()
+        {
+            //P03
+            if (Chainloader.PluginInfos.ContainsKey("zorro.inscryption.infiniscryption.p03kayceerun") &&
+            AscensionSaveData.Data != null &&
+            AscensionSaveData.Data.currentRun != null &&
+            AscensionSaveData.Data.currentRun.playerLives > 0 &&
+            ModdedSaveManager.SaveData.GetValueAsBoolean("zorro.inscryption.infiniscryption.p03kayceerun", "IsP03Run"))
             {
-                bool flag = Chainloader.PluginInfos.ContainsKey("zorro.inscryption.infiniscryption.p03kayceerun") && AscensionSaveData.Data != null && AscensionSaveData.Data.currentRun != null && AscensionSaveData.Data.currentRun.playerLives > 0;
-                bool result = (flag && ModdedSaveManager.SaveData.GetValueAsBoolean("zorro.inscryption.infiniscryption.p03kayceerun", "IsP03Run"));
-                return result;
+                return MOD_MODE.P03;
+            }
+
+            //Vanilla
+            else
+            {
+                return MOD_MODE.KCM;
             }
         }
+        public static bool modModeActive(MOD_MODE modMode)
+        {
+            return getModMode() == modMode;
+        }
 
-		[HarmonyPatch(typeof(AudioController))]
+        [HarmonyPatch(typeof(AudioController))]
         public class AudioPatches
         {
             [HarmonyPrefix]
-            [HarmonyPatch(nameof(AudioController.GetAudioClip))]
-            public static void AddAudios(AudioController __instance, string soundId)
+            [HarmonyPatch("GetAudioClip")]
+            public static void AddAudiosClips(AudioController __instance, string soundId)
             {
-                __instance.SFX.AddRange(addedSfx.Where(x => !__instance.SFX.Contains(x)));
+                __instance.SFX.AddRange(from x in Plugin.addedSfx
+                                        where !__instance.SFX.Contains(x)
+                                        select x);
             }
 
             [HarmonyPrefix]
-            [HarmonyPatch(nameof(AudioController.GetLoopClip))]
-            public static void AddLoops(AudioController __instance, string loopId)
+            [HarmonyPatch("GetLoopClip")]
+            public static void AddLoopClips(AudioController __instance, string loopId)
             {
-                __instance.Loops.AddRange(addedSfx.Where(x => !__instance.Loops.Contains(x)));
+                __instance.Loops.AddRange(from x in Plugin.addedSfx
+                                          where !__instance.Loops.Contains(x)
+                                          select x);
             }
 
             [HarmonyPrefix]
-            [HarmonyPatch(nameof(AudioController.GetLoop))]
-            public static void AddLoops2(AudioController __instance, string loopName)
+            [HarmonyPatch("GetLoop")]
+            public static void AddLoops(AudioController __instance, string loopName)
             {
-                __instance.Loops.AddRange(addedSfx.Where(x => !__instance.Loops.Contains(x)));
+                __instance.Loops.AddRange(from x in Plugin.addedSfx
+                                          where !__instance.Loops.Contains(x)
+                                          select x);
             }
         }
-	}
+    }
 }
 
 

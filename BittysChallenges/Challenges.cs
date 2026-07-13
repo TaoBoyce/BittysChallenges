@@ -5,6 +5,7 @@ using InscryptionAPI.Ascension;
 using InscryptionAPI.Boons;
 using InscryptionAPI.Card;
 using InscryptionAPI.Saves;
+using InscryptionAPI.Slots;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -15,6 +16,7 @@ using UnityEngine;
 using static BittysChallenges.Abilities;
 using static BittysChallenges.Boons;
 using static BittysChallenges.Plugin;
+using static BittysChallenges.EnviroHandler;
 
 namespace BittysChallenges
 {
@@ -375,7 +377,6 @@ namespace BittysChallenges
                         {
                             idealTurn = 1;
                         }
-                        Plugin.Log.LogInfo(idealTurn);
                         if (tp[idealTurn].Count < lanes)
                         {
                             Plugin.Log.LogInfo("Adding Skeleton to turn plan...");
@@ -476,7 +477,6 @@ namespace BittysChallenges
                         mod.abilities.Add(Ability.WhackAMole);
                         for (int i = 1; i <= AscensionStatsData.GetStatValue(AscensionStat.Type.BossesDefeated, false); i++)
                         {
-                            Plugin.Log.LogInfo(i);
                             mod.abilities.Add(MiscEncounters.ValidAbilities(i).ability);
                         }
                         mod.attackAdjustment = MiscEncounters.TravelingOuroborosBuffs();
@@ -508,6 +508,7 @@ namespace BittysChallenges
                         mod.attackAdjustment = 1;
                         mod.healthAdjustment = 4;
                         mod.abilities.Add(Ability.BuffNeighbours);
+                        mod.abilities.Add(Ability.DeathShield);
                         mod.nameReplacement = "Mole Firstmate";
                         mole.AddAppearances(GoldEmission.Appearance.GoldEmission);
                         mole.mods.Add(mod);
@@ -564,6 +565,10 @@ namespace BittysChallenges
             [HarmonyPatch(nameof(RunIntroSequencer.TryModifyStarterCards))]
             public static void StartersPatch()
             {
+                if (AscensionSaveData.Data.ChallengeIsActive(Challenges.Challenge_infiniteLives.challengeType))
+                {
+                    InfiniteLives.LifeRepeatsReset();
+                }
                 if (AscensionSaveData.Data.ChallengeIsActive(Challenges.Challenge_waterborneStarter.challengeType))
                 {
                     foreach (CardInfo cardInfo in RunState.Run.playerDeck.Cards)
@@ -673,13 +678,13 @@ namespace BittysChallenges
                             weakenedCards = true;
                         }
                     }
-                    if (!dialoguePlayed && !Plugin.IsP03Run && SaveFile.IsAscension && !DialogueEventsData.EventIsPlayed("WeakStart") && weakenedCards)
+                    if (!dialoguePlayed && modModeActive(MOD_MODE.KCM) && SaveFile.IsAscension && !DialogueEventsData.EventIsPlayed("WeakStart") && weakenedCards)
                     {
                         dialoguePlayed = true;
                         yield return new WaitForSeconds(0.5f);
                         yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("WeakStart", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
                     }
-                    else if (!dialoguePlayed && Plugin.IsP03Run && SaveFile.IsAscension && !DialogueEventsData.EventIsPlayed("P03WeakStart") && weakenedCards)
+                    else if (!dialoguePlayed && modModeActive(MOD_MODE.P03) && SaveFile.IsAscension && !DialogueEventsData.EventIsPlayed("P03WeakStart") && weakenedCards)
                     {
                         dialoguePlayed = true;
                         yield return new WaitForSeconds(0.5f);
@@ -730,13 +735,13 @@ namespace BittysChallenges
                         Plugin.Log.LogInfo("Creating an Ouroboros...");
                         CardInfo ouro = CardLoader.GetCardByName("bitty_TravelingOuroboros");
                         CardModificationInfo mod = new CardModificationInfo();
-                        if (IsP03Run)
+                        if (modModeActive(MOD_MODE.P03))
                         {
                             ouro.portraitTex = Tools.LoadSprite("portrait_ourobot.png");
                             mod.nameReplacement = "Ourobot";
                         }
                         mod.abilities.Add(Ability.GuardDog);
-                        if (!IsP03Run)
+                        if (modModeActive(MOD_MODE.P03))
                         {
                             mod.fromCardMerge = true;
                             for (int i = 1; i <= AscensionStatsData.GetStatValue(AscensionStat.Type.BossesDefeated, false); i++)
@@ -748,7 +753,7 @@ namespace BittysChallenges
                         mod.attackAdjustment = MiscEncounters.TravelingOuroborosBuffs();
                         mod.healthAdjustment = MiscEncounters.TravelingOuroborosBuffs();
 
-                        if (!IsP03Run && MiscEncounters.TravelingOuroborosBuffs() < AscensionStatsData.GetStatValue(AscensionStat.Type.BossesDefeated, false))
+                        if (modModeActive(MOD_MODE.KCM) && MiscEncounters.TravelingOuroborosBuffs() < AscensionStatsData.GetStatValue(AscensionStat.Type.BossesDefeated, false))
                         {
                             mod.attackAdjustment = AscensionStatsData.GetStatValue(AscensionStat.Type.BossesDefeated, false);
                             mod.healthAdjustment = AscensionStatsData.GetStatValue(AscensionStat.Type.BossesDefeated, false);
@@ -758,11 +763,11 @@ namespace BittysChallenges
                         Plugin.Log.LogInfo("Finding Ouro placement...");
 
                         int idealTurn;
-                        if (IsP03Run && tp[3].Count <= 1)
+                        if (modModeActive(MOD_MODE.P03) && tp[3].Count <= 1)
                         {
                             idealTurn = 3;
                         }
-                        else if (IsP03Run)
+                        else if (modModeActive(MOD_MODE.P03))
                         {
                             idealTurn = 4;
                         }
@@ -937,7 +942,6 @@ namespace BittysChallenges
 
                     ChallengeActivationUI.TryShowActivation(Challenges.Challenge_abundance.challengeType);
                     CardInfo info = Singleton<CardDrawPiles3D>.Instance.SideDeck.cards.Count > 0 ? Singleton<CardDrawPiles3D>.Instance.SideDeck.cards[0] : CardLoader.GetCardByName("Bee");
-                    Plugin.Log.LogInfo(info.displayedName);
                     for (int i = 0; i < (abundancesActive * Plugin.abundanceQuality.Value); i++)
                     {
                         Singleton<CardDrawPiles3D>.Instance.sidePile.CreateCards(1);
@@ -952,7 +956,7 @@ namespace BittysChallenges
                     }
 
                     Plugin.Log.LogInfo("Total cards in side deck: " + CardDrawPiles3D.Instance.SideDeck.CardsInDeck);
-                    if (AscensionSaveData.Data.ChallengeIsActive(Challenges.Challenge_famine.challengeType) && !DialogueEventsData.EventIsPlayed("P03FamineIntro") && IsP03Run)
+                    if (AscensionSaveData.Data.ChallengeIsActive(Challenges.Challenge_famine.challengeType) && !DialogueEventsData.EventIsPlayed("P03FamineIntro") && modModeActive(MOD_MODE.P03))
                     {
                         Singleton<CardDrawPiles3D>.Instance.StartCoroutine(Singleton<TextDisplayer>.Instance.PlayDialogueEvent("P03FamineIntro", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, new string[]
                         {
@@ -966,7 +970,7 @@ namespace BittysChallenges
                             info.displayedName
                         }, null));
                     }
-                    else if (AscensionSaveData.Data.ChallengeIsActive(Challenges.Challenge_abundance.challengeType) && !DialogueEventsData.EventIsPlayed("P03AbundanceIntro") && IsP03Run)
+                    else if (AscensionSaveData.Data.ChallengeIsActive(Challenges.Challenge_abundance.challengeType) && !DialogueEventsData.EventIsPlayed("P03AbundanceIntro") && modModeActive(MOD_MODE.P03))
                     {
                         Singleton<CardDrawPiles3D>.Instance.StartCoroutine(Singleton<TextDisplayer>.Instance.PlayDialogueEvent("P03AbundanceIntro", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, new string[]
                         {
@@ -984,6 +988,30 @@ namespace BittysChallenges
             }
         }
 
+        public class FleetingSquirrels : ChallengeBehaviour
+        {
+            public override bool RespondsToUpkeep(bool playerUpkeep)
+            {
+                return Singleton<CardDrawPiles3D>.Instance.SideDeck.CardsInDeck > 0;
+            }
+            public override IEnumerator OnUpkeep(bool playerUpkeep)
+            {
+                sideDeckName = Singleton<CardDrawPiles3D>.Instance.SideDeck.Cards[0].name;
+                yield break;
+            }
+            public override bool RespondsToOtherCardDrawn(PlayableCard card)
+            {
+                return card.Info.name == sideDeckName || card.Info.name.ToLower().Contains("emptyvessel");
+            }
+            public override IEnumerator OnOtherCardDrawn(PlayableCard card)
+            {
+                card.AddTemporaryMod(new CardModificationInfo(Sigils.GiveFleeting.ability));
+                yield break;
+            }
+
+            public string sideDeckName;
+        }
+
         [HarmonyPatch(typeof(PlayerHand))]
         public class SprinterDraw
         {
@@ -997,15 +1025,15 @@ namespace BittysChallenges
                     CardModificationInfo mod = new CardModificationInfo();
 
 
-                    if (!Plugin.IsP03Run) mod.fromCardMerge = true;
+                    if (modModeActive(MOD_MODE.KCM)) mod.fromCardMerge = true;
                     mod.abilities.Add(GetRandomStrafe().ability);
 
-                    if (!Plugin.IsP03Run || card.AllAbilities().Count() <= 4)
+                    if (modModeActive(MOD_MODE.KCM) || card.AllAbilities().Count() <= 4)
                     {
                         card.AddTemporaryMod(mod);
                     }
 
-                    if (!Plugin.IsP03Run && !CardDisplayer3D.EmissionEnabledForCard(card.renderInfo, card))
+                    if (modModeActive(MOD_MODE.KCM) && !CardDisplayer3D.EmissionEnabledForCard(card.renderInfo, card))
                     {
                         card.RenderInfo.forceEmissivePortrait = true;
                         card.StatsLayer.SetEmissionColor(GameColors.Instance.lightPurple);
@@ -1027,46 +1055,6 @@ namespace BittysChallenges
 
                 AbilityInfo abilityInfo = validAbilities[UnityEngine.Random.Range(0, validAbilities.Count)];
                 return abilityInfo;
-            }
-        }
-
-        [HarmonyPatch(typeof(DrawCopy))]
-        public class NoFecundityNerf
-        {
-            [HarmonyPostfix]
-            [HarmonyPatch(nameof(DrawCopy.CardToDrawTempMods), MethodType.Getter)]
-            private static void Postfix(ref List<CardModificationInfo> __result)
-            {
-                if (SaveFile.IsAscension && AscensionSaveData.Data.ChallengeIsActive(Challenges.Challenge_oldFecund.challengeType))
-                {
-                    __result = null;
-                }
-            }
-
-            [HarmonyPostfix]
-            [HarmonyPatch(nameof(DrawCopy.OnResolveOnBoard))]
-            public static IEnumerator UnNerfDialogue(IEnumerator values)
-            {
-                yield return values;
-                if (SaveFile.IsAscension && AscensionSaveData.Data.ChallengeIsActive(Challenges.Challenge_oldFecund.challengeType) && (!DialogueEventsData.EventIsPlayed("P03FecundityUnNerfIntro") || !DialogueEventsData.EventIsPlayed("FecundityUnNerfIntro")))
-                {
-                    Singleton<ChallengeActivationUI>.Instance.ShowTextLines(new string[]
-                    {
-                    Localization.Translate("DEPLOY SIGIL UNNERF: FECUNDITY"),
-                    Localization.Translate("AddSigilToCopy()"),
-                    Localization.Translate("// It was asked for.")
-                    });
-                    yield return new WaitForSeconds(0.5f);
-                    if (IsP03Run && !DialogueEventsData.EventIsPlayed("P03FecundityUnNerfIntro"))
-                    {
-                        yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("P03FecundityUnNerfIntro", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null,
-                            new Action<DialogueEvent.Line>(Dialogue.P03HappyCloseUp));
-                    }
-                    else if (!IsP03Run && !DialogueEventsData.EventIsPlayed("FecundityUnNerfIntro"))
-                    {
-                        yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("FecundityUnNerfIntro", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
-                    }
-                }
             }
         }
 
@@ -1107,21 +1095,14 @@ namespace BittysChallenges
                     {
                         if (card.Info.name == "Mule")
                         {
-                            Plugin.Log.LogInfo("Mule Check");
                             CardModificationInfo mod = new CardModificationInfo();
                             mod.abilities.Add(Ability.Sentry);
                             ApplyMods(mod, card);
                         }
-                        if (card.Info.name == "Bloodhound")
+                        if (card.Info.name == "Bloodhound" ||
+                            card.Info.name == "Coyote" ||
+                            card.Info.name == "Wolverine")
                         {
-                            Plugin.Log.LogInfo("Bloodhound Check");
-                            CardModificationInfo mod = new CardModificationInfo();
-                            mod.abilities.Add(Ability.Deathtouch);
-                            ApplyMods(mod, card);
-                        }
-                        if (card.Info.name == "Coyote")
-                        {
-                            Plugin.Log.LogInfo("Coyote Check");
                             CardModificationInfo mod = new CardModificationInfo();
                             mod.abilities.Add(Ability.Deathtouch);
                             ApplyMods(mod, card);
@@ -1131,14 +1112,12 @@ namespace BittysChallenges
                     {
                         if (card.Info.name == "Kingfisher")
                         {
-                            Plugin.Log.LogInfo("Kingfisher Check");
                             CardModificationInfo mod = new CardModificationInfo();
                             mod.abilities.Add(Ability.BuffNeighbours);
                             ApplyMods(mod, card);
                         }
                         if (card.Info.name == "BaitBucket")
                         {
-                            Plugin.Log.LogInfo("BaitBucket Check");
                             CardModificationInfo mod = new CardModificationInfo();
                             mod.abilities.Add(Ability.Reach);
                             ApplyMods(mod, card);
@@ -1148,7 +1127,6 @@ namespace BittysChallenges
                     {
                         if (card.Info.name == "Bullfrog")
                         {
-                            Plugin.Log.LogInfo("Bullfrog Check");
                             CardModificationInfo mod = new CardModificationInfo();
                             mod.abilities.Add(Ability.SteelTrap);
                             ApplyMods(mod, card);
@@ -1156,14 +1134,12 @@ namespace BittysChallenges
                         }
                         if (card.Info.name == "Rabbit")
                         {
-                            Plugin.Log.LogInfo("Rabbit Check");
                             CardModificationInfo mod = new CardModificationInfo();
                             mod.abilities.Add(Ability.WhackAMole);
                             ApplyMods(mod, card);
                         }
                         if (card.Info.name == "TrapFrog")
                         {
-                            Plugin.Log.LogInfo("TrapFrog Check");
                             CardModificationInfo mod = new CardModificationInfo();
                             mod.abilities.Add(Ability.GuardDog);
                             ApplyMods(mod, card);
@@ -1173,21 +1149,18 @@ namespace BittysChallenges
                     {
                         if (card.Info.name == "Amalgam")
                         {
-                            Plugin.Log.LogInfo("Amalgam Check");
                             CardModificationInfo mod = new CardModificationInfo();
                             mod.abilities.Add(Ability.Sharp);
                             ApplyMods(mod, card);
                         }
                         if (card.Info.name == "MantisGod")
                         {
-                            Plugin.Log.LogInfo("MantisGod Check");
                             CardModificationInfo mod = new CardModificationInfo();
                             mod.abilities.Add(Ability.SplitStrike);
                             ApplyMods(mod, card);
                         }
                         if (card.Info.name == "Mantis")
                         {
-                            Plugin.Log.LogInfo("Mantis Check");
                             CardModificationInfo mod = new CardModificationInfo();
                             mod.abilities.Add(Ability.DoubleStrike);
                             ApplyMods(mod, card);
@@ -1197,21 +1170,18 @@ namespace BittysChallenges
                     {
                         if (card.Info.name == "MoleSeaman")
                         {
-                            Plugin.Log.LogInfo("MoleSeaman Check");
                             CardModificationInfo mod = new CardModificationInfo();
                             mod.abilities.Add(Ability.ConduitBuffAttack);
                             ApplyMods(mod, card);
                         }
                         if (card.Info.name == "SkeletonPirate")
                         {
-                            Plugin.Log.LogInfo("SkeletonPirate Check");
                             CardModificationInfo mod = new CardModificationInfo();
                             mod.abilities.Add(Ability.Deathtouch);
                             ApplyMods(mod, card);
                         }
                         if (card.Info.name == "SkeletonParrot")
                         {
-                            Plugin.Log.LogInfo("SkeletonParrot Check");
                             CardModificationInfo mod = new CardModificationInfo();
                             mod.abilities.Add(Ability.IceCube);
 
@@ -1220,7 +1190,6 @@ namespace BittysChallenges
                         }
                         if (card.Info.name == "Maggots")
                         {
-                            Plugin.Log.LogInfo("Maggots Check");
                             CardModificationInfo mod = new CardModificationInfo();
                             mod.abilities.Add(Ability.Brittle);
                             ApplyMods(mod, card);
@@ -1230,7 +1199,6 @@ namespace BittysChallenges
             }
             public static void ApplyMods(CardModificationInfo mod, PlayableCard card)
             {
-                Plugin.Log.LogInfo("Adding Mods...");
                 mod.fromCardMerge = true;
                 card.AddTemporaryMod(mod);
                 if (!CardDisplayer3D.EmissionEnabledForCard(card.renderInfo, card))
@@ -1242,88 +1210,11 @@ namespace BittysChallenges
             }
         }
 
-        [HarmonyPatch(typeof(LifeManager))]
-        public class InfiniteLives
-        {
-            [HarmonyPostfix]
-            [HarmonyPatch(nameof(LifeManager.ShowDamageSequence))]
-            public static IEnumerator GiveLife(IEnumerator values)
-            {
-                yield return values;
-                if (SaveFile.IsAscension && AscensionSaveData.Data.ChallengeIsActive(Challenges.Challenge_infiniteLives.challengeType) && Singleton<LifeManager>.Instance.Balance <= -5)
-                {
-                    ChallengeActivationUI.Instance.ShowActivation(Challenges.Challenge_infiniteLives.challengeType);
-                    LifeRepeatsIncrease();
-
-                    yield return Singleton<LifeManager>.Instance.ShowResetSequence();
-                    if (LifeRepeats() < Math.Max(0, Plugin.allowedResets.Value))
-                    {
-                        if (!DialogueEventsData.EventIsPlayed("InfiniteLivesIntro"))
-                        {
-                            yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("InfiniteLivesIntro", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
-                        }
-                        else if (Singleton<Opponent>.Instance.OpponentType == Opponent.Type.PirateSkullBoss)
-                        {
-                            yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("InfiniteLivesRoyal", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
-                        }
-                        else
-                        {
-                            yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("InfiniteLivesRepeat", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
-                        }
-                    }
-                    else if (LifeRepeats() == Math.Max(0, Plugin.allowedResets.Value))
-                    {
-                        yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("InfiniteLivesLoop", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
-                    }
-                    else
-                    {
-                        yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("InfiniteLivesLoopBreak", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
-                        Singleton<LifeManager>.Instance.SetNumWeightsImmediate(5, 0);
-                        LifeRepeatsReset();
-                    }
-                }
-                yield break;
-            }
-
-            public static int LifeRepeats()
-            {
-                return ModdedSaveManager.RunState.GetValueAsInt(Plugin.PluginGuid, "BittysChallenges.LifeRepeats");
-            }
-            public static void LifeRepeatsIncrease(int by = 1)
-            {
-                int num = ModdedSaveManager.RunState.GetValueAsInt(Plugin.PluginGuid, "BittysChallenges.LifeRepeats") + by;
-                Plugin.Log.LogInfo(string.Format("Increasing LifeResets by {0} to {1}", by, num));
-                ModdedSaveManager.RunState.SetValue(Plugin.PluginGuid, "BittysChallenges.LifeRepeats", num.ToString());
-            }
-            public static void LifeRepeatsReset(int num = 0)
-            {
-                Plugin.Log.LogInfo(string.Format("Setting LifeResets to ", num));
-                ModdedSaveManager.RunState.SetValue(Plugin.PluginGuid, "BittysChallenges.LifeRepeats", num.ToString());
-            }
-        }
-
-        [HarmonyPatch(typeof(TurnManager))]
-        public class ReverseScales
-        {
-            [HarmonyPostfix]
-            [HarmonyPatch(nameof(TurnManager.SetupPhase))]
-            public static IEnumerator TipScale(IEnumerator values)
-            {
-                yield return values;
-                if (AscensionSaveData.Data.ChallengeIsActive(Challenges.Challenge_reverseScales.challengeType))
-                {
-                    ChallengeActivationUI.Instance.ShowActivation(Challenges.Challenge_reverseScales.challengeType);
-                    yield return Singleton<LifeManager>.Instance.ShowDamageSequence(1, 1, false, 0.125f, null, 0f, false);
-                }
-            }
-        }
-
         [HarmonyPatch]
         public class Environments
         {
             public static int EnvironmentNumber()
             {
-                Plugin.Log.LogInfo(ModdedSaveManager.RunState.GetValueAsInt(Plugin.PluginGuid, "BittysChallenges.EnvironmentNumber"));
                 return ModdedSaveManager.RunState.GetValueAsInt(Plugin.PluginGuid, "BittysChallenges.EnvironmentNumber");
             }
             public static void ResetEnviroNumber(int value = 0)
@@ -1336,7 +1227,21 @@ namespace BittysChallenges
                 int num = ModdedSaveManager.RunState.GetValueAsInt(Plugin.PluginGuid, "BittysChallenges.EnvironmentNumber") + by;
                 Plugin.Log.LogInfo(string.Format("Increasing Environment Number by {0} to {1}", by, num));
                 ModdedSaveManager.RunState.SetValue(Plugin.PluginGuid, "BittysChallenges.EnvironmentNumber", num.ToString());
-                Plugin.Log.LogInfo(EnvironmentNumber());
+            }
+            public static int PrevEnvironment()
+            {
+                return ModdedSaveManager.RunState.GetValueAsInt(Plugin.PluginGuid, "BittysChallenges.PreviousEnvironment");
+            }
+            public static void ResetPrevEnviro(int value = 0)
+            {
+                Plugin.Log.LogInfo(string.Format("Resetting Prev Environment Number to {0}", value));
+                ModdedSaveManager.RunState.SetValue(Plugin.PluginGuid, "BittysChallenges.PreviousEnvironment", value);
+            }
+            public static void IncreasePrevEnviro(int by = 1)
+            {
+                int num = ModdedSaveManager.RunState.GetValueAsInt(Plugin.PluginGuid, "BittysChallenges.PreviousEnvironment") + by;
+                Plugin.Log.LogInfo(string.Format("Increasing Prev Environment Number by {0} to {1}", by, num));
+                ModdedSaveManager.RunState.SetValue(Plugin.PluginGuid, "BittysChallenges.PreviousEnvironment", num.ToString());
             }
 
             [HarmonyPostfix]
@@ -1357,121 +1262,33 @@ namespace BittysChallenges
                 if (AscensionSaveData.Data.ChallengeIsActive(Challenges.Challenge_environment.challengeType) && (OpponentType == Opponent.Type.Default || OpponentType == Opponent.Type.Totem))
                 {
                     ClearEnvironmentBoons();
-                    IncreaseEnviroNumber();
-                    List<BoonData.Type> boons = new List<BoonData.Type>();
-                    if (!Plugin.IsP03Run)
+
+                    bool boonActive = SeededRandom.Bool(SaveManager.SaveFile.GetCurrentRandomSeed() + PrevEnvironment());
+                    if (PrevEnvironment() < 2 && !boonActive)
                     {
-
-                        Plugin.Log.LogInfo("Region Tier: " + RunState.CurrentRegionTier);
-                        if (RunState.CurrentRegionTier >= 0)
-                        {
-                            boons.Add(ChallengeBoonCliffs.boo);
-                            Plugin.Log.LogInfo("Added Cliffs to boons pool: " + ChallengeBoonCliffs.boo);
-
-                            Plugin.Log.LogInfo("Region: " + RunState.CurrentMapRegion.name);
-                            switch (RunState.CurrentMapRegion.name)
-                            {
-                                case "Forest":
-                                    boons.Add(ChallengeBoonTotem.boo);
-                                    Plugin.Log.LogInfo("Added Totem to boons pool: " + ChallengeBoonTotem.boo);
-                                    break;
-                                case "Wetlands":
-                                    boons.Add(ChallengeBoonMud.boo);
-                                    Plugin.Log.LogInfo("Added Mud to boons pool: " + ChallengeBoonMud.boo);
-                                    break;
-                                case "Alpine":
-                                    boons.Add(ChallengeBoonHail.boo);
-                                    Plugin.Log.LogInfo("Added Hail to boons pool: " + ChallengeBoonHail.boo);
-                                    break;
-                                case "Magma_bitty":
-                                    break;
-                            }
-                        }
-                        if (RunState.CurrentRegionTier >= 1)
-                        {
-                            boons.Add(ChallengeBoonBreeze.boo);
-                            Plugin.Log.LogInfo("Added Breeze to boons pool: " + ChallengeBoonBreeze.boo);
-                            boons.Add(ChallengeBoonFlashGrowth.boo);
-                            Plugin.Log.LogInfo("Added Flash Growth to boons pool: " + ChallengeBoonFlashGrowth.boo);
-                            boons.Add(ChallengeBoonGraveyard.boo);
-                            Plugin.Log.LogInfo("Added Graveyard to boons pool: " + ChallengeBoonGraveyard.boo);
-
-                            switch (RunState.CurrentMapRegion.name)
-                            {
-                                case "Forest":
-                                    boons.Add(ChallengeBoonDynamite.boo);
-                                    Plugin.Log.LogInfo("Added Prospector's Camp to boons pool: " + ChallengeBoonDynamite.boo);
-                                    break;
-                                case "Wetlands":
-                                    boons.Add(ChallengeBoonBait.boo);
-                                    Plugin.Log.LogInfo("Added Angler's Pool to boons pool: " + ChallengeBoonBait.boo);
-                                    break;
-                                case "Alpine":
-                                    boons.Add(ChallengeBoonTrap.boo);
-                                    Plugin.Log.LogInfo("Added Trapper's Hunting Grounds to boons pool: " + ChallengeBoonTrap.boo);
-                                    break;
-                            }
-                        }
-                        if (RunState.CurrentRegionTier >= 2)
-                        {
-                            boons.Add(ChallengeBoonObelisk.boo);
-                            Plugin.Log.LogInfo("Added Obelisk to boons pool: " + ChallengeBoonObelisk.boo);
-
-                            boons.Add(ChallengeBoonMushrooms.boo);
-                            Plugin.Log.LogInfo("Added Mushrooms to boons pool: " + ChallengeBoonMushrooms.boo);
-
-                            if (AscensionSaveData.Data.ChallengeIsActive(AscensionChallenge.GrizzlyMode))
-                            {
-                                boons.Add(ChallengeBoonBloodMoon.boo);
-                                Plugin.Log.LogInfo("Added Blood Moon to boons pool: " + ChallengeBoonBloodMoon.boo);
-                            }
-                            if (AscensionSaveData.Data.ChallengeIsActive(AscensionChallenge.GrizzlyMode) && SeededRandom.Bool(SaveManager.SaveFile.GetCurrentRandomSeed() + 1) && !DialogueEventsData.EventIsPlayed("CarrotBoonIntro"))
-                            {
-                                boons.Add(ChallengeBoonCarrotPatch.boo);
-                                Plugin.Log.LogInfo("Added Blood Moon(?) to boons pool: " + ChallengeBoonCarrotPatch.boo);
-                            }
-                            if (AscensionSaveData.Data.ChallengeIsActive(Challenges.Challenge_harderFinalBoss.challengeType) || AscensionSaveData.Data.ChallengeIsActive(AscensionChallenge.FinalBoss))
-                            {
-                                boons.Add(ChallengeBoonMinicello.boo);
-                                Plugin.Log.LogInfo("Added Minicello to boons pool: " + ChallengeBoonMinicello.boo);
-                            }
-
-                            switch (RunState.CurrentMapRegion.name)
-                            {
-                                case "Forest":
-                                    boons.Add(ChallengeBoonDarkForest.boo);
-                                    Plugin.Log.LogInfo("Added Dark Forest to boons pool: " + ChallengeBoonDarkForest.boo);
-                                    break;
-                                case "Wetlands":
-                                    boons.Add(ChallengeBoonFlood.boo);
-                                    Plugin.Log.LogInfo("Added Flood to boons pool: " + ChallengeBoonFlood.boo);
-                                    break;
-                                case "Alpine":
-                                    boons.Add(ChallengeBoonBlizzard.boo);
-                                    Plugin.Log.LogInfo("Added Blizzard to boons pool: " + ChallengeBoonBlizzard.boo);
-                                    break;
-                            }
-                        }
+                        IncreasePrevEnviro();
+                        return true;
                     }
-                    else //P03 boons
+                    ResetPrevEnviro();
+                    IncreaseEnviroNumber();
+                    List<EnviroBoon> boons = new List<EnviroBoon>();
+                    foreach(EnviroBoon enviroBoon in EnviroBoonList)
                     {
-                        boons.Add(ChallengeBoonGraveyard.boo);
-                        Plugin.Log.LogInfo("Added Graveyard to boons pool: " + ChallengeBoonGraveyard.boo);
-                        boons.Add(ChallengeBoonFlashGrowth.boo);
-                        Plugin.Log.LogInfo("Added Flash Growth to boons pool: " + ChallengeBoonFlashGrowth.boo);
-                        boons.Add(ChallengeBoonConveyor.boo);
-                        Plugin.Log.LogInfo("Added Conveyor to boons pool: " + ChallengeBoonConveyor.boo);
-                        boons.Add(ChallengeBoonGemSanctuary.boo);
-                        Plugin.Log.LogInfo("Added Gem Sanctuary to boons pool: " + ChallengeBoonGemSanctuary.boo);
-                        boons.Add(ChallengeBoonElectricStorm.boo);
-                        Plugin.Log.LogInfo("Added Electrical Storm to boons pool: " + ChallengeBoonElectricStorm.boo);
+                        if(enviroBoon.regionTier <= RunState.CurrentRegionTier &&
+                            enviroBoon.RegionMatch(RunState.CurrentMapRegion.name) &&
+                            enviroBoon.condition.IsActive() &&
+                            enviroBoon.modes.Contains(getModMode()))
+                        {
+                            boons.Add(enviroBoon);
+                            Log.LogInfo("Add: " + enviroBoon.boonName);
+                        }
                     }
                     int i = EnvironmentNumber() % boons.Count;
-                    bool boonActive = SeededRandom.Bool(SaveManager.SaveFile.GetCurrentRandomSeed() + 2);
-                    if (boonActive && boons != null)
+                    boons.Randomize();
+                    if (boons != null)
                     {
-                        RunState.Run.playerDeck.AddBoon(boons[i]);
-                        Plugin.Log.LogInfo("Using boon: " + boons[i]);
+                        RunState.Run.playerDeck.AddBoon(boons[i].boonType);
+                        Log.LogInfo("Using boon: " + boons[i].boonName);
                     }
                 }
 
@@ -1482,45 +1299,17 @@ namespace BittysChallenges
             [HarmonyPatch(typeof(TurnManager), nameof(TurnManager.CleanupPhase))]
             public static void EnvironmentBoonCleanup()
             {
-                foreach (CardSlot slot in Singleton<BoardManager>.Instance.AllSlotsCopy)
+                if (AscensionSaveData.Data.ChallengeIsActive(Challenges.Challenge_environment.challengeType))
                 {
-                    if (SaveManager.SaveFile.IsPart1)
+                    foreach (CardSlot slot in Singleton<BoardManager>.Instance.AllSlotsCopy)
                     {
-                        slot.SetTexture(ResourceBank.Get<Texture>("Art/Cards/card_slot"));
+                        slot.ResetSlotTexture();
                     }
-                    if (SaveManager.SaveFile.IsPart3)
-                    {
-                        slot.SetTexture(ResourceBank.Get<Texture>("Art/Cards/card_slot_tech"));
-                    }
-                    if (SaveManager.SaveFile.IsGrimora)
-                    {
-                        slot.SetTexture(ResourceBank.Get<Texture>("Art/Cards/card_slot_undead"));
-                    }
-                    if (SaveManager.SaveFile.IsMagnificus)
-                    {
-                        slot.SetTexture(ResourceBank.Get<Texture>("Art/Cards/card_slot_wizard"));
-                    }
+                    Singleton<TableVisualEffectsManager>.Instance.ResetTableColors();
+                    ClearEnvironmentBoons();
                 }
-                Singleton<TableVisualEffectsManager>.Instance.ResetTableColors();
-                ClearEnvironmentBoons();
             }
 
-            [HarmonyPostfix]
-            [HarmonyPatch(typeof(BoardManager), nameof(BoardManager.SacrificesCreateRoomForCard))]
-            public static void MergeSigilPatch(ref bool __result)
-            {
-                foreach (CardSlot slot in Singleton<BoardManager>.Instance.PlayerSlotsCopy)
-                {
-                    if (slot.Card != null)
-                    {
-                        CardModificationInfo cardModificationInfo = slot.Card.TemporaryMods.Find((CardModificationInfo x) => x.singletonId == "bitty_mergeSigil");
-                        if (cardModificationInfo != null)
-                        {
-                            __result = true;
-                        }
-                    }
-                }
-            }
             public static void ClearEnvironmentBoons()
             {
                 if (RunState.Run.playerDeck.Boons.Count > 0)
@@ -1563,78 +1352,9 @@ namespace BittysChallenges
                 ChallengeBoonBlizzard.boo,
 
 				//p03
-				ChallengeBoonConveyor.boo,
                 ChallengeBoonGemSanctuary.boo,
                 ChallengeBoonElectricStorm.boo
             };
-        }
-
-        public class VineBoomDeath : ChallengeBehaviour
-        {
-            public override bool RespondsToOtherCardDie(PlayableCard card, CardSlot deathSlot, bool fromCombat, PlayableCard killer)
-            {
-                return true;
-            }
-            public override IEnumerator OnOtherCardDie(PlayableCard card, CardSlot deathSlot, bool fromCombat, PlayableCard killer)
-            {
-                AudioController.Instance.PlaySound2D("vine-boom", MixerGroup.None, 4f, CustomRandom.RandomBetween(0f, 0.2f), new AudioParams.Pitch(AudioParams.Pitch.Variation.Large), null, null, null, false);
-                yield break;
-            }
-            public override bool RespondsToOtherCardAssignedToSlot(PlayableCard otherCard)
-            {
-                return true;
-            }
-            public override IEnumerator OnOtherCardAssignedToSlot(PlayableCard otherCard)
-            {
-                otherCard.Status.hiddenAbilities.Add(Ability.ExplodeOnDeath);
-                otherCard.AddTemporaryMod(new CardModificationInfo(Ability.ExplodeOnDeath));
-                yield break;
-            }
-        }
-
-        public class FleetingSquirrels : ChallengeBehaviour
-        {
-            public override bool RespondsToUpkeep(bool playerUpkeep)
-            {
-                return Singleton<CardDrawPiles3D>.Instance.SideDeck.CardsInDeck > 0;
-            }
-            public override IEnumerator OnUpkeep(bool playerUpkeep)
-            {
-                sideDeckName = Singleton<CardDrawPiles3D>.Instance.SideDeck.Cards[0].name;
-                yield break;
-            }
-            public override bool RespondsToOtherCardDrawn(PlayableCard card)
-            {
-                return card.Info.name == sideDeckName || card.Info.name.ToLower().Contains("emptyvessel");
-            }
-            public override IEnumerator OnOtherCardDrawn(PlayableCard card)
-            {
-                card.AddTemporaryMod(new CardModificationInfo(Sigils.GiveFleeting.ability));
-                yield break;
-            }
-
-            public string sideDeckName;
-        }
-
-        [HarmonyPatch(typeof(TurnManager))]
-        public class RedrawHand
-        {
-            [HarmonyPostfix]
-            [HarmonyPatch(nameof(TurnManager.SetupPhase))]
-            public static IEnumerator CloverGiver(IEnumerator __result)
-            {
-                yield return __result;
-                if (AscensionSaveData.Data.ChallengeIsActive(Challenges.Challenge_redrawHand.challengeType))
-                {
-                    ChallengeActivationUI.TryShowActivation(Challenges.Challenge_redrawHand.challengeType);
-                    yield return Singleton<CardSpawner>.Instance.SpawnCardToHand(CardLoader.GetCardByName(CardPrefix + "_" + "Clover"), null, 0.25f, null);
-                    if (!DialogueEventsData.EventIsPlayed("RedrawHandIntro"))
-                    {
-                        yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("RedrawHandIntro", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
-                    }
-                }
-                yield break;
-            }
         }
 
         [HarmonyPatch]
@@ -1846,12 +1566,11 @@ namespace BittysChallenges
 
         }
 
-        [HarmonyPatch]
+        [HarmonyPatch(typeof(Opponent))]
         public class MiscEncounters
         {
             public static int TravelingOuroborosBuffs()
             {
-                Plugin.Log.LogInfo(ModdedSaveManager.RunState.GetValueAsInt(Plugin.PluginGuid, "BittysChallenges.TravelingOuroborosBuffs"));
                 return ModdedSaveManager.RunState.GetValueAsInt(Plugin.PluginGuid, "BittysChallenges.TravelingOuroborosBuffs");
             }
             public static void ResetOuro(int value = 0)
@@ -1864,7 +1583,6 @@ namespace BittysChallenges
                 int num = ModdedSaveManager.RunState.GetValueAsInt(Plugin.PluginGuid, "BittysChallenges.TravelingOuroborosBuffs") + by;
                 Plugin.Log.LogInfo(string.Format("Increasing Traveling Ouroboros by {0} to {1}", by, num));
                 ModdedSaveManager.RunState.SetValue(Plugin.PluginGuid, "BittysChallenges.TravelingOuroborosBuffs", num.ToString());
-                Plugin.Log.LogInfo(TravelingOuroborosBuffs());
             }
             public static int TimesGoldenSheepKilled()
             {
@@ -1875,12 +1593,11 @@ namespace BittysChallenges
                 int num = ModdedSaveManager.RunState.GetValueAsInt(Plugin.PluginGuid, "BittysChallenges.GoldenSheepKilled") + by;
                 Plugin.Log.LogInfo(string.Format("Increasing Golden Sheep Killed by {0} to {1}", by, num));
                 ModdedSaveManager.RunState.SetValue(Plugin.PluginGuid, "BittysChallenges.GoldenSheepKilled", num.ToString());
-                Plugin.Log.LogInfo(TimesGoldenSheepKilled());
             }
 
             public static bool RollForOuro(CardBattleNodeData nodeData)
             {
-                if (Plugin.IsP03Run)
+                if (Plugin.modModeActive(MOD_MODE.P03))
                 {
                     return SeededRandom.Bool(SaveManager.SaveFile.GetCurrentRandomSeed() + 6);
                 }
@@ -2007,31 +1724,18 @@ namespace BittysChallenges
                         }
 
                         ChallengeActivationUI.Instance.ShowActivation(Challenges.Challenge_travelingOuro.challengeType);
-                        if (!Plugin.IsP03Run && !DialogueEventsData.EventIsPlayed("OuroIntro"))
+                        if(Singleton<Opponent>.Instance.OpponentType == Opponent.Type.PirateSkullBoss)
+                        { 
+                            //nothing
+                        }
+                        else if (Plugin.modModeActive(MOD_MODE.KCM))
                         {
                             yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("OuroIntro", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
                         }
-                        else if (Plugin.IsP03Run && !DialogueEventsData.EventIsPlayed("P03OuroIntro"))
+                        else if (modModeActive(MOD_MODE.P03))
                         {
                             yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("P03OuroIntro", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null,
                                 new Action<DialogueEvent.Line>(Dialogue.P03HappyCloseUp));
-                        }
-                        else if (!Plugin.IsP03Run && Singleton<Opponent>.Instance.OpponentType == Opponent.Type.PirateSkullBoss)
-                        {
-
-                        }
-                        else if (!Plugin.IsP03Run)
-                        {
-                            int currentRandomSeed = SaveManager.SaveFile.GetCurrentRandomSeed();
-                            List<string> list = new List<string>
-                        {
-                            "OuroZoom1",
-                            "OuroZoom2",
-                            "OuroZoom3",
-                            "OuroZoom4"
-                        };
-                            string zoom = list[SeededRandom.Range(0, list.Count, currentRandomSeed++)];
-                            yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent(zoom, TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
                         }
 
                         yield return new WaitForSeconds(0.5f);
@@ -2071,24 +1775,8 @@ namespace BittysChallenges
                         }
 
                         ChallengeActivationUI.Instance.ShowActivation(Challenges.Challenge_goldenSheep.challengeType);
-                        if (!DialogueEventsData.EventIsPlayed("GoldenSheepIntro"))
-                        {
-                            yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("GoldenSheepIntro", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
-                        }
-                        else
-                        {
-                            int currentRandomSeed = SaveManager.SaveFile.GetCurrentRandomSeed();
-                            List<string> list = new List<string>
-                        {
-                            "GoldenSheepZoom1",
-                            "GoldenSheepZoom2",
-                            "GoldenSheepZoom3",
-                            "GoldenSheepZoom4"
-                        };
-                            string zoom = list[SeededRandom.Range(0, list.Count, currentRandomSeed++)];
-                            yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent(zoom, TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
-                        }
-
+                        yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("GoldenSheepIntro", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
+                        
                         yield return new WaitForSeconds(0.5f);
                         Singleton<ViewManager>.Instance.SwitchToView(oldView, false, false);
                         targetPos = null;
@@ -2140,6 +1828,162 @@ namespace BittysChallenges
                 yield break;
             }
 
+        }
+
+        [HarmonyPatch(typeof(DrawCopy))]
+        public class NoFecundityNerf
+        {
+            [HarmonyPostfix]
+            [HarmonyPatch(nameof(DrawCopy.CardToDrawTempMods), MethodType.Getter)]
+            private static void Postfix(ref List<CardModificationInfo> __result)
+            {
+                if (SaveFile.IsAscension && AscensionSaveData.Data.ChallengeIsActive(Challenges.Challenge_oldFecund.challengeType))
+                {
+                    __result = null;
+                }
+            }
+
+            [HarmonyPostfix]
+            [HarmonyPatch(nameof(DrawCopy.OnResolveOnBoard))]
+            public static IEnumerator UnNerfDialogue(IEnumerator values)
+            {
+                yield return values;
+                if (SaveFile.IsAscension && AscensionSaveData.Data.ChallengeIsActive(Challenges.Challenge_oldFecund.challengeType) && (!DialogueEventsData.EventIsPlayed("P03FecundityUnNerfIntro") || !DialogueEventsData.EventIsPlayed("FecundityUnNerfIntro")))
+                {
+                    Singleton<ChallengeActivationUI>.Instance.ShowTextLines(new string[]
+                    {
+                    Localization.Translate("DEPLOY SIGIL UNNERF: FECUNDITY"),
+                    Localization.Translate("AddSigilToCopy()"),
+                    Localization.Translate("// It was asked for.")
+                    });
+                    yield return new WaitForSeconds(0.5f);
+                    if (modModeActive(MOD_MODE.P03) && !DialogueEventsData.EventIsPlayed("P03FecundityUnNerfIntro"))
+                    {
+                        yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("P03FecundityUnNerfIntro", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null,
+                            new Action<DialogueEvent.Line>(Dialogue.P03HappyCloseUp));
+                    }
+                    else if (modModeActive(MOD_MODE.KCM) && !DialogueEventsData.EventIsPlayed("FecundityUnNerfIntro"))
+                    {
+                        yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("FecundityUnNerfIntro", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
+                    }
+                }
+            }
+        }
+
+        [HarmonyPatch(typeof(LifeManager))]
+        public class InfiniteLives
+        {
+            [HarmonyPostfix]
+            [HarmonyPatch(nameof(LifeManager.ShowDamageSequence))]
+            public static IEnumerator GiveLife(IEnumerator values)
+            {
+                yield return values;
+                if (SaveFile.IsAscension && AscensionSaveData.Data.ChallengeIsActive(Challenges.Challenge_infiniteLives.challengeType) && Singleton<LifeManager>.Instance.Balance <= -5)
+                {
+                    ChallengeActivationUI.Instance.ShowActivation(Challenges.Challenge_infiniteLives.challengeType);
+                    LifeRepeatsIncrease();
+
+                    yield return Singleton<LifeManager>.Instance.ShowResetSequence();
+                    if (LifeRepeats() < Math.Max(0, Plugin.allowedResets.Value))
+                    {
+                        if (Singleton<Opponent>.Instance.OpponentType == Opponent.Type.PirateSkullBoss)
+                        {
+                            yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("InfiniteLivesRoyal", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
+                        }
+                        else
+                        {
+                            yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("InfiniteLivesIntro", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
+                        }
+                    }
+                    else if (LifeRepeats() == Math.Max(0, Plugin.allowedResets.Value))
+                    {
+                        yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("InfiniteLivesLoop", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
+                    }
+                    else
+                    {
+                        yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("InfiniteLivesLoopBreak", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
+                        Singleton<LifeManager>.Instance.SetNumWeightsImmediate(5, 0);
+                        LifeRepeatsReset();
+                    }
+                }
+                yield break;
+            }
+
+            public static int LifeRepeats()
+            {
+                return ModdedSaveManager.RunState.GetValueAsInt(Plugin.PluginGuid, "BittysChallenges.LifeRepeats");
+            }
+            public static void LifeRepeatsIncrease(int by = 1)
+            {
+                int num = ModdedSaveManager.RunState.GetValueAsInt(Plugin.PluginGuid, "BittysChallenges.LifeRepeats") + by;
+                Plugin.Log.LogInfo(string.Format("Increasing LifeResets by {0} to {1}", by, num));
+                ModdedSaveManager.RunState.SetValue(Plugin.PluginGuid, "BittysChallenges.LifeRepeats", num.ToString());
+            }
+            public static void LifeRepeatsReset(int num = 0)
+            {
+                Plugin.Log.LogInfo(string.Format("Setting LifeResets to ", num));
+                ModdedSaveManager.RunState.SetValue(Plugin.PluginGuid, "BittysChallenges.LifeRepeats", num.ToString());
+            }
+        }
+
+        [HarmonyPatch(typeof(TurnManager))]
+        public class ReverseScales
+        {
+            [HarmonyPostfix]
+            [HarmonyPatch(nameof(TurnManager.SetupPhase))]
+            public static IEnumerator TipScale(IEnumerator values)
+            {
+                yield return values;
+                if (AscensionSaveData.Data.ChallengeIsActive(Challenges.Challenge_reverseScales.challengeType))
+                {
+                    ChallengeActivationUI.Instance.ShowActivation(Challenges.Challenge_reverseScales.challengeType);
+                    yield return Singleton<LifeManager>.Instance.ShowDamageSequence(1, 1, false, 0.125f, null, 0f, false);
+                }
+            }
+        }
+
+        [HarmonyPatch(typeof(TurnManager))]
+        public class RedrawHand
+        {
+            [HarmonyPostfix]
+            [HarmonyPatch(nameof(TurnManager.SetupPhase))]
+            public static IEnumerator CloverGiver(IEnumerator __result)
+            {
+                yield return __result;
+                if (AscensionSaveData.Data.ChallengeIsActive(Challenges.Challenge_redrawHand.challengeType))
+                {
+                    ChallengeActivationUI.TryShowActivation(Challenges.Challenge_redrawHand.challengeType);
+                    yield return Singleton<CardSpawner>.Instance.SpawnCardToHand(CardLoader.GetCardByName(CardPrefix + "_" + "Clover"), null, 0.25f, null);
+                    if (!DialogueEventsData.EventIsPlayed("RedrawHandIntro"))
+                    {
+                        yield return Singleton<TextDisplayer>.Instance.PlayDialogueEvent("RedrawHandIntro", TextDisplayer.MessageAdvanceMode.Input, TextDisplayer.EventIntersectMode.Wait, null, null);
+                    }
+                }
+                yield break;
+            }
+        }
+
+        public class VineBoomDeath : ChallengeBehaviour
+        {
+            public override bool RespondsToOtherCardDie(PlayableCard card, CardSlot deathSlot, bool fromCombat, PlayableCard killer)
+            {
+                return true;
+            }
+            public override IEnumerator OnOtherCardDie(PlayableCard card, CardSlot deathSlot, bool fromCombat, PlayableCard killer)
+            {
+                AudioController.Instance.PlaySound3D(PluginGuid + "_sfx_vineBoom.ogg", MixerGroup.None, deathSlot.transform.position, 1f, 0f, new AudioParams.Pitch(AudioParams.Pitch.Variation.Small), null, null, null, false);
+                yield break;
+            }
+            public override bool RespondsToOtherCardAssignedToSlot(PlayableCard otherCard)
+            {
+                return true;
+            }
+            public override IEnumerator OnOtherCardAssignedToSlot(PlayableCard otherCard)
+            {
+                otherCard.Status.hiddenAbilities.Add(Ability.ExplodeOnDeath);
+                otherCard.AddTemporaryMod(new CardModificationInfo(Ability.ExplodeOnDeath));
+                yield break;
+            }
         }
         #endregion
     }
