@@ -1,5 +1,6 @@
 ﻿using BittysSigils;
 using DiskCardGame;
+using HarmonyLib;
 using InscryptionAPI.Card;
 using InscryptionAPI.Dialogue;
 using InscryptionAPI.Helpers;
@@ -16,13 +17,24 @@ using static BittysChallenges.Plugin;
 
 namespace BittysChallenges
 {
+    public static class SlotModExtensions
+    {
+        //A smoother transition to a slot mod than just instantly changing
+        public static IEnumerator FadeToSlotMod(this CardSlot cardSlot, SlotModificationManager.ModificationType slotType)
+        {
+            cardSlot.SetShown(false, false);
+            yield return new WaitForSeconds(0.45f);
+            yield return cardSlot.SetSlotModification(slotType);
+            cardSlot.SetShown(true, false);
+            yield break;
+        }
+    }
     public class SlotMods
     {
         public static void Add_SlotMods()
         {
             Log.LogInfo("Start of slot mods");
             Add_Slot_Raft();
-            Add_Slot_Muddy();
             Add_Slot_Hail();
             Add_Slot_Flood();
             Add_Slot_Breeze();
@@ -32,6 +44,12 @@ namespace BittysChallenges
             Add_Slot_Dynamite();
             Add_Slot_Obelisk();
             Log.LogInfo("End of slot mods");
+        }
+        public static void Add_Reliant_SlotMods()
+        {
+            Log.LogInfo("Start of reliant slot mods");
+            Add_Slot_Muddy();
+            Log.LogInfo("End of reliant slot mods");
         }
         #region SlotMod Loaders
         public static void Add_Slot_Raft()
@@ -48,6 +66,7 @@ namespace BittysChallenges
             Tools.LoadTexture("rulebookitemicon_raft.png"),
             SlotModificationManager.ModificationMetaCategory.Part1Rulebook
             )
+            .SetAbilityRedirect("submerging", Ability.Submerge, GameColors.instance.orange)
         ;
             SlotMod_Raft.SlotType = SlotRaft;
         }
@@ -65,6 +84,7 @@ namespace BittysChallenges
             Tools.LoadTexture("rulebookitemicon_mud.png"),
             SlotModificationManager.ModificationMetaCategory.Part1Rulebook
             )
+            .SetAbilityRedirect("cannot attack", Sigils.GiveCantAttack.ability, GameColors.instance.orange)
         ;
             SlotMod_Muddy.SlotType = SlotMuddy;
         }
@@ -98,7 +118,7 @@ namespace BittysChallenges
             "When a creature is played in this slot, it gets submerged in the water unless it is flying.",
             Tools.LoadTexture("rulebookitemicon_flood.png"),
             SlotModificationManager.ModificationMetaCategory.Part1Rulebook
-            )
+            ).SetAbilityRedirect("flying", Ability.Flying, GameColors.Instance.orange)
         ;
             SlotMod_Flood.SlotType = SlotFlood;
         }
@@ -112,10 +132,13 @@ namespace BittysChallenges
             )
             .SetRulebook(
             "Windy Slot",
-            "At the start of the owner\'s turn, a creature in this slot will alternate between flying and not flying. This effect is ignored if the card naturally flies.",
+            "At the start of the owner\'s turn, a creature in this slot will alternate between flying and not flying. This effect is ignored if the creature naturally flies, submerges, or burrows.",
             Tools.LoadTexture("rulebookitemicon_breeze.png"),
             SlotModificationManager.ModificationMetaCategory.Part1Rulebook
-            )
+            ).SetAbilityRedirect("flying",Ability.Flying,GameColors.Instance.orange)
+            .SetAbilityRedirect("flies", Ability.Flying,GameColors.Instance.orange)
+            .SetAbilityRedirect("submerges", Ability.Submerge,GameColors.Instance.brightSeafoam)
+            .SetAbilityRedirect("burrows", Ability.WhackAMole,GameColors.Instance.gold)
         ;
             SlotMod_Breeze.SlotType = SlotBreeze;
         }
@@ -146,10 +169,12 @@ namespace BittysChallenges
             )
             .SetRulebook(
             "Growth Slot",
-            "When a creature is played in this slot, instantly evolve it if it has Fledgeling. If it does not have Fledgling, it instead gains Fledgling.",
+            "When a creature is played in this slot, instantly evolve it if it has an evolve related sigil. If it does not have Fledgling, it instead gains Fledgling.",
             Tools.LoadTexture("rulebookitemicon_overgrowth.png"),
-            SlotModificationManager.ModificationMetaCategory.Part1Rulebook
+            SlotModificationManager.ModificationMetaCategory.Part1Rulebook,
+            SlotModificationManager.ModificationMetaCategory.Part3Rulebook
             )
+            .SetAbilityRedirect("Fledgeling", Ability.Evolve, GameColors.Instance.orange)
         ;
             SlotMod_Growth.SlotType = SlotGrowth;
         }
@@ -202,6 +227,7 @@ namespace BittysChallenges
             Tools.LoadTexture("rulebookitemicon_obelisk.png"),
             SlotModificationManager.ModificationMetaCategory.Part1Rulebook
             )
+            .SetStatIconRedirect("sacrificed", SpecialStatIcon.SacrificesThisTurn, GameColors.instance.orange)
         ;
             SlotMod_Obelisk.SlotType = SlotObelisk;
         }
@@ -269,6 +295,7 @@ namespace BittysChallenges
 
                     yield return new WaitForSeconds(0.25f);
                 }
+                Singleton<BoardManager>.Instance.SacrificesMadeThisTurn += 1;
                 yield return otherCard.Die(false, null, true);
                 if (properSacrifice)
                 {
@@ -280,7 +307,7 @@ namespace BittysChallenges
             CardModificationInfo mod = new CardModificationInfo(1, 0)
             {
                 singletonId = "bitty_obeliskAnger",
-                abilities = new List<Ability>() { Ability.BuffNeighbours},
+                abilities = new List<Ability>() { Ability.BuffNeighbours },
                 nonCopyable = true,
             };
             private bool properSacrifice = false;
@@ -351,7 +378,7 @@ namespace BittysChallenges
             {
                 AudioController.Instance.PlaySound2D("teslacoil_overload", MixerGroup.TableObjectsSFX, 1f, 0f, null, null, null, null, false);
                 yield return otherCard.TakeDamage(1, null);
-                if(otherCard.Dead != true)
+                if (otherCard.Dead != true)
                 {
                     yield return new WaitForSeconds(0.3f);
                     otherCard.Anim.PlayTransformAnimation();
@@ -494,7 +521,7 @@ namespace BittysChallenges
 
             public override bool RespondsToOtherCardAssignedToSlot(PlayableCard otherCard)
             {
-                return otherCard == Slot.Card && !Slot.Card.Info.HasTrait(Trait.Terrain) && 
+                return otherCard == Slot.Card && !Slot.Card.Info.HasTrait(Trait.Terrain) &&
                     !Slot.Card.HasAbility(Ability.Flying) && !Slot.Card.HasAbility(Ability.Submerge);
             }
             public override IEnumerator OnOtherCardAssignedToSlot(PlayableCard otherCard)
@@ -524,7 +551,7 @@ namespace BittysChallenges
 
             public override bool RespondsToUpkeep(bool playerUpkeep)
             {
-                return Slot.Card != null && !Slot.Card.Info.HasTrait(Trait.Terrain) && 
+                return Slot.Card != null && !Slot.Card.Info.HasTrait(Trait.Terrain) &&
                     Slot.Card.IsPlayerCard() == playerUpkeep;
             }
             public override IEnumerator OnUpkeep(bool playerUpkeep)
@@ -576,7 +603,7 @@ namespace BittysChallenges
             public override IEnumerator OnOtherCardAssignedToSlot(PlayableCard otherCard)
             {
                 CardModificationInfo cardModificationInfo = otherCard.TemporaryMods.Find((CardModificationInfo x) => x.singletonId == "bitty_flood");
-                if(cardModificationInfo != null)
+                if (cardModificationInfo != null)
                 {
                     otherCard.RemoveTemporaryMod(cardModificationInfo);
                 }
@@ -600,3 +627,4 @@ namespace BittysChallenges
         #endregion
     }
 }
+

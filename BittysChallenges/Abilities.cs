@@ -31,7 +31,6 @@ namespace BittysChallenges
             Add_Ability_Paralysis();
             Add_Ability_StrafeKiller();
             Add_Ability_StrafeAvalanche();
-            Add_Ability_Raft();
             Add_Ability_SlotSpawner();
 
             Add_Ability_RedChamp();
@@ -47,6 +46,12 @@ namespace BittysChallenges
             Add_Ability_LightGreenChamp();
             Add_Ability_BrightRedChamp();
             Log.LogInfo("End of sigils");
+        }
+        public static void Add_Reliant_Abilities()
+        {
+            Log.LogInfo("Start of reliant sigils");
+            Add_Ability_Raft();
+            Log.LogInfo("End of reliant sigils");
         }
         #region Ability Loaders
         private static void Add_Ability_SlotSpawner()
@@ -389,10 +394,10 @@ namespace BittysChallenges
                 List<CardSlot> playerSlots = Singleton<BoardManager3D>.Instance.PlayerSlotsCopy;
                 for(int i = 0; i < playerSlots.Count; i++)
                 {
-                    if (i == 0) { yield return playerSlots[0].SetSlotModification(SlotMods.SlotMod_Overclock.SlotType); }
-                    if (i == 1) { yield return playerSlots[1].SetSlotModification(SlotMods.SlotMod_Dynamite.SlotType); }
-                    if (i == 2) { yield return playerSlots[2].SetSlotModification(SlotMods.SlotMod_Hail.SlotType); }
-                    if (i == 3) { yield return playerSlots[3].SetSlotModification(SlotMods.SlotMod_Muddy.SlotType); }
+                    if (i == 0) { yield return playerSlots[0].FadeToSlotMod(SlotMods.SlotMod_Growth.SlotType); }
+                    if (i == 1) { yield return playerSlots[1].FadeToSlotMod(SlotMods.SlotMod_Grave.SlotType); }
+                    if (i == 2) { yield return playerSlots[2].FadeToSlotMod(SlotMods.SlotMod_Flood.SlotType); }
+                    if (i == 3) { yield return playerSlots[3].FadeToSlotMod(SlotMods.SlotMod_Obelisk.SlotType); }
                 }
                 base.Card.Anim.PlayDeathAnimation(false);
                 Object.Destroy(base.Card.gameObject);
@@ -555,7 +560,7 @@ namespace BittysChallenges
                         zoom = "RoyalOuroDies";
                     }
                 }
-                if (IsP03Run)
+                if (modModeActive(MOD_MODE.P03))
                 {
                     zoom = "P03OuroDies";
                 }

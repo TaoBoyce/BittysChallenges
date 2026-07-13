@@ -58,6 +58,8 @@ namespace BittysChallenges
 			Boons.AddBoons();
             SlotMods.Add_SlotMods();
 			Abilities.AddAbilities();
+            SlotMods.Add_Reliant_SlotMods();
+            Abilities.Add_Reliant_Abilities();
 			Cards.AddCards();
             Dialogue.Add_Dialogue();
             Decks.AddDecks();
@@ -84,14 +86,32 @@ namespace BittysChallenges
 
 		internal static ManualLogSource Log;
 
-        public static bool IsP03Run
+        public enum MOD_MODE
         {
-            get
+            KCM,
+            P03
+        }
+        public static MOD_MODE getModMode()
+        {
+            //P03
+            if (Chainloader.PluginInfos.ContainsKey("zorro.inscryption.infiniscryption.p03kayceerun") &&
+            AscensionSaveData.Data != null &&
+            AscensionSaveData.Data.currentRun != null &&
+            AscensionSaveData.Data.currentRun.playerLives > 0 &&
+            ModdedSaveManager.SaveData.GetValueAsBoolean("zorro.inscryption.infiniscryption.p03kayceerun", "IsP03Run"))
             {
-                bool flag = Chainloader.PluginInfos.ContainsKey("zorro.inscryption.infiniscryption.p03kayceerun") && AscensionSaveData.Data != null && AscensionSaveData.Data.currentRun != null && AscensionSaveData.Data.currentRun.playerLives > 0;
-                bool result = (flag && ModdedSaveManager.SaveData.GetValueAsBoolean("zorro.inscryption.infiniscryption.p03kayceerun", "IsP03Run"));
-                return result;
+                return MOD_MODE.P03;
             }
+
+            //Vanilla
+            else
+            {
+                return MOD_MODE.KCM;
+            }
+        }
+        public static bool modModeActive(MOD_MODE modMode)
+        {
+            return getModMode() == modMode;
         }
 
         [HarmonyPatch(typeof(AudioController))]
