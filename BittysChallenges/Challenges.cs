@@ -456,6 +456,10 @@ namespace BittysChallenges
                     }
                     Singleton<GiantShip>.Instance.mutineesSinceDialogue++;
                 }
+                else
+                {
+                    yield return values;
+                }
                 yield break;
             }
             [HarmonyPostfix]
