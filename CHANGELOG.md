@@ -7,6 +7,7 @@
 <details>
 <summary>Changelog</summary>
 
+- 6.1.2: slotmod rulebook redirects fix
 - 6.1.1: non-challenge mutiny fix
 - 6.0.0: Refactor
 - 5.3.0: Added Champions challenge, nerfed wood boards and totem environment

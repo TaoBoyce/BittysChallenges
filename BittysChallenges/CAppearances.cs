@@ -30,7 +30,7 @@ namespace BittysChallenges
             public override void ApplyAppearance()
             {
                 base.Card.renderInfo.forceEmissivePortrait = true;
-                base.Card.StatsLayer.SetEmissionColor(GameColors.instance.darkRed);
+                base.Card.StatsLayer.SetEmissionColor(GameColors.Instance.darkRed);
             }
         }
         public readonly static CardAppearanceBehaviour.Appearance RedChampAppearance = CardAppearanceBehaviourManager.Add(Plugin.PluginGuid, "RedChampAppearance", typeof(RedChampAppearanceBehaviour)).Id;
@@ -39,7 +39,7 @@ namespace BittysChallenges
             public override void ApplyAppearance()
             {
                 base.Card.renderInfo.forceEmissivePortrait = true;
-                base.Card.StatsLayer.SetEmissionColor(GameColors.instance.yellow);
+                base.Card.StatsLayer.SetEmissionColor(GameColors.Instance.yellow);
             }
         }
         public readonly static CardAppearanceBehaviour.Appearance YellowChampAppearance = CardAppearanceBehaviourManager.Add(Plugin.PluginGuid, "YellowChampAppearance", typeof(YellowChampAppearanceBehaviour)).Id;
@@ -48,7 +48,7 @@ namespace BittysChallenges
             public override void ApplyAppearance()
             {
                 base.Card.renderInfo.forceEmissivePortrait = true;
-                base.Card.StatsLayer.SetEmissionColor(GameColors.instance.orange);
+                base.Card.StatsLayer.SetEmissionColor(GameColors.Instance.orange);
             }
         }
         public readonly static CardAppearanceBehaviour.Appearance OrangeChampAppearance = CardAppearanceBehaviourManager.Add(Plugin.PluginGuid, "OrangeChampAppearance", typeof(OrangeChampAppearanceBehaviour)).Id;
@@ -66,7 +66,7 @@ namespace BittysChallenges
             public override void ApplyAppearance()
             {
                 base.Card.renderInfo.forceEmissivePortrait = true;
-                base.Card.StatsLayer.SetEmissionColor(GameColors.instance.brightNearWhite);
+                base.Card.StatsLayer.SetEmissionColor(GameColors.Instance.brightNearWhite);
             }
         }
         public readonly static CardAppearanceBehaviour.Appearance WhiteChampAppearance = CardAppearanceBehaviourManager.Add(Plugin.PluginGuid, "WhiteChampAppearance", typeof(WhiteChampAppearanceBehaviour)).Id;
@@ -84,7 +84,7 @@ namespace BittysChallenges
             public override void ApplyAppearance()
             {
                 base.Card.renderInfo.forceEmissivePortrait = true;
-                base.Card.StatsLayer.SetEmissionColor(GameColors.instance.darkPurple);
+                base.Card.StatsLayer.SetEmissionColor(GameColors.Instance.darkPurple);
             }
         }
         public readonly static CardAppearanceBehaviour.Appearance PurpleChampAppearance = CardAppearanceBehaviourManager.Add(Plugin.PluginGuid, "PurpleChampAppearance", typeof(PurpleChampAppearanceBehaviour)).Id;
@@ -93,7 +93,7 @@ namespace BittysChallenges
             public override void ApplyAppearance()
             {
                 base.Card.renderInfo.forceEmissivePortrait = true;
-                base.Card.StatsLayer.SetEmissionColor(GameColors.instance.brightBlue);
+                base.Card.StatsLayer.SetEmissionColor(GameColors.Instance.brightBlue);
             }
         }
         public readonly static CardAppearanceBehaviour.Appearance LightBlueChampAppearance = CardAppearanceBehaviourManager.Add(Plugin.PluginGuid, "LightBlueChampAppearance", typeof(LightBlueChampAppearanceBehaviour)).Id;
@@ -102,7 +102,7 @@ namespace BittysChallenges
             public override void ApplyAppearance()
             {
                 base.Card.renderInfo.forceEmissivePortrait = true;
-                base.Card.StatsLayer.SetEmissionColor(GameColors.instance.brightRed);
+                base.Card.StatsLayer.SetEmissionColor(GameColors.Instance.brightRed);
             }
         }
         public readonly static CardAppearanceBehaviour.Appearance BrightRedChampAppearance = CardAppearanceBehaviourManager.Add(Plugin.PluginGuid, "BrightRedChampAppearance", typeof(BrightRedChampAppearanceBehaviour)).Id;
@@ -111,7 +111,7 @@ namespace BittysChallenges
             public override void ApplyAppearance()
             {
                 base.Card.renderInfo.forceEmissivePortrait = true;
-                base.Card.StatsLayer.SetEmissionColor(GameColors.instance.brightLimeGreen);
+                base.Card.StatsLayer.SetEmissionColor(GameColors.Instance.brightLimeGreen);
             }
         }
         public readonly static CardAppearanceBehaviour.Appearance LightGreenChampAppearance = CardAppearanceBehaviourManager.Add(Plugin.PluginGuid, "LightGreenChampAppearance", typeof(LightGreenChampAppearanceBehaviour)).Id;
@@ -120,7 +120,7 @@ namespace BittysChallenges
             public override void ApplyAppearance()
             {
                 base.Card.renderInfo.forceEmissivePortrait = true;
-                base.Card.StatsLayer.SetEmissionColor(GameColors.instance.darkBlue);
+                base.Card.StatsLayer.SetEmissionColor(GameColors.Instance.darkBlue);
             }
         }
         public readonly static CardAppearanceBehaviour.Appearance BlueChampAppearance = CardAppearanceBehaviourManager.Add(Plugin.PluginGuid, "BlueChampAppearance", typeof(BlueChampAppearanceBehaviour)).Id;
@@ -129,7 +129,7 @@ namespace BittysChallenges
             public override void ApplyAppearance()
             {
                 base.Card.renderInfo.forceEmissivePortrait = true;
-                base.Card.StatsLayer.SetEmissionColor(GameColors.instance.darkLimeGreen);
+                base.Card.StatsLayer.SetEmissionColor(GameColors.Instance.darkLimeGreen);
             }
         }
         public readonly static CardAppearanceBehaviour.Appearance GreenChampAppearance = CardAppearanceBehaviourManager.Add(Plugin.PluginGuid, "GreenChampAppearance", typeof(GreenChampAppearanceBehaviour)).Id;

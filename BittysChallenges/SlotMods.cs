@@ -67,7 +67,7 @@ namespace BittysChallenges
             SlotModificationManager.ModificationMetaCategory.Part1Rulebook
             );
             //Log.LogInfo("pre redirect");
-            //SlotRaft.SetAbilityRedirect("submerging", Ability.Submerge, GameColors.instance.orange)
+            SlotRaft.SetAbilityRedirect("submerging", Ability.Submerge, GameColors.Instance.orange)
         ;
             //Log.LogInfo("post redirect");
             SlotMod_Raft.SlotType = SlotRaft;
@@ -86,7 +86,7 @@ namespace BittysChallenges
             Tools.LoadTexture("rulebookitemicon_mud.png"),
             SlotModificationManager.ModificationMetaCategory.Part1Rulebook
             )
-            //.SetAbilityRedirect("cannot attack", Sigils.GiveCantAttack.ability, GameColors.instance.orange)
+            .SetAbilityRedirect("cannot attack", Sigils.GiveCantAttack.ability, GameColors.Instance.orange)
         ;
             SlotMod_Muddy.SlotType = SlotMuddy;
         }
@@ -121,7 +121,8 @@ namespace BittysChallenges
             Tools.LoadTexture("rulebookitemicon_flood.png"),
             SlotModificationManager.ModificationMetaCategory.Part1Rulebook
             )
-            //.SetAbilityRedirect("flying", Ability.Flying, GameColors.Instance.orange)
+            .SetAbilityRedirect("flying", Ability.Flying, GameColors.Instance.orange)
+            .SetAbilityRedirect("submerged", Ability.Submerge, GameColors.Instance.blue)
         ;
             SlotMod_Flood.SlotType = SlotFlood;
         }
@@ -139,10 +140,10 @@ namespace BittysChallenges
             Tools.LoadTexture("rulebookitemicon_breeze.png"),
             SlotModificationManager.ModificationMetaCategory.Part1Rulebook
             )
-            //.SetAbilityRedirect("flying",Ability.Flying,GameColors.Instance.orange)
-            //.SetAbilityRedirect("flies", Ability.Flying,GameColors.Instance.orange)
-            //.SetAbilityRedirect("submerges", Ability.Submerge,GameColors.Instance.brightSeafoam)
-            //.SetAbilityRedirect("burrows", Ability.WhackAMole,GameColors.Instance.gold)
+            .SetAbilityRedirect("flying",Ability.Flying,GameColors.Instance.orange)
+            .SetAbilityRedirect("flies", Ability.Flying,GameColors.Instance.orange)
+            .SetAbilityRedirect("submerges", Ability.Submerge,GameColors.Instance.blue)
+            .SetAbilityRedirect("burrows", Ability.WhackAMole,GameColors.Instance.gold)
         ;
             SlotMod_Breeze.SlotType = SlotBreeze;
         }
@@ -178,7 +179,7 @@ namespace BittysChallenges
             SlotModificationManager.ModificationMetaCategory.Part1Rulebook,
             SlotModificationManager.ModificationMetaCategory.Part3Rulebook
             )
-            //.SetAbilityRedirect("Fledgeling", Ability.Evolve, GameColors.Instance.orange)
+            .SetAbilityRedirect("Fledgeling", Ability.Evolve, GameColors.Instance.orange)
         ;
             SlotMod_Growth.SlotType = SlotGrowth;
         }
@@ -231,7 +232,7 @@ namespace BittysChallenges
             Tools.LoadTexture("rulebookitemicon_obelisk.png"),
             SlotModificationManager.ModificationMetaCategory.Part1Rulebook
             )
-            //.SetStatIconRedirect("sacrificed", SpecialStatIcon.SacrificesThisTurn, GameColors.instance.orange)
+            .SetStatIconRedirect("sacrificed", SpecialStatIcon.SacrificesThisTurn, GameColors.Instance.orange)
         ;
             SlotMod_Obelisk.SlotType = SlotObelisk;
         }

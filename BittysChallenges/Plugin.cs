@@ -24,8 +24,8 @@ using UnityEngine;
 using static BittysChallenges.Abilities;
 using Object = UnityEngine.Object;
 
-///Changelog: 6.1.1
-///Fix to non-challenge mutiny
+///Changelog: 6.1.2
+///Fix to slotmod rulebook redirects
 ///
 namespace BittysChallenges
 {

@@ -75,7 +75,7 @@ As with most mods, you need [BepInEx](https://inscryption.thunderstore.io/packag
 <details>
 <summary>Changelog</summary>
 
-- 6.1.1: Non-challenge mutiny fix
+- 6.1.0: Environments reworked to use slot mods
 - 6.0.0: Refactor
 - 5.3.0: Added Champions challenge, nerfed wood boards and totem environment
 - 5.2.0: Removed clover redraw from unfairhand challenge, added in a new anti-challenge for that instead
