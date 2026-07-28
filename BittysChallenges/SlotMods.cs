@@ -67,7 +67,7 @@ namespace BittysChallenges
             SlotModificationManager.ModificationMetaCategory.Part1Rulebook
             );
             //Log.LogInfo("pre redirect");
-            SlotRaft.SetAbilityRedirect("submerging", Ability.Submerge, GameColors.Instance.orange)
+            SlotRaft.SetAbilityRedirect("submerging", Ability.Submerge, GameColors.Instance.blue)
         ;
             //Log.LogInfo("post redirect");
             SlotMod_Raft.SlotType = SlotRaft;
@@ -179,7 +179,7 @@ namespace BittysChallenges
             SlotModificationManager.ModificationMetaCategory.Part1Rulebook,
             SlotModificationManager.ModificationMetaCategory.Part3Rulebook
             )
-            .SetAbilityRedirect("Fledgeling", Ability.Evolve, GameColors.Instance.orange)
+            .SetAbilityRedirect("Fledgling", Ability.Evolve, GameColors.Instance.orange)
         ;
             SlotMod_Growth.SlotType = SlotGrowth;
         }
@@ -232,7 +232,7 @@ namespace BittysChallenges
             Tools.LoadTexture("rulebookitemicon_obelisk.png"),
             SlotModificationManager.ModificationMetaCategory.Part1Rulebook
             )
-            .SetStatIconRedirect("sacrificed", SpecialStatIcon.SacrificesThisTurn, GameColors.Instance.orange)
+            .SetStatIconRedirect("sacrificed", SpecialStatIcon.SacrificesThisTurn, GameColors.Instance.red)
         ;
             SlotMod_Obelisk.SlotType = SlotObelisk;
         }
